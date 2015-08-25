@@ -30,14 +30,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="sim-android" />
       </profile>
       <profile default="false" name="Annotation profile for sim-robovm" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="sim-robovm" />
       </profile>
       <profile default="false" name="Annotation profile for sim-java" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -58,7 +56,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="sim-html" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
