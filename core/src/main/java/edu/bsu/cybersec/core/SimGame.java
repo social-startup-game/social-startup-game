@@ -1,20 +1,19 @@
 package edu.bsu.cybersec.core;
 
-import playn.core.Image;
 import playn.core.Platform;
-import playn.scene.ImageLayer;
 import playn.scene.SceneGame;
+import tripleplay.game.ScreenStack;
 
 public class SimGame extends SceneGame {
 
-    public SimGame(Platform plat) {
-        super(plat, 33); // update our "simulation" 33ms (30 times per second)
+    // This is required for ScreenStack.UIScreen's game() method, which is called before the constructor.
+    // See https://github.com/threerings/tripleplay/blob/master/demo/core/src/main/java/tripleplay/demo/TripleDemo.java#L19
+    static SimGame game;
 
-        // create and add background image layer
-        Image bgImage = plat.assets().getImage("images/bg.png");
-        ImageLayer bgLayer = new ImageLayer(bgImage);
-        // scale the background to fill the screen
-        bgLayer.setSize(plat.graphics().viewSize);
-        rootLayer.add(bgLayer);
+    public SimGame(Platform plat) {
+        super(plat, 33);
+        game = this;
+        ScreenStack screenStack = new ScreenStack(this, rootLayer);
+        screenStack.push(new GameScreen());
     }
 }
