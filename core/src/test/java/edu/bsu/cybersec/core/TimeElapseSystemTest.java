@@ -30,7 +30,7 @@ public final class TimeElapseSystemTest {
     }
 
     private void thenElapsedMsIs(int expected) {
-        assertEquals(expected, world.elapsedSimMs.get(gameClockEntityId));
+        assertEquals(expected, world.simClock.get(gameClockEntityId).elapsedMS);
     }
 
     private void whenMsElapses(int elapsedMS) {
@@ -60,7 +60,7 @@ public final class TimeElapseSystemTest {
     }
 
     private void thenTickIs(int i) {
-        assertEquals(i, world.tickMs.get(gameClockEntityId));
+        assertEquals(i, world.simClock.get(gameClockEntityId).tickMS);
     }
 
     @Test

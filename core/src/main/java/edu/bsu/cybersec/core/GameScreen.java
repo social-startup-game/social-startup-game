@@ -30,17 +30,17 @@ public class GameScreen extends ScreenStack.UIScreen {
 
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(elapsedSimMs);
+                return entity.has(simClock);
             }
 
             @Override
             protected void update(Clock clock, System.Entities entities) {
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    int entityId = entities.get(i);
-                    int tick = tickMs.get(entityId);
+                    final int entityId = entities.get(i);
+                    final int tick = simClock.get(entityId).tickMS;
                     now.setTimeInMillis(START_MS + tick);
                 }
-                String formatted = format.format(now.getTime());
+                final String formatted = format.format(now.getTime());
                 label.text.update(formatted);
             }
         };

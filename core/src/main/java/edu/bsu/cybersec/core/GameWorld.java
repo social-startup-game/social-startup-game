@@ -6,14 +6,12 @@ import tripleplay.entity.World;
 
 public abstract class GameWorld extends World {
 
-    public final Component.IScalar elapsedSimMs = new Component.IScalar(this);
-    public final Component.IScalar tickMs = new Component.IScalar(this);
+    public final Component.Generic<SimClock> simClock = new Component.Generic<SimClock>(this);
 
     protected Entity createClockEntity() {
         Entity entity = create(true);
-        entity.add(elapsedSimMs, tickMs);
-        elapsedSimMs.set(entity.id, 0);
-        tickMs.set(entity.id, 0);
+        entity.add(simClock);
+        simClock.set(entity.id, new SimClock());
         return entity;
     }
 
