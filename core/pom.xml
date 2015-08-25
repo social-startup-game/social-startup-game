@@ -19,6 +19,11 @@
             <artifactId>playn-scene</artifactId>
             <version>${playn.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.threerings</groupId>
+            <artifactId>tripleplay</artifactId>
+            <version>${playn.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

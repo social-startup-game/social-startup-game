@@ -31,6 +31,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="sim-core" />
     <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-rc1" level="project" />
     <orderEntry type="library" name="Maven: io.playn:playn-android:2.0-rc1" level="project" />
     <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-rc1" level="project" />
     <orderEntry type="library" name="Maven: com.samskivert:pythagoras:1.4.1" level="project" />

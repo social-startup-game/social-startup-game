@@ -11,6 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="sim-core" />
     <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-rc1" level="project" />
     <orderEntry type="module" module-name="sim-core" />
     <orderEntry type="module" module-name="sim-assets" />
     <orderEntry type="library" name="Maven: io.playn:playn-scene:sources:2.0-rc1" level="project" />
