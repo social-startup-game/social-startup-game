@@ -13,11 +13,20 @@ import tripleplay.ui.Style;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.util.Colors;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+
 public class GameScreen extends ScreenStack.UIScreen {
     private GameWorld world = new GameWorld.Initialized() {
         tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
 
-            int now;
+            private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
+            private final long START_MS = new GregorianCalendar().getTimeInMillis();
+            private final GregorianCalendar now = new GregorianCalendar();
+
+            {
+                format.setCalendar(now);
+            }
 
             @Override
             protected boolean isInterested(Entity entity) {
@@ -28,10 +37,11 @@ public class GameScreen extends ScreenStack.UIScreen {
             protected void update(Clock clock, System.Entities entities) {
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int entityId = entities.get(i);
-                    int elapsed = elapsedSimMs.get(entityId);
-                    now += elapsed;
+                    int tick = tickMs.get(entityId);
+                    now.setTimeInMillis(START_MS + tick);
                 }
-                label.text.update("" + now);
+                String formatted = format.format(now.getTime());
+                label.text.update(formatted);
             }
         };
 
