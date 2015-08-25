@@ -3,9 +3,10 @@ package edu.bsu.cybersec.core;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-public class TimeElapseSystem extends tripleplay.entity.System {
+public final class TimeElapseSystem extends tripleplay.entity.System {
 
     private final GameWorld world;
+    private float simSecondsPerClockSecond = 1f;
 
     public TimeElapseSystem(GameWorld world) {
         super(world, 0);
@@ -21,7 +22,12 @@ public class TimeElapseSystem extends tripleplay.entity.System {
     protected void update(Clock clock, Entities entities) {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int entityId = entities.get(i);
-            world.elapsedSimMs.set(entityId, clock.dt);
+            int elapsedSimMs = (int) (clock.dt * simSecondsPerClockSecond);
+            world.elapsedSimMs.set(entityId, elapsedSimMs);
         }
+    }
+
+    public void setSimSecondsPerClockSecond(float simSecondsPerClockSecond) {
+        this.simSecondsPerClockSecond = simSecondsPerClockSecond;
     }
 }

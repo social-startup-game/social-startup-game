@@ -30,7 +30,11 @@ public final class TimeElapseSystemTest {
     @Test
     public void testUpdate_noElapsedTime_noChange() {
         whenMsElapses(0);
-        assertEquals(0, world.elapsedSimMs.get(gameClockEntityId));
+        thenElapsedMsIs(0);
+    }
+
+    private void thenElapsedMsIs(int expected) {
+        assertEquals(expected, world.elapsedSimMs.get(gameClockEntityId));
     }
 
     private void whenMsElapses(int elapsedMS) {
@@ -44,7 +48,14 @@ public final class TimeElapseSystemTest {
     public void testUpdate_oneSimSecondPerClockSecond_oneSecondElapses() {
         final int elapsedMS = 1000;
         whenMsElapses(elapsedMS);
-        assertEquals(elapsedMS, world.elapsedSimMs.get(gameClockEntityId));
+        thenElapsedMsIs(elapsedMS);
+    }
+
+    @Test
+    public void testUpdate_twoSimSecondsPerClockSecond_twoSecondsElapse() {
+        system.setSimSecondsPerClockSecond(2);
+        whenMsElapses(1000);
+        thenElapsedMsIs(2000);
     }
 
 }
