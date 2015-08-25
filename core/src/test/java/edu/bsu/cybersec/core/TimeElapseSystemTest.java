@@ -14,12 +14,9 @@ public final class TimeElapseSystemTest {
 
     @Before
     public void setUp() {
-        world = new GameWorld() {
-            {
-                gameClockEntityId = createClockEntity().id;
-            }
-        };
-        system = new TimeElapseSystem(world);
+        world = new GameWorld();
+        system = world.timeElapseSystem;
+        gameClockEntityId = system.simClockEntity.id;
     }
 
 
@@ -76,4 +73,16 @@ public final class TimeElapseSystemTest {
         thenTickIs(2000);
     }
 
+    @Test
+    public void testAdvance_zero_sameTime() {
+        system.advance(0);
+        thenElapsedMsIs(0);
+    }
+
+    @Test
+    public void testAdvance_oneSecond() {
+        final int oneSecond = 1000;
+        system.advance(oneSecond);
+        thenElapsedMsIs(oneSecond);
+    }
 }

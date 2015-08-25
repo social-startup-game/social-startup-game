@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 public class GameScreen extends ScreenStack.UIScreen {
-    private GameWorld world = new GameWorld.Initialized() {
+    private GameWorld world = new GameWorld() {
         tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
 
             private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
