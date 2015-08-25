@@ -3,7 +3,6 @@ package edu.bsu.cybersec.core;
 import org.junit.Before;
 import org.junit.Test;
 import playn.core.Clock;
-import tripleplay.entity.Entity;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,17 +14,14 @@ public final class TimeElapseSystemTest {
 
     @Before
     public void setUp() {
-        world = new GameWorld();
+        world = new GameWorld() {
+            {
+                gameClockEntityId = createClockEntity().id;
+            }
+        };
         system = new TimeElapseSystem(world);
-        gameClockEntityId = createSimClock();
     }
 
-    private int createSimClock() {
-        Entity gameClockEntity = world.create(true);
-        gameClockEntity.add(world.elapsedSimMs);
-        world.elapsedSimMs.set(gameClockEntity.id, 0);
-        return gameClockEntity.id;
-    }
 
     @Test
     public void testUpdate_noElapsedTime_noChange() {

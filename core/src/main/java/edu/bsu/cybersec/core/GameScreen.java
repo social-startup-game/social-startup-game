@@ -14,12 +14,7 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.util.Colors;
 
 public class GameScreen extends ScreenStack.UIScreen {
-    private GameWorld world = new GameWorld() {
-        {
-            createClockEntity();
-            new TimeElapseSystem(this);
-        }
-
+    private GameWorld world = new GameWorld.Initialized() {
         tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
 
             int now;
@@ -40,11 +35,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
         };
 
-        private void createClockEntity() {
-            Entity entity = create(true);
-            entity.add(elapsedSimMs);
-            elapsedSimMs.set(entity.id, 0);
-        }
+
     };
 
     private final Label label = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
