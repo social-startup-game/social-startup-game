@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/sim.iml" filepath="$PROJECT_DIR$/sim.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/sim-android.iml" filepath="$PROJECT_DIR$/android/sim-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets/sim-assets.iml" filepath="$PROJECT_DIR$/assets/sim-assets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/sim-core.iml" filepath="$PROJECT_DIR$/core/sim-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/html/sim-html.iml" filepath="$PROJECT_DIR$/html/sim-html.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java/sim-java.iml" filepath="$PROJECT_DIR$/java/sim-java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/robovm/sim-robovm.iml" filepath="$PROJECT_DIR$/robovm/sim-robovm.iml" />
+    </modules>
+  </component>
+</project>

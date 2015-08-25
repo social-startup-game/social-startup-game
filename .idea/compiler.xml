@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="DEFAULT_COMPILER" value="Javac" />
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="!?*.java" />
+      <entry name="!?*.form" />
+      <entry name="!?*.class" />
+      <entry name="!?*.groovy" />
+      <entry name="!?*.scala" />
+      <entry name="!?*.flex" />
+      <entry name="!?*.kt" />
+      <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Annotation profile for sim-assets" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sim-assets" />
+      </profile>
+      <profile default="false" name="Annotation profile for sim-android" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sim-android" />
+      </profile>
+      <profile default="false" name="Annotation profile for sim-robovm" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sim-robovm" />
+      </profile>
+      <profile default="false" name="Annotation profile for sim-java" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sim-java" />
+      </profile>
+      <profile default="false" name="Annotation profile for sim-core" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sim-core" />
+      </profile>
+      <profile default="false" name="Annotation profile for sim-html" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="sim-html" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sim" target="1.5" />
+      <module name="sim-android" target="1.7" />
+      <module name="sim-assets" target="1.7" />
+      <module name="sim-core" target="1.7" />
+      <module name="sim-html" target="1.7" />
+      <module name="sim-java" target="1.7" />
+      <module name="sim-robovm" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

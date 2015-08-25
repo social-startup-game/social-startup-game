@@ -1,0 +1,11 @@
+<module rename-to='sim'>
+    <inherits name='playn.Scene'/>
+    <inherits name='SimGameAssets'/>
+
+    <source path='core'/>
+    <source path='html'/>
+
+    <public path="resources"/>
+
+    <entry-point class='edu.bsu.cybersec.html.SimGameHtml'/>
+</module>
