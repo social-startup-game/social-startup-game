@@ -54,4 +54,26 @@ public final class TimeElapseSystemTest {
         thenElapsedMsIs(2000);
     }
 
+    @Test
+    public void testUpdate_noElapsedTime_tickIsUnchanged() {
+        thenTickIs(0);
+    }
+
+    private void thenTickIs(int i) {
+        assertEquals(i, world.tickMs.get(gameClockEntityId));
+    }
+
+    @Test
+    public void testUpdate_oneSecondElapsed_tickIsOneSecond() {
+        whenMsElapses(1000);
+        thenTickIs(1000);
+    }
+
+    @Test
+    public void testUpdate_oneSecondElapsedTwice_tickIsTwoSeconds() {
+        whenMsElapses(1000);
+        whenMsElapses(1000);
+        thenTickIs(2000);
+    }
+
 }

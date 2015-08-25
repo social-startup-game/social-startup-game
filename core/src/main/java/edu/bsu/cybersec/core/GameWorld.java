@@ -7,11 +7,13 @@ import tripleplay.entity.World;
 public abstract class GameWorld extends World {
 
     public final Component.IScalar elapsedSimMs = new Component.IScalar(this);
+    public final Component.IScalar tickMs = new Component.IScalar(this);
 
     protected Entity createClockEntity() {
         Entity entity = create(true);
-        entity.add(elapsedSimMs);
+        entity.add(elapsedSimMs, tickMs);
         elapsedSimMs.set(entity.id, 0);
+        tickMs.set(entity.id, 0);
         return entity;
     }
 

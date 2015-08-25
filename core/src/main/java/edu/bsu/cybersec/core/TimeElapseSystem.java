@@ -15,7 +15,8 @@ public final class TimeElapseSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.elapsedSimMs);
+        return entity.has(world.elapsedSimMs)
+                && entity.has(world.tickMs);
     }
 
     @Override
@@ -24,6 +25,7 @@ public final class TimeElapseSystem extends tripleplay.entity.System {
             int entityId = entities.get(i);
             int elapsedSimMs = (int) (clock.dt * simSecondsPerClockSecond);
             world.elapsedSimMs.set(entityId, elapsedSimMs);
+            world.tickMs.add(entityId, elapsedSimMs);
         }
     }
 
