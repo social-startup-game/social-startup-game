@@ -16,7 +16,7 @@ public final class TimeElapseSystemTest {
     public void setUp() {
         world = new GameWorld();
         clockUtil = new PlayNClockUtil(world);
-        system = world.timeElapseSystem;
+        system = new TimeElapseSystem(world);
         gameClockEntityId = system.simClockEntity.id;
     }
 

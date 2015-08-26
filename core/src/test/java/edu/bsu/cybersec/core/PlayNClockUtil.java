@@ -2,9 +2,7 @@ package edu.bsu.cybersec.core;
 
 import playn.core.Clock;
 
-public class PlayNClockUtil {
-
-    public static final int MS_PER_DAY = 1000 * 60 * 60 * 24;
+public final class PlayNClockUtil {
 
     private GameWorld world;
 
