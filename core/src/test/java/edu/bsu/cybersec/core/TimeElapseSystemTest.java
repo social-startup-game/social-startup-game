@@ -2,19 +2,20 @@ package edu.bsu.cybersec.core;
 
 import org.junit.Before;
 import org.junit.Test;
-import playn.core.Clock;
 
 import static org.junit.Assert.assertEquals;
 
 public final class TimeElapseSystemTest {
 
     private GameWorld world;
+    private PlayNClockUtil clockUtil;
     private TimeElapseSystem system;
     private int gameClockEntityId;
 
     @Before
     public void setUp() {
         world = new GameWorld();
+        clockUtil = new PlayNClockUtil(world);
         system = world.timeElapseSystem;
         gameClockEntityId = system.simClockEntity.id;
     }
@@ -22,7 +23,7 @@ public final class TimeElapseSystemTest {
 
     @Test
     public void testUpdate_noElapsedTime_noChange() {
-        whenMsElapses(0);
+        clockUtil.advance(0);
         thenElapsedMsIs(0);
     }
 
@@ -30,24 +31,17 @@ public final class TimeElapseSystemTest {
         assertEquals(expected, world.simClock.get(gameClockEntityId).elapsedMS);
     }
 
-    private void whenMsElapses(int elapsedMS) {
-        Clock playnClock = new Clock();
-        playnClock.dt = elapsedMS;
-        playnClock.tick += elapsedMS;
-        world.update(playnClock);
-    }
-
     @Test
     public void testUpdate_oneSimSecondPerClockSecond_oneSecondElapses() {
         final int elapsedMS = 1000;
-        whenMsElapses(elapsedMS);
+        clockUtil.advance(elapsedMS);
         thenElapsedMsIs(elapsedMS);
     }
 
     @Test
     public void testUpdate_twoSimSecondsPerClockSecond_twoSecondsElapse() {
         system.setSimSecondsPerClockSecond(2);
-        whenMsElapses(1000);
+        clockUtil.advance(1000);
         thenElapsedMsIs(2000);
     }
 
@@ -62,14 +56,14 @@ public final class TimeElapseSystemTest {
 
     @Test
     public void testUpdate_oneSecondElapsed_tickIsOneSecond() {
-        whenMsElapses(1000);
+        clockUtil.advance(1000);
         thenTickIs(1000);
     }
 
     @Test
     public void testUpdate_oneSecondElapsedTwice_tickIsTwoSeconds() {
-        whenMsElapses(1000);
-        whenMsElapses(1000);
+        clockUtil.advance(1000);
+        clockUtil.advance(1000);
         thenTickIs(2000);
     }
 
