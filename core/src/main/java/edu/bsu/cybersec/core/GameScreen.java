@@ -41,14 +41,30 @@ public class GameScreen extends ScreenStack.UIScreen {
                     now.setTimeInMillis(START_MS + tick);
                 }
                 final String formatted = format.format(now.getTime());
-                label.text.update(formatted);
+                timeLabel.text.update(formatted);
             }
         };
 
+        tripleplay.entity.System hudRenderingSystem = new System(this, 0) {
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return entity.has(company);
+            }
 
+            @Override
+            protected void update(Clock clock, Entities entities) {
+                super.update(clock, entities);
+                for (int i = 0, limit = entities.size(); i < limit; i++) {
+                    int entityId = entities.get(i);
+                    int users = company.get(entityId).users;
+                    usersLabel.text.update("Users: " + users);
+                }
+            }
+        };
     };
 
-    private final Label label = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final Label timeLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
 
     public GameScreen() {
         update.connect(new Slot<Clock>() {
@@ -57,12 +73,25 @@ public class GameScreen extends ScreenStack.UIScreen {
                 world.update(clock);
             }
         });
+        initializeWorld();
+    }
+
+    private void initializeWorld() {
+        Entity companyEntity = world.create(true).add(world.company);
+        world.company.set(companyEntity.id, new Company());
+
+        Feature feature = new Feature();
+        feature.companyId = companyEntity.id;
+        feature.usersPerDay = 1000000;
+        Entity featureEntity = world.create(true).add(world.feature);
+        world.feature.set(featureEntity.id, feature);
     }
 
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, new AbsoluteLayout(), SimpleStyles.newSheet(game().plat.graphics()));
-        root.add(AbsoluteLayout.at(label, 50, 50));
+        root.add(AbsoluteLayout.at(timeLabel, 50, 50));
+        root.add(AbsoluteLayout.at(usersLabel, 50, 100));
         return root;
     }
 
