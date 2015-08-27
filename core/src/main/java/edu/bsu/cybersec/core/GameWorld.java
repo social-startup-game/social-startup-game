@@ -20,6 +20,9 @@ public class GameWorld extends World {
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final ProgressSystem progressSystem = new ProgressSystem(this);
-        public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
+
+        {
+            new FeatureDevelopmentSystem(this);
+        }
     }
 }
