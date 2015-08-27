@@ -4,7 +4,6 @@ import tripleplay.entity.Component;
 import tripleplay.entity.World;
 
 public class GameWorld extends World {
-    public final Component.Generic<SimClock> simClock = new Component.Generic<>(this);
     public final Component.Generic<Task> tasked = new Component.Generic<>(this);
     public final Component.IScalar developmentSkill = new Component.IScalar(this);
     public final Component.IScalar type = new Component.IScalar(this);
@@ -13,9 +12,11 @@ public class GameWorld extends World {
     public final Component.FScalar goal = new Component.FScalar(this);
     public final Component.FScalar usersPerSecond = new Component.FScalar(this);
     public final Component.FScalar users = new Component.FScalar(this);
+    public final Component.IScalar gameTime = new Component.IScalar(this);
+    public final Component.FScalar gameTimeScale = new Component.FScalar(this);
 
     public static class Systematized extends GameWorld {
-        public final TimeElapseSystem timeElapseSystem = new TimeElapseSystem(this);
+        public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final ProgressSystem progressSystem = new ProgressSystem(this);
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);

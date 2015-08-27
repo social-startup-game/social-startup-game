@@ -16,6 +16,11 @@ public abstract class AbstractSystemTest {
         clockUtil = new PlayNClockUtil();
     }
 
+
+    protected void advanceOneMillisecond() {
+        clockUtil.advance(1);
+    }
+
     protected void advanceOneSecond() {
         clockUtil.advance(1000);
     }

@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 public class GameScreen extends ScreenStack.UIScreen {
+    private static final float SECONDS_PER_HOUR = 60 * 60;
     private GameWorld.Systematized world = new GameWorld.Systematized() {
         @SuppressWarnings("unused")
         private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
@@ -28,14 +29,14 @@ public class GameScreen extends ScreenStack.UIScreen {
 
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(simClock);
+                return entity.has(gameTime);
             }
 
             @Override
             protected void update(Clock clock, System.Entities entities) {
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    final int entityId = entities.get(i);
-                    final int tick = simClock.get(entityId).tickMS;
+                    final int id = entities.get(i);
+                    final int tick = gameTime.get(id);
                     now.setTimeInMillis(START_MS + tick);
                 }
                 final String formatted = format.format(now.getTime());
@@ -96,9 +97,18 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void initializeWorld() {
+        makeClock();
         makeExistingFeature();
         makeFeatureInDevelopment();
         makeDeveloper();
+    }
+
+    private void makeClock() {
+        Entity clock = world.create(true).add(world.type, world.gameTime, world.gameTimeScale);
+        final int id = clock.id;
+        world.type.set(id, Type.CLOCK);
+        world.gameTime.set(id, 0);
+        world.gameTimeScale.set(id, SECONDS_PER_HOUR);
     }
 
     private void makeDeveloper() {
@@ -123,7 +133,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void configurePauseButton() {
         pauseButton.selected().update(false);
-        final SystemToggle toggle = new SystemToggle(world.timeElapseSystem, world.userGenerationSystem, world.progressSystem);
+        final SystemToggle toggle = new SystemToggle(world.gameTimeSystem, world.userGenerationSystem, world.progressSystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {
