@@ -128,7 +128,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void configurePauseButton() {
         pauseButton.selected().update(false);
-        final SystemToggle toggle = new SystemToggle(world.timeElapseSystem, world.userAcquisitionSystem, world.progressSystem);
+        final SystemToggle toggle = new SystemToggle(world.timeElapseSystem, world.userGenerationSystem, world.progressSystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {

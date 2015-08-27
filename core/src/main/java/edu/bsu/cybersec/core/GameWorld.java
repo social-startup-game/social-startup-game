@@ -13,10 +13,12 @@ public class GameWorld extends World {
     public final Component.FScalar progressRate = new Component.FScalar(this);
     public final Component.FScalar progress = new Component.FScalar(this);
     public final Component.FScalar goal = new Component.FScalar(this);
+    public final Component.FScalar usersPerSecond = new Component.FScalar(this);
+    public final Component.FScalar users = new Component.FScalar(this);
 
     public static class Systematized extends GameWorld {
         public final TimeElapseSystem timeElapseSystem = new TimeElapseSystem(this);
-        public final UserAcquisitionSystem userAcquisitionSystem = new UserAcquisitionSystem(this);
+        public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final ProgressSystem progressSystem = new ProgressSystem(this);
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
     }
