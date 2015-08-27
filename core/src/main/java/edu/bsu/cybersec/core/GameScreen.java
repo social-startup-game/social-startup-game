@@ -15,7 +15,8 @@ import java.util.GregorianCalendar;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private GameWorld.Systematized world = new GameWorld.Systematized() {
-        tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
+        @SuppressWarnings("unused")
+        private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
 
             private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
             private final long START_MS = new GregorianCalendar().getTimeInMillis();
@@ -42,23 +43,22 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
         };
 
+        @SuppressWarnings("unused")
         tripleplay.entity.System hudRenderingSystem = new System(this, 0) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(company);
+                return true;
             }
 
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    int entityId = entities.get(i);
-                    int users = company.get(entityId).users;
-                    usersLabel.text.update("Users: " + users);
-                }
+                int users = userGenerationSystem.users.get().intValue();
+                usersLabel.text.update("Users: " + users);
             }
         };
 
+        @SuppressWarnings("unused")
         tripleplay.entity.System progressRenderingSystem = new System(this, 0) {
             @Override
             protected boolean isInterested(Entity entity) {
@@ -96,9 +96,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void initializeWorld() {
-        Entity companyEntity = world.create(true).add(world.company);
-        world.company.set(companyEntity.id, new Company());
-        makeExistingFeature(companyEntity.id);
+        makeExistingFeature();
         makeFeatureInDevelopment();
         makeDeveloper();
     }
@@ -110,12 +108,9 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.developmentSkill.set(developer.id, 5);
     }
 
-    private void makeExistingFeature(int companyId) {
-        Feature feature = new Feature();
-        feature.companyId = companyId;
-        feature.usersPerDay = 1000000;
-        Entity featureEntity = world.create(true).add(world.feature);
-        world.feature.set(featureEntity.id, feature);
+    private void makeExistingFeature() {
+        Entity featureEntity = world.create(true).add(world.usersPerSecond);
+        world.usersPerSecond.set(featureEntity.id, 10);
     }
 
     private void makeFeatureInDevelopment() {
