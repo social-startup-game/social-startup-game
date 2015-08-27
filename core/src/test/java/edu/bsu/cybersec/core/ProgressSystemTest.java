@@ -8,8 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 public class ProgressSystemTest extends AbstractSystemTest {
 
-    private static final float EPSILON = 0.00001f;
-
     @Override
     public void setUp() {
         super.setUp();
@@ -47,4 +45,5 @@ public class ProgressSystemTest extends AbstractSystemTest {
         advanceOneSecond();
         assertEquals(amountPerSecond, world.progress.get(entity.id), EPSILON);
     }
+
 }

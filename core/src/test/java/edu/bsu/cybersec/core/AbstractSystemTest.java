@@ -4,6 +4,9 @@ import org.junit.Before;
 import playn.core.Clock;
 
 public abstract class AbstractSystemTest {
+
+    protected static final float EPSILON = 0.00001f;
+
     protected GameWorld world;
     private PlayNClockUtil clockUtil;
 

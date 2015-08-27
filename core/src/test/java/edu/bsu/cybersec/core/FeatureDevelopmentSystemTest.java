@@ -6,44 +6,44 @@ import tripleplay.entity.Entity;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class DevelopmentSystemTest extends AbstractSystemTest {
+public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     @Override
     public void setUp() {
         super.setUp();
-        new DevelopmentSystem(world);
+        new FeatureDevelopmentSystem(world);
     }
 
     @Test
     public void testUpdate_noDevelopers_noProgress() {
-        FeatureInDevelopment inDevelopment = new FeatureInDevelopment();
-        Entity featureEntity = world.create(true).add(world.featureInDevelopment);
-        world.featureInDevelopment.set(featureEntity.id, inDevelopment);
+        Entity featureEntity = makeFeatureInDevelopment();
         advanceOneDay();
-        assertEquals(0, inDevelopment.progress);
+        assertEquals(0, world.progress.get(featureEntity.id), EPSILON);
+    }
+
+    private Entity makeFeatureInDevelopment() {
+        Entity entity = world.create(true)
+                .add(world.type, world.progress, world.progressRate);
+        world.type.set(entity.id, Type.FEATURE);
+        world.progress.set(entity.id, 0);
+        world.progressRate.set(entity.id, 0);
+        return entity;
     }
 
     @Test
     public void testUpdate_oneTaskedEntityIdle_oneFeatureToDevelop_noProgress() {
         createIdleDeveloper();
-        FeatureInDevelopment inDevelopment = createFeatureInDevelopment();
+        Entity inDevelopment = makeFeatureInDevelopment();
         advanceOneDay();
-        assertEquals(0, inDevelopment.progress);
+        assertEquals(0, world.progress.get(inDevelopment.id), EPSILON);
     }
 
     @Test
-    public void testUpdate_oneEntityDeveloping_oneFeatureToDevelop_developmentProgresses() {
+    public void testUpdate_oneEntityDeveloping_oneFeatureToDevelop_developRateIsPositive() {
         createActiveDeveloper();
-        FeatureInDevelopment inDevelopment = createFeatureInDevelopment();
+        Entity inDevelopment = makeFeatureInDevelopment();
         advanceOneDay();
-        assertTrue(inDevelopment.progress > 0);
-    }
-
-    private FeatureInDevelopment createFeatureInDevelopment() {
-        FeatureInDevelopment inDevelopment = new FeatureInDevelopment();
-        Entity featureEntity = world.create(true).add(world.featureInDevelopment);
-        world.featureInDevelopment.set(featureEntity.id, inDevelopment);
-        return inDevelopment;
+        assertTrue(world.progressRate.get(inDevelopment.id) > 0);
     }
 
     private void createIdleDeveloper() {
