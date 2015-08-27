@@ -7,13 +7,12 @@ import static org.junit.Assert.assertEquals;
 
 public final class GameTimeSystemTest extends AbstractSystemTest {
 
-    private GameTimeSystem system;
     private Entity gameClock;
 
     @Override
     public void setUp() {
         super.setUp();
-        system = new GameTimeSystem(world);
+        new GameTimeSystem(world);
         createGameTimeEntity();
     }
 

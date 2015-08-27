@@ -13,8 +13,11 @@ import tripleplay.util.Colors;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
+    private int companyId;
     private GameWorld.Systematized world = new GameWorld.Systematized() {
         @SuppressWarnings("unused")
         private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
@@ -48,14 +51,15 @@ public class GameScreen extends ScreenStack.UIScreen {
         tripleplay.entity.System hudRenderingSystem = new System(this, 0) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return true;
+                return entity.id == companyId;
             }
 
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
-                int users = userGenerationSystem.users.get().intValue();
-                usersLabel.text.update("Users: " + users);
+                checkArgument(entities.size() == 1);
+                float numberOfUsers = users.get(entities.get(0));
+                usersLabel.text.update("Users: " + (int) numberOfUsers);
             }
         };
 
@@ -97,10 +101,18 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void initializeWorld() {
+        makeCompany();
         makeClock();
         makeExistingFeature();
         makeFeatureInDevelopment();
         makeDeveloper();
+    }
+
+    private void makeCompany() {
+        Entity company = world.create(true).add(world.type, world.users);
+        companyId = company.id;
+        world.type.set(company.id, Type.COMPANY);
+        world.users.set(company.id, 0);
     }
 
     private void makeClock() {
@@ -119,16 +131,18 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeExistingFeature() {
-        Entity featureEntity = world.create(true).add(world.usersPerSecond);
-        world.usersPerSecond.set(featureEntity.id, 10);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.owner);
+        world.usersPerSecond.set(userGeneratingEntity.id, 10);
+        world.owner.set(userGeneratingEntity.id, companyId);
     }
 
     private void makeFeatureInDevelopment() {
         Entity featureInDevelopment = world.create(true)
-                .add(world.type, world.progress, world.progressRate);
+                .add(world.type, world.progress, world.progressRate, world.owner);
         world.type.set(featureInDevelopment.id, Type.FEATURE);
         world.progress.set(featureInDevelopment.id, 0);
         world.progressRate.set(featureInDevelopment.id, 0);
+        world.owner.set(featureInDevelopment.id, companyId);
     }
 
     private void configurePauseButton() {
