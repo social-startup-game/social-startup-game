@@ -3,15 +3,17 @@ package edu.bsu.cybersec.core;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
+
+    private Entity completedFeatureEntity;
 
     @Override
     public void setUp() {
         super.setUp();
         new FeatureDevelopmentSystem(world);
+        completedFeatureEntity = null;
     }
 
     @Test
@@ -23,9 +25,10 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity makeFeatureInDevelopment() {
         Entity entity = world.create(true)
-                .add(world.type, world.progress);
-        world.type.set(entity.id, Type.FEATURE);
+                .add(world.type, world.progress, world.goal);
+        world.type.set(entity.id, Type.FEATURE_IN_DEVELOPMENT);
         world.progress.set(entity.id, 0);
+        world.goal.set(entity.id, 100);
         return entity;
     }
 
@@ -68,5 +71,42 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         createActiveDeveloper(10);
         advanceOneSecond();
         assertEquals(amountPerSecond, world.progress.get(entity.id), EPSILON);
+    }
+
+    @Test
+    public void testFeatureCompletion_progressComponentRemoved() {
+        whenAFeatureIsCompleted();
+        assertFalse(completedFeatureEntity.has(world.progress));
+    }
+
+    private void whenAFeatureIsCompleted() {
+        completedFeatureEntity = makeFeatureInDevelopmentRequiring(0);
+        createActiveDeveloper(10);
+        advanceOneSecond();
+    }
+
+    private Entity makeFeatureInDevelopmentRequiring(int goal) {
+        Entity e = makeFeatureInDevelopment();
+        e.add(world.goal);
+        world.goal.set(e.id, goal);
+        return e;
+    }
+
+    @Test
+    public void testFeatureCompletion_goalComponentRemoved() {
+        whenAFeatureIsCompleted();
+        assertFalse(completedFeatureEntity.has(world.goal));
+    }
+
+    @Test
+    public void testFeatureCompletion_changesEntityType() {
+        whenAFeatureIsCompleted();
+        assertEquals(Type.FEATURE_COMPLETE, world.type.get(completedFeatureEntity.id));
+    }
+
+    @Test
+    public void testFeatureCompletion_enablesUserGeneration() {
+        whenAFeatureIsCompleted();
+        assertTrue(completedFeatureEntity.has(world.usersPerSecond));
     }
 }

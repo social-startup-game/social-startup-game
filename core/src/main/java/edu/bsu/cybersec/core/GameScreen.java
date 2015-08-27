@@ -68,7 +68,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             @Override
             protected boolean isInterested(Entity entity) {
                 return entity.has(type)
-                        && type.get(entity.id) == Type.FEATURE
+                        && type.get(entity.id) == Type.FEATURE_IN_DEVELOPMENT
                         && entity.has(progress);
 
             }
@@ -78,7 +78,8 @@ public class GameScreen extends ScreenStack.UIScreen {
                 super.update(clock, entities);
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
-                    progressLabel.text.update("Progress: " + String.format("%.1f", progress.get(id)));
+                    progressLabel.text.update("Progress: " + String.format("%.1f", progress.get(id))
+                            + " / " + goal.get(id));
                 }
             }
         };
@@ -131,17 +132,19 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.owner);
-        world.usersPerSecond.set(userGeneratingEntity.id, 10);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.owner, world.type);
+        world.usersPerSecond.set(userGeneratingEntity.id, 1);
         world.owner.set(userGeneratingEntity.id, companyId);
+        world.type.set(userGeneratingEntity.id, Type.FEATURE_COMPLETE);
     }
 
     private void makeFeatureInDevelopment() {
         Entity featureInDevelopment = world.create(true)
-                .add(world.type, world.progress, world.owner);
-        world.type.set(featureInDevelopment.id, Type.FEATURE);
+                .add(world.type, world.progress, world.goal, world.owner);
+        world.type.set(featureInDevelopment.id, Type.FEATURE_IN_DEVELOPMENT);
         world.progress.set(featureInDevelopment.id, 0);
         world.owner.set(featureInDevelopment.id, companyId);
+        world.goal.set(featureInDevelopment.id, 20);
     }
 
     private void configurePauseButton() {
