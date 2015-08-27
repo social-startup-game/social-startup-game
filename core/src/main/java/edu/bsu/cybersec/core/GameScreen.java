@@ -138,16 +138,15 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void makeFeatureInDevelopment() {
         Entity featureInDevelopment = world.create(true)
-                .add(world.type, world.progress, world.progressRate, world.owner);
+                .add(world.type, world.progress, world.owner);
         world.type.set(featureInDevelopment.id, Type.FEATURE);
         world.progress.set(featureInDevelopment.id, 0);
-        world.progressRate.set(featureInDevelopment.id, 0);
         world.owner.set(featureInDevelopment.id, companyId);
     }
 
     private void configurePauseButton() {
         pauseButton.selected().update(false);
-        final SystemToggle toggle = new SystemToggle(world.gameTimeSystem, world.userGenerationSystem, world.progressSystem);
+        final SystemToggle toggle = new SystemToggle(world.gameTimeSystem, world.userGenerationSystem, world.featureDevelopmentSystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {

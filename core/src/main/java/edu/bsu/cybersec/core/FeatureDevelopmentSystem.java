@@ -25,8 +25,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
 
     private boolean isFeature(Entity entity) {
         return entity.has(world.type)
-                && world.type.get(entity.id) == Type.FEATURE
-                && entity.has(world.progressRate);
+                && world.type.get(entity.id) == Type.FEATURE;
     }
 
     private boolean isDeveloper(Entity entity) {
@@ -39,7 +38,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
         triageEntitiesIntoBags(entities);
-        distributeEffortEvenlyAcrossFeaturesInDevelopment();
+        distributeEffortEvenlyAcrossFeaturesInDevelopment(clock);
         clearBags();
     }
 
@@ -55,11 +54,12 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         }
     }
 
-    private void distributeEffortEvenlyAcrossFeaturesInDevelopment() {
+    private void distributeEffortEvenlyAcrossFeaturesInDevelopment(Clock clock) {
         float effortPerFeature = computeTotalDevelopmentEffort() / featureBag.size();
         for (int i = 0, limit = featureBag.size(); i < limit; i++) {
-            int entityId = featureBag.get(i);
-            world.progressRate.set(entityId, effortPerFeature);
+            int id = featureBag.get(i);
+            float delta = effortPerFeature * clock.dt / 1000;
+            world.progress.add(id, delta);
         }
     }
 
