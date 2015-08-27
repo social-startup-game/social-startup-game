@@ -6,10 +6,7 @@ import react.Slot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
 import tripleplay.game.ScreenStack;
-import tripleplay.ui.Label;
-import tripleplay.ui.Root;
-import tripleplay.ui.SimpleStyles;
-import tripleplay.ui.Style;
+import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.util.Colors;
 
@@ -17,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 public class GameScreen extends ScreenStack.UIScreen {
-    private GameWorld world = new GameWorld.Systematized() {
+    private GameWorld.Systematized world = new GameWorld.Systematized() {
         tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
 
             private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
@@ -65,6 +62,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private final Label timeLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final ToggleButton pauseButton = new ToggleButton("Pause");
 
     public GameScreen() {
         update.connect(new Slot<Clock>() {
@@ -74,6 +72,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
         });
         initializeWorld();
+        configurePauseButton();
     }
 
     private void initializeWorld() {
@@ -87,11 +86,28 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.feature.set(featureEntity.id, feature);
     }
 
+    private void configurePauseButton() {
+        pauseButton.selected().update(false);
+        final SystemToggle toggle = new SystemToggle(world.timeElapseSystem, world.userAcquisitionSystem);
+        pauseButton.selected().connect(new Slot<Boolean>() {
+            @Override
+            public void onEmit(Boolean selected) {
+                if (selected) {
+                    toggle.disable();
+                } else {
+                    toggle.enable();
+                }
+            }
+        });
+    }
+
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, new AbsoluteLayout(), SimpleStyles.newSheet(game().plat.graphics()));
         root.add(AbsoluteLayout.at(timeLabel, 50, 50));
         root.add(AbsoluteLayout.at(usersLabel, 50, 100));
+        root.add(AbsoluteLayout.at(pauseButton, 300, 50));
+        root.setSize(size());
         return root;
     }
 

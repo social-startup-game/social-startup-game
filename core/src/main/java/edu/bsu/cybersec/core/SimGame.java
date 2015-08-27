@@ -1,6 +1,7 @@
 package edu.bsu.cybersec.core;
 
 import playn.core.Platform;
+import playn.scene.Pointer;
 import playn.scene.SceneGame;
 import tripleplay.game.ScreenStack;
 
@@ -13,7 +14,12 @@ public class SimGame extends SceneGame {
     public SimGame(Platform plat) {
         super(plat, 33);
         game = this;
+        configurePointerEventDispatch();
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
         screenStack.push(new GameScreen());
+    }
+
+    private void configurePointerEventDispatch() {
+        new Pointer(plat, rootLayer, true);
     }
 }
