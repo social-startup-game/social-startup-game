@@ -1,24 +1,20 @@
 package edu.bsu.cybersec.core;
 
-import org.junit.Before;
 import org.junit.Test;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
 import static org.junit.Assert.assertEquals;
 
-public class UserAcquisitionSystemTest {
+public class UserAcquisitionSystemTest extends AbstractSystemTest {
 
-    private GameWorld world;
     private UserAcquisitionSystem system;
-    private PlayNClockUtil clockUtil;
     private Entity company;
 
-    @Before
+    @Override
     public void setUp() {
-        world = new GameWorld();
+        super.setUp();
         system = new UserAcquisitionSystem(world);
-        clockUtil = new PlayNClockUtil(world);
         createCompany();
     }
 
@@ -30,16 +26,12 @@ public class UserAcquisitionSystemTest {
 
     @Test
     public void testZeroFeatures() {
-        whenOneDayElapses();
+        advanceOneDay();
         assertEquals(0, numberOfUsers());
     }
 
     private int numberOfUsers() {
         return world.company.get(company.id).users;
-    }
-
-    private void whenOneDayElapses() {
-        clockUtil.advance(ClockUtils.MS_PER_DAY);
     }
 
     private void whenMsElapses(int elapsedMS) {
@@ -52,7 +44,7 @@ public class UserAcquisitionSystemTest {
     @Test
     public void testOneFeatureAndOneDayElapses_GainOneUser() {
         createFeatureGeneratingUsersPerDay(1);
-        whenOneDayElapses();
+        advanceOneDay();
         assertEquals(1, numberOfUsers());
     }
 
@@ -68,7 +60,7 @@ public class UserAcquisitionSystemTest {
     @Test
     public void testOneFeatureOneDayElapses_GainFiveUsers() {
         createFeatureGeneratingUsersPerDay(5);
-        whenOneDayElapses();
+        advanceOneDay();
         assertEquals(5, numberOfUsers());
     }
 }

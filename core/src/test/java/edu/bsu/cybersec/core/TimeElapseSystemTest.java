@@ -1,29 +1,23 @@
 package edu.bsu.cybersec.core;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public final class TimeElapseSystemTest {
+public final class TimeElapseSystemTest extends AbstractSystemTest {
 
-    private GameWorld world;
-    private PlayNClockUtil clockUtil;
     private TimeElapseSystem system;
     private int gameClockEntityId;
 
-    @Before
+    @Override
     public void setUp() {
-        world = new GameWorld();
-        clockUtil = new PlayNClockUtil(world);
+        super.setUp();
         system = new TimeElapseSystem(world);
         gameClockEntityId = system.simClockEntity.id;
     }
 
-
     @Test
     public void testUpdate_noElapsedTime_noChange() {
-        clockUtil.advance(0);
         thenElapsedMsIs(0);
     }
 
@@ -34,14 +28,14 @@ public final class TimeElapseSystemTest {
     @Test
     public void testUpdate_oneSimSecondPerClockSecond_oneSecondElapses() {
         final int elapsedMS = 1000;
-        clockUtil.advance(elapsedMS);
+        advanceOneSecond();
         thenElapsedMsIs(elapsedMS);
     }
 
     @Test
     public void testUpdate_twoSimSecondsPerClockSecond_twoSecondsElapse() {
         system.setSimSecondsPerClockSecond(2);
-        clockUtil.advance(1000);
+        advanceTwoSeconds();
         thenElapsedMsIs(2000);
     }
 
@@ -56,20 +50,23 @@ public final class TimeElapseSystemTest {
 
     @Test
     public void testUpdate_oneSecondElapsed_tickIsOneSecond() {
-        clockUtil.advance(1000);
+        advanceOneSecond();
         thenTickIs(1000);
     }
 
     @Test
     public void testUpdate_oneSecondElapsedTwice_tickIsTwoSeconds() {
-        clockUtil.advance(1000);
-        clockUtil.advance(1000);
+        advanceTwoSeconds();
         thenTickIs(2000);
+    }
+
+    private void advanceTwoSeconds() {
+        advanceOneSecond();
+        advanceOneSecond();
     }
 
     @Test
     public void testAdvance_zero_sameTime() {
-        system.advance(0);
         thenElapsedMsIs(0);
     }
 
