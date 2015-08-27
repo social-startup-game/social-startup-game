@@ -58,10 +58,30 @@ public class GameScreen extends ScreenStack.UIScreen {
                 }
             }
         };
+
+        tripleplay.entity.System progressRenderingSystem = new System(this, 0) {
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return entity.has(type)
+                        && type.get(entity.id) == Type.FEATURE
+                        && entity.has(progress);
+
+            }
+
+            @Override
+            protected void update(Clock clock, Entities entities) {
+                super.update(clock, entities);
+                for (int i = 0, limit = entities.size(); i < limit; i++) {
+                    int id = entities.get(i);
+                    progressLabel.text.update("Progress: " + String.format("%.1f", progress.get(id)));
+                }
+            }
+        };
     };
 
     private final Label timeLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final Label progressLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
     public GameScreen() {
@@ -78,17 +98,37 @@ public class GameScreen extends ScreenStack.UIScreen {
     private void initializeWorld() {
         Entity companyEntity = world.create(true).add(world.company);
         world.company.set(companyEntity.id, new Company());
+        makeExistingFeature(companyEntity.id);
+        makeFeatureInDevelopment();
+        makeDeveloper();
+    }
 
+    private void makeDeveloper() {
+        Entity developer = world.create(true)
+                .add(world.developmentSkill, world.tasked);
+        world.tasked.set(developer.id, Task.DEVELOPMENT);
+        world.developmentSkill.set(developer.id, 5);
+    }
+
+    private void makeExistingFeature(int companyId) {
         Feature feature = new Feature();
-        feature.companyId = companyEntity.id;
+        feature.companyId = companyId;
         feature.usersPerDay = 1000000;
         Entity featureEntity = world.create(true).add(world.feature);
         world.feature.set(featureEntity.id, feature);
     }
 
+    private void makeFeatureInDevelopment() {
+        Entity featureInDevelopment = world.create(true)
+                .add(world.type, world.progress, world.progressRate);
+        world.type.set(featureInDevelopment.id, Type.FEATURE);
+        world.progress.set(featureInDevelopment.id, 0);
+        world.progressRate.set(featureInDevelopment.id, 0);
+    }
+
     private void configurePauseButton() {
         pauseButton.selected().update(false);
-        final SystemToggle toggle = new SystemToggle(world.timeElapseSystem, world.userAcquisitionSystem);
+        final SystemToggle toggle = new SystemToggle(world.timeElapseSystem, world.userAcquisitionSystem, world.progressSystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {
@@ -106,7 +146,8 @@ public class GameScreen extends ScreenStack.UIScreen {
         Root root = new Root(iface, new AbsoluteLayout(), SimpleStyles.newSheet(game().plat.graphics()));
         root.add(AbsoluteLayout.at(timeLabel, 50, 50));
         root.add(AbsoluteLayout.at(usersLabel, 50, 100));
-        root.add(AbsoluteLayout.at(pauseButton, 300, 50));
+        root.add(AbsoluteLayout.at(progressLabel, 50, 150));
+        root.add(AbsoluteLayout.at(pauseButton, 400, 50));
         root.setSize(size());
         return root;
     }

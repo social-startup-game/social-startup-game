@@ -17,5 +17,7 @@ public class GameWorld extends World {
     public static class Systematized extends GameWorld {
         public final TimeElapseSystem timeElapseSystem = new TimeElapseSystem(this);
         public final UserAcquisitionSystem userAcquisitionSystem = new UserAcquisitionSystem(this);
+        public final ProgressSystem progressSystem = new ProgressSystem(this);
+        public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
     }
 }
