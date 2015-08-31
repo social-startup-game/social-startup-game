@@ -190,7 +190,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         return SimGame.game;
     }
 
-    class TaskComboBox extends Button {
+    final class TaskComboBox extends Button {
         private final int entityId;
 
         TaskComboBox(Root root) {
@@ -201,13 +201,10 @@ public class GameScreen extends ScreenStack.UIScreen {
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
             onClick(new Slot<Button>() {
-                final String IDLE = "Idle";
-                final String DEVELOPING = "Developing";
-
                 @Override
                 public void onEmit(Button button) {
                     MenuHost.Pop pop = new MenuHost.Pop(button,
-                            createMenu(IDLE, DEVELOPING));
+                            createMenu());
                     pop.menu.itemTriggered().connect(updater(button));
                     menuHost.popup(pop);
                 }
@@ -217,27 +214,17 @@ public class GameScreen extends ScreenStack.UIScreen {
                         @Override
                         public void onEmit(MenuItem menuItem) {
                             button.text.update(menuItem.text.get() + " " + DOWN_ARROW);
-                            world.tasked.set(developer.id, lookupTaskId(menuItem.text.get()));
+                            Task assignedTask = Task.forName(menuItem.text.get());
+                            world.tasked.set(developer.id, assignedTask);
                             developer.didChange();
-                        }
-
-                        private Task lookupTaskId(String s) {
-                            switch (s) {
-                                case IDLE:
-                                    return Task.IDLE;
-                                case DEVELOPING:
-                                    return Task.DEVELOPMENT;
-                                default:
-                                    throw new IllegalArgumentException("Unexpected task " + s);
-                            }
                         }
                     };
                 }
 
-                private Menu createMenu(String... options) {
+                private Menu createMenu() {
                     Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
-                    for (String item : options) {
-                        menu.add(new MenuItem(item));
+                    for (Task task : Task.values()) {
+                        menu.add(new MenuItem(task.name));
                     }
                     return menu;
                 }
