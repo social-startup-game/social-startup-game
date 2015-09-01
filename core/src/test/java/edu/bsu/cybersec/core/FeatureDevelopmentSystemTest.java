@@ -8,12 +8,14 @@ import static org.junit.Assert.*;
 public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity completedFeatureEntity;
+    private Entity company;
 
     @Override
     public void setUp() {
         super.setUp();
         new FeatureDevelopmentSystem(world);
         completedFeatureEntity = null;
+        company = world.create(true);
     }
 
     @Test
@@ -25,10 +27,11 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity makeFeatureInDevelopment() {
         Entity entity = world.create(true)
-                .add(world.type, world.progress, world.goal);
+                .add(world.type, world.progress, world.goal, world.owner);
         world.type.set(entity.id, Type.FEATURE_IN_DEVELOPMENT);
         world.progress.set(entity.id, 0);
         world.goal.set(entity.id, 100);
+        world.owner.set(entity.id, company.id);
         return entity;
     }
 
@@ -108,5 +111,17 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     public void testFeatureCompletion_enablesUserGeneration() {
         whenAFeatureIsCompleted();
         assertTrue(completedFeatureEntity.has(world.usersPerSecond));
+    }
+
+    @Test
+    public void testFeatureCompletion_featureHasExposure() {
+        whenAFeatureIsCompleted();
+        assertTrue(completedFeatureEntity.has(world.exposure));
+    }
+
+    @Test
+    public void testFeatureCompletion_featureHasAnOwner() {
+        whenAFeatureIsCompleted();
+        assertTrue(completedFeatureEntity.has(world.owner));
     }
 }

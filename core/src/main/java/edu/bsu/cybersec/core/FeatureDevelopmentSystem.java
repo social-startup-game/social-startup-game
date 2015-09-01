@@ -98,8 +98,10 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         final Entity e = world.entity(id);
         e.remove(world.progress)
                 .remove(world.goal);
-        e.add(world.usersPerSecond);
+        e.add(world.usersPerSecond,
+                world.exposure);
         world.usersPerSecond.set(id, 20);
+        world.exposure.set(id, 0.20f);
         world.type.set(id, Type.FEATURE_COMPLETE);
         world.entity(id).didChange();
     }
