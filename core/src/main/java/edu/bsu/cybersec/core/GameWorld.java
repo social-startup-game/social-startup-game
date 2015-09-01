@@ -14,7 +14,8 @@ public class GameWorld extends World {
     public final Component.FScalar users = new Component.FScalar(this);
     public final Component.IScalar gameTime = new Component.IScalar(this);
     public final Component.FScalar gameTimeScale = new Component.FScalar(this);
-
+    public final Component.FScalar attackSurface = new Component.FScalar(this);
+    public final Component.FScalar exposure = new Component.FScalar(this);
 
     public static class Systematized extends GameWorld {
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
