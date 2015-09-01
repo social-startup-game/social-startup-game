@@ -97,12 +97,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
     public GameScreen() {
-        update.connect(new Slot<Clock>() {
-            @Override
-            public void onEmit(Clock clock) {
-                world.update(clock);
-            }
-        });
+        world.connect(update, paint);
         initializeWorld();
         configurePauseButton();
     }
