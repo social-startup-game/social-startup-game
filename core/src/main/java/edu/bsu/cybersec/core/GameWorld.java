@@ -4,7 +4,7 @@ import tripleplay.entity.Component;
 import tripleplay.entity.World;
 
 public class GameWorld extends World {
-    public final Component.Generic<Task> tasked = new Component.Generic<>(this);
+    public final Component.IScalar tasked = new Component.IScalar(this);
     public final Component.IScalar developmentSkill = new Component.IScalar(this);
     public final Component.IScalar type = new Component.IScalar(this);
     public final Component.FScalar progress = new Component.FScalar(this);

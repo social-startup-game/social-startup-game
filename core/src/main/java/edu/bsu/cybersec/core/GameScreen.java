@@ -201,6 +201,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
             onClick(new Slot<Button>() {
+                private final TaskFormatter formatter = new TaskFormatter();
                 @Override
                 public void onEmit(Button button) {
                     MenuHost.Pop pop = new MenuHost.Pop(button,
@@ -214,7 +215,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                         @Override
                         public void onEmit(MenuItem menuItem) {
                             button.text.update(menuItem.text.get() + " " + DOWN_ARROW);
-                            Task assignedTask = Task.forName(menuItem.text.get());
+                            int assignedTask = formatter.asTask(menuItem.text.get());
                             world.tasked.set(developer.id, assignedTask);
                             developer.didChange();
                         }
@@ -223,8 +224,8 @@ public class GameScreen extends ScreenStack.UIScreen {
 
                 private Menu createMenu() {
                     Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
-                    for (Task task : Task.values()) {
-                        menu.add(new MenuItem(task.name));
+                    for (int task : Task.VALUES) {
+                        menu.add(new MenuItem(formatter.format(task)));
                     }
                     return menu;
                 }

@@ -1,23 +1,13 @@
 package edu.bsu.cybersec.core;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableList;
 
-public enum Task {
-    IDLE("Idle"),
-    DEVELOPMENT("Development");
+public final class Task {
+    public static final int IDLE = 0;
+    public static final int DEVELOPMENT = 1;
 
-    public final String name;
+    public static final ImmutableList<Integer> VALUES = ImmutableList.of(IDLE, DEVELOPMENT);
 
-    Task(String name) {
-        this.name = checkNotNull(name);
-    }
-
-    public static Task forName(String name) {
-        for (Task t : values()) {
-            if (t.name.equals(name)) {
-                return t;
-            }
-        }
-        throw new IllegalArgumentException("No task named " + name);
+    private Task() {
     }
 }
