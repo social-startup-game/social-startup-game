@@ -175,28 +175,21 @@ public class GameScreen extends ScreenStack.UIScreen {
         return root;
     }
 
-
-    private void configureDeveloperUi(final Root root) {
-
-    }
-
     @Override
     public Game game() {
         return SimGame.game;
     }
 
     final class TaskComboBox extends Button {
-        private final int entityId;
-
         TaskComboBox(Root root) {
             super("Select a task " + DOWN_ARROW);
             checkState(developer != null);
-            this.entityId = developer.id;
             final MenuHost menuHost = new MenuHost(iface, root);
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
             onClick(new Slot<Button>() {
                 private final TaskFormatter formatter = new TaskFormatter();
+
                 @Override
                 public void onEmit(Button button) {
                     MenuHost.Pop pop = new MenuHost.Pop(button,
