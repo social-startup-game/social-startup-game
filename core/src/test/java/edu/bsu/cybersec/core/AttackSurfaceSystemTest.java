@@ -45,9 +45,9 @@ public final class AttackSurfaceSystemTest extends AbstractSystemTest {
 
     private void givenAnEntityOwnedByTheCompanyWithExposure(float exposure) {
         Entity exposureEntity = world.create(true)
-                .add(world.exposure, world.owner);
+                .add(world.exposure, world.ownerId);
         world.exposure.set(exposureEntity.id, exposure);
-        world.owner.set(exposureEntity.id, company.id);
+        world.ownerId.set(exposureEntity.id, company.id);
     }
 
     @Test

@@ -72,14 +72,14 @@ public class GameScreen extends ScreenStack.UIScreen {
         tripleplay.entity.System progressRenderingSystem = new System(this, 0) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(feature) && entity.has(progress);
+                return entity.has(featureId) && entity.has(progress);
             }
 
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
                 checkState(entities.size() <= 1,
-                        "I expected at most one feature in development but found " + entities.size());
+                        "I expected at most one featureId in development but found " + entities.size());
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
                     progressLabel.text.update("Progress: " + String.format("%.1f", progress.get(id))
@@ -157,22 +157,22 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.owner);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.ownerId);
         world.usersPerSecond.set(userGeneratingEntity.id, 1);
-        world.owner.set(userGeneratingEntity.id, companyId);
+        world.ownerId.set(userGeneratingEntity.id, companyId);
     }
 
     private void makeFeatureInDevelopment() {
         Entity feature = world.create(false)
-                .add(world.usersPerSecond, world.owner);
+                .add(world.usersPerSecond, world.ownerId);
         world.usersPerSecond.set(feature.id, 25);
-        world.owner.set(feature.id, companyId);
+        world.ownerId.set(feature.id, companyId);
 
         Entity development = world.create(true)
-                .add(world.progress, world.goal, world.feature);
+                .add(world.progress, world.goal, world.featureId);
         world.progress.set(development.id, 0);
         world.goal.set(development.id, 20);
-        world.feature.set(development.id, feature.id);
+        world.featureId.set(development.id, feature.id);
     }
 
     private void configurePauseButton() {

@@ -33,18 +33,18 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity createDisabledFeatureEntity() {
         Entity featureEntity = world.create(false)
-                .add(world.usersPerSecond, world.owner);
+                .add(world.usersPerSecond, world.ownerId);
         world.usersPerSecond.set(featureEntity.id, 20);
-        world.owner.set(featureEntity.id, company.id);
+        world.ownerId.set(featureEntity.id, company.id);
         return featureEntity;
     }
 
     private Entity createDevelopmentEntityForFeature(Entity featureEntity) {
         Entity developmentEntity = world.create(true)
-                .add(world.progress, world.goal, world.feature);
+                .add(world.progress, world.goal, world.featureId);
         world.progress.set(developmentEntity.id, 0);
         world.goal.set(developmentEntity.id, 100);
-        world.feature.set(developmentEntity.id, featureEntity.id);
+        world.featureId.set(developmentEntity.id, featureEntity.id);
         return developmentEntity;
     }
 
@@ -127,7 +127,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private void thenTheDevelopedFeatureIsEnabled() {
-        final int featureId = world.feature.get(completedDevelopmentEntity.id);
+        final int featureId = world.featureId.get(completedDevelopmentEntity.id);
         final Entity featureEntity = world.entity(featureId);
         assertTrue(featureEntity.isEnabled());
     }

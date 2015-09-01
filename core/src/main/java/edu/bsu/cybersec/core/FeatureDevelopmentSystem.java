@@ -24,7 +24,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private boolean isFeatureDevelopment(Entity entity) {
-        return entity.has(world.feature);
+        return entity.has(world.featureId);
     }
 
     private boolean isDeveloper(Entity entity) {
@@ -98,7 +98,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private void enableFeatureDevelopedBy(Entity developmentEntity) {
-        final int featureEntityId = world.feature.get(developmentEntity.id);
+        final int featureEntityId = world.featureId.get(developmentEntity.id);
         final Entity featureEntity = world.entity(featureEntityId);
         featureEntity.setEnabled(true);
     }

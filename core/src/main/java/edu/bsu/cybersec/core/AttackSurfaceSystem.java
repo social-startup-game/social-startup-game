@@ -21,7 +21,7 @@ public class AttackSurfaceSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.owner)
+        return entity.has(world.ownerId)
                 && entity.has(world.exposure);
     }
 
@@ -36,7 +36,7 @@ public class AttackSurfaceSystem extends tripleplay.entity.System {
     private void readExposureValuesIntoMap(Entities entities) {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
-            int owner = world.owner.get(id);
+            int owner = world.ownerId.get(id);
             float increment = world.exposure.get(id);
             if (map.containsKey(owner)) {
                 map.put(owner, map.get(owner) + increment);
