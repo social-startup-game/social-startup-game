@@ -3,49 +3,70 @@ package edu.bsu.cybersec.core;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
-    private Entity completedFeatureEntity;
+    private Entity completedDevelopmentEntity;
     private Entity company;
 
     @Override
     public void setUp() {
         super.setUp();
         new FeatureDevelopmentSystem(world);
-        completedFeatureEntity = null;
+        completedDevelopmentEntity = null;
         company = world.create(true);
     }
 
     @Test
     public void testUpdate_noDevelopers_noProgress() {
-        Entity featureEntity = makeFeatureInDevelopment();
+        Entity developmentEntity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         advanceOneDay();
-        assertEquals(0, world.progress.get(featureEntity.id), EPSILON);
+        thenThereIsNoProgressOn(developmentEntity);
     }
 
-    private Entity makeFeatureInDevelopment() {
-        Entity entity = world.create(true)
-                .add(world.type, world.progress, world.goal, world.owner);
-        world.type.set(entity.id, Type.FEATURE_IN_DEVELOPMENT);
-        world.progress.set(entity.id, 0);
-        world.goal.set(entity.id, 100);
-        world.owner.set(entity.id, company.id);
-        return entity;
+    private Entity makeFeatureInDevelopmentAndReturnDevelopmentEntity() {
+        Entity featureEntity = createDisabledFeatureEntity();
+        return createDevelopmentEntityForFeature(featureEntity);
+    }
+
+    private Entity createDisabledFeatureEntity() {
+        Entity featureEntity = world.create(false)
+                .add(world.usersPerSecond, world.owner);
+        world.usersPerSecond.set(featureEntity.id, 20);
+        world.owner.set(featureEntity.id, company.id);
+        return featureEntity;
+    }
+
+    private Entity createDevelopmentEntityForFeature(Entity featureEntity) {
+        Entity developmentEntity = world.create(true)
+                .add(world.progress, world.goal, world.feature);
+        world.progress.set(developmentEntity.id, 0);
+        world.goal.set(developmentEntity.id, 100);
+        world.feature.set(developmentEntity.id, featureEntity.id);
+        return developmentEntity;
+    }
+
+    private void thenThereIsNoProgressOn(Entity developmentEntity) {
+        assertEquals(0, world.progress.get(developmentEntity.id), EPSILON);
     }
 
     @Test
-    public void testUpdate_oneTaskedEntityIdle_oneFeatureToDevelop_noProgress() {
+    public void testUpdate_oneIdleDeveloper_oneFeatureToDevelop_noProgress() {
         createIdleDeveloper();
-        Entity inDevelopment = makeFeatureInDevelopment();
+        Entity developmentEntity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         advanceOneDay();
-        assertEquals(0, world.progress.get(inDevelopment.id), EPSILON);
+        thenThereIsNoProgressOn(developmentEntity);
     }
 
     private void createIdleDeveloper() {
-        Entity developer = createTasklessDeveloper(1);
+        Entity developer = createEntityWithDevelopmentSkill(1).taskedWith(Task.IDLE);
         world.tasked.set(developer.id, Task.IDLE);
+    }
+
+    private DeveloperBuilder createEntityWithDevelopmentSkill(int devSkill) {
+        return new DeveloperBuilder(devSkill);
     }
 
     private Entity createTasklessDeveloper(float rate) {
@@ -54,74 +75,75 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         return developer;
     }
 
-    private void createActiveDeveloper(float rate) {
-        Entity developer = createTasklessDeveloper(rate);
-        world.tasked.set(developer.id, Task.DEVELOPMENT);
+    private Entity createActiveDeveloper(int rate) {
+        return createEntityWithDevelopmentSkill(rate).taskedWith(Task.DEVELOPMENT);
     }
 
     @Test
     public void testPositiveProgressRate_positiveProgress() {
-        Entity entity = makeFeatureInDevelopment();
+        Entity entity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         createActiveDeveloper(10);
         advanceOneDay();
-        assertTrue(world.progress.get(entity.id) > EPSILON);
+        thenProgressIsPositiveOn(entity);
+    }
+
+    private void thenProgressIsPositiveOn(Entity entity) {
+        assertTrue(world.progress.get(entity.id) > 0);
     }
 
     @Test
     public void testUpdate_defaultProgressUnitsArePerSecond() {
         final float amountPerSecond = 10;
-        Entity entity = makeFeatureInDevelopment();
+        Entity entity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         createActiveDeveloper(10);
         advanceOneSecond();
         assertEquals(amountPerSecond, world.progress.get(entity.id), EPSILON);
     }
 
-    @Test
-    public void testFeatureCompletion_progressComponentRemoved() {
-        whenAFeatureIsCompleted();
-        assertFalse(completedFeatureEntity.has(world.progress));
-    }
-
     private void whenAFeatureIsCompleted() {
-        completedFeatureEntity = makeFeatureInDevelopmentRequiring(0);
+        completedDevelopmentEntity = makeFeatureInDevelopmentRequiring(0);
         createActiveDeveloper(10);
         advanceOneSecond();
     }
 
     private Entity makeFeatureInDevelopmentRequiring(int goal) {
-        Entity e = makeFeatureInDevelopment();
+        Entity e = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         e.add(world.goal);
         world.goal.set(e.id, goal);
         return e;
     }
 
     @Test
-    public void testFeatureCompletion_goalComponentRemoved() {
+    public void testFeatureCompletion_removesDevelopmentEntity() {
         whenAFeatureIsCompleted();
-        assertFalse(completedFeatureEntity.has(world.goal));
+        advanceOneMillisecond();
+        assertTrue(completedDevelopmentEntity.isDisposed());
     }
 
     @Test
-    public void testFeatureCompletion_changesEntityType() {
+    public void testFeatureCompletion_enablesFeatureEntity() {
         whenAFeatureIsCompleted();
-        assertEquals(Type.FEATURE_COMPLETE, world.type.get(completedFeatureEntity.id));
+        thenTheDevelopedFeatureIsEnabled();
     }
 
-    @Test
-    public void testFeatureCompletion_enablesUserGeneration() {
-        whenAFeatureIsCompleted();
-        assertTrue(completedFeatureEntity.has(world.usersPerSecond));
+    private void thenTheDevelopedFeatureIsEnabled() {
+        final int featureId = world.feature.get(completedDevelopmentEntity.id);
+        final Entity featureEntity = world.entity(featureId);
+        assertTrue(featureEntity.isEnabled());
     }
 
-    @Test
-    public void testFeatureCompletion_featureHasExposure() {
-        whenAFeatureIsCompleted();
-        assertTrue(completedFeatureEntity.has(world.exposure));
-    }
+    private class DeveloperBuilder {
+        private Entity entity = world.create(true)
+                .add(world.developmentSkill,
+                        world.tasked);
 
-    @Test
-    public void testFeatureCompletion_featureHasAnOwner() {
-        whenAFeatureIsCompleted();
-        assertTrue(completedFeatureEntity.has(world.owner));
+        public DeveloperBuilder(int devSkill) {
+            world.developmentSkill.set(entity.id, devSkill);
+        }
+
+        public Entity taskedWith(int task) {
+            world.tasked.set(entity.id, task);
+            return entity;
+        }
     }
 }

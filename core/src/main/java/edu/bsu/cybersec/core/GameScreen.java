@@ -41,6 +41,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
             @Override
             protected void update(Clock clock, System.Entities entities) {
+                checkState(entities.size() == 1, "I expected exactly one clock.");
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     final int id = entities.get(i);
                     final int tick = gameTime.get(id);
@@ -71,15 +72,14 @@ public class GameScreen extends ScreenStack.UIScreen {
         tripleplay.entity.System progressRenderingSystem = new System(this, 0) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(type)
-                        && type.get(entity.id) == Type.FEATURE_IN_DEVELOPMENT
-                        && entity.has(progress);
-
+                return entity.has(feature) && entity.has(progress);
             }
 
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
+                checkState(entities.size() <= 1,
+                        "I expected at most one feature in development but found " + entities.size());
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
                     progressLabel.text.update("Progress: " + String.format("%.1f", progress.get(id))
@@ -157,19 +157,22 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.owner, world.type);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.owner);
         world.usersPerSecond.set(userGeneratingEntity.id, 1);
         world.owner.set(userGeneratingEntity.id, companyId);
-        world.type.set(userGeneratingEntity.id, Type.FEATURE_COMPLETE);
     }
 
     private void makeFeatureInDevelopment() {
-        Entity featureInDevelopment = world.create(true)
-                .add(world.type, world.progress, world.goal, world.owner);
-        world.type.set(featureInDevelopment.id, Type.FEATURE_IN_DEVELOPMENT);
-        world.progress.set(featureInDevelopment.id, 0);
-        world.owner.set(featureInDevelopment.id, companyId);
-        world.goal.set(featureInDevelopment.id, 20);
+        Entity feature = world.create(false)
+                .add(world.usersPerSecond, world.owner);
+        world.usersPerSecond.set(feature.id, 25);
+        world.owner.set(feature.id, companyId);
+
+        Entity development = world.create(true)
+                .add(world.progress, world.goal, world.feature);
+        world.progress.set(development.id, 0);
+        world.goal.set(development.id, 20);
+        world.feature.set(development.id, feature.id);
     }
 
     private void configurePauseButton() {
