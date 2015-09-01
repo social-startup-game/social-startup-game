@@ -87,6 +87,25 @@ public class GameScreen extends ScreenStack.UIScreen {
                 }
             }
         };
+
+        @SuppressWarnings("unused")
+        System attackSurfaceRenderingSystem = new System(this, 0) {
+
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return entity.has(attackSurface);
+            }
+
+            @Override
+            protected void update(Clock clock, Entities entities) {
+                super.update(clock, entities);
+                checkState(entities.size() == 1, "I expected only one entity to have an attack surface.");
+                int id = entities.get(0);
+                float surface = attackSurface.get(id);
+                int displayedValue = (int) (surface * 100);
+                attackSurfaceLabel.text.update("Attack surface: " + displayedValue + "%");
+            }
+        };
     };
 
     private Entity developer;
@@ -94,6 +113,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final Label timeLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label progressLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final Label attackSurfaceLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
     public GameScreen() {
@@ -111,10 +131,14 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeCompany() {
-        Entity company = world.create(true).add(world.type, world.users);
+        Entity company = world.create(true)
+                .add(world.type,
+                        world.users,
+                        world.attackSurface);
         companyId = company.id;
         world.type.set(company.id, Type.COMPANY);
         world.users.set(company.id, 0);
+        world.attackSurface.set(company.id, 0);
     }
 
     private void makeClock() {
@@ -170,7 +194,8 @@ public class GameScreen extends ScreenStack.UIScreen {
         root.add(AbsoluteLayout.at(usersLabel, 50, 100));
         root.add(AbsoluteLayout.at(progressLabel, 50, 150));
         root.add(AbsoluteLayout.at(pauseButton, 400, 50));
-        root.add(AbsoluteLayout.at(new TaskComboBox(root), 50, 200));
+        root.add(AbsoluteLayout.at(attackSurfaceLabel, 50, 200));
+        root.add(AbsoluteLayout.at(new TaskComboBox(root), 50, 250));
         root.setSize(size());
         return root;
     }

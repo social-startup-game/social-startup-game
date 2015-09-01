@@ -21,5 +21,7 @@ public class GameWorld extends World {
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
+        @SuppressWarnings("unused")
+        public final AttackSurfaceSystem attackSurfaceSystem = new AttackSurfaceSystem(this);
     }
 }
