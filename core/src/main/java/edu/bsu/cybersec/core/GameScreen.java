@@ -22,6 +22,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
     private static final char DOWN_ARROW = '\u25BC';
     private Entity company;
+    private Entity[] developers;
     private GameWorld.Systematized world = new GameWorld.Systematized() {
         @SuppressWarnings("unused")
         private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
@@ -108,8 +109,6 @@ public class GameScreen extends ScreenStack.UIScreen {
         };
     };
 
-    private Entity developer;
-
     private final Label timeLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label progressLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
@@ -127,7 +126,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         makeClock();
         makeExistingFeature();
         makeFeatureInDevelopment();
-        makeDeveloper();
+        makeDevelopers(3);
     }
 
     private void makeCompany() {
@@ -148,8 +147,18 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.gameTimeScale.set(id, SECONDS_PER_HOUR);
     }
 
-    private void makeDeveloper() {
-        developer = world.create(true)
+    private Entity[] makeDevelopers(int number) {
+        checkArgument(number >= 0);
+        checkState(developers == null, "Expected developers not yet to be initialized");
+        developers = new Entity[number];
+        for (int i = 0; i < number; i++) {
+            developers[i] = makeDeveloper();
+        }
+        return developers;
+    }
+
+    private Entity makeDeveloper() {
+        Entity developer = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked,
                         world.companyId,
@@ -158,6 +167,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 0.02f);
         world.companyId.set(developer.id, company.id);
+        return developer;
     }
 
     private void makeExistingFeature() {
@@ -208,7 +218,10 @@ public class GameScreen extends ScreenStack.UIScreen {
         root.add(AbsoluteLayout.at(progressLabel, 50, 150));
         root.add(AbsoluteLayout.at(pauseButton, 400, 50));
         root.add(AbsoluteLayout.at(attackSurfaceLabel, 50, 200));
-        root.add(AbsoluteLayout.at(new TaskComboBox(root), 50, 250));
+        for (int i = 0, limit = developers.length; i < limit; i++) {
+            TaskSelector taskSelector = new TaskSelector(root, developers[i]);
+            root.add(AbsoluteLayout.at(taskSelector, 50 + 150 * i, 250));
+        }
         root.setSize(size());
         return root;
     }
@@ -218,10 +231,9 @@ public class GameScreen extends ScreenStack.UIScreen {
         return SimGame.game;
     }
 
-    final class TaskComboBox extends Button {
-        TaskComboBox(Root root) {
+    final class TaskSelector extends Button {
+        TaskSelector(Root root, final Entity worker) {
             super("Select a task " + DOWN_ARROW);
-            checkState(developer != null);
             final MenuHost menuHost = new MenuHost(iface, root);
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
@@ -242,8 +254,8 @@ public class GameScreen extends ScreenStack.UIScreen {
                         public void onEmit(MenuItem menuItem) {
                             button.text.update(menuItem.text.get() + " " + DOWN_ARROW);
                             int assignedTask = formatter.asTask(menuItem.text.get());
-                            world.tasked.set(developer.id, assignedTask);
-                            developer.didChange();
+                            world.tasked.set(worker.id, assignedTask);
+                            worker.didChange();
                         }
                     };
                 }
