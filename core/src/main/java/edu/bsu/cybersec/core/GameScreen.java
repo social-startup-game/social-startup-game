@@ -157,16 +157,18 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.ownerId);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.ownerId, world.exposure);
         world.usersPerSecond.set(userGeneratingEntity.id, 1);
         world.ownerId.set(userGeneratingEntity.id, companyId);
+        world.exposure.set(userGeneratingEntity.id, 0.05f);
     }
 
     private void makeFeatureInDevelopment() {
         Entity feature = world.create(false)
-                .add(world.usersPerSecond, world.ownerId);
+                .add(world.usersPerSecond, world.ownerId, world.exposure);
         world.usersPerSecond.set(feature.id, 25);
         world.ownerId.set(feature.id, companyId);
+        world.exposure.set(feature.id, 0.20f);
 
         Entity development = world.create(true)
                 .add(world.progress, world.goal, world.featureId);
