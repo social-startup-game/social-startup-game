@@ -18,13 +18,13 @@ public class UserGenerationSystem extends tripleplay.entity.System {
             int id = entities.get(i);
             float usersPerSecond = world.usersPerSecond.get(id);
             float additionalUsers = usersPerSecond * clock.dt / 1000;
-            int ownerId = world.ownerId.get(id);
+            int ownerId = world.companyId.get(id);
             world.users.add(ownerId, additionalUsers);
         }
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.usersPerSecond) && entity.has(world.ownerId);
+        return entity.has(world.usersPerSecond) && entity.has(world.companyId);
     }
 }

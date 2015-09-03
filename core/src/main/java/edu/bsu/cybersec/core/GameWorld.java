@@ -12,7 +12,7 @@ public class GameWorld extends World {
     public final Component.IScalar goal = new Component.IScalar(this);
     public final Component.IScalar featureId = new Component.IScalar(this);
     public final Component.FScalar usersPerSecond = new Component.FScalar(this);
-    public final Component.IScalar ownerId = new Component.IScalar(this);
+    public final Component.IScalar companyId = new Component.IScalar(this);
     public final Component.FScalar users = new Component.FScalar(this);
     public final Component.IScalar gameTime = new Component.IScalar(this);
     public final Component.FScalar gameTimeScale = new Component.FScalar(this);

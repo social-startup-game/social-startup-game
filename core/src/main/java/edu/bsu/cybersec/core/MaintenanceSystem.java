@@ -21,7 +21,7 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
                 && world.tasked.get(entity.id) == Task.MAINTENANCE;
         if (interested) {
             checkState(entity.has(world.maintenanceSkill));
-            checkState(entity.has(world.ownerId));
+            checkState(entity.has(world.companyId));
         }
         return interested;
     }
@@ -31,7 +31,7 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
         super.update(clock, entities);
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
-            int companyId = world.ownerId.get(id);
+            int companyId = world.companyId.get(id);
             float change = clock.dt * world.maintenanceSkill.get(id);
             world.attackSurface.add(companyId, -change);
         }

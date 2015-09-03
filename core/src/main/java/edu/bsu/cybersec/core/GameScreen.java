@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
     private static final char DOWN_ARROW = '\u25BC';
-    private int companyId;
+    private Entity company;
     private GameWorld.Systematized world = new GameWorld.Systematized() {
         @SuppressWarnings("unused")
         private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
@@ -56,7 +56,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         tripleplay.entity.System hudRenderingSystem = new System(this, 0) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.id == companyId;
+                return entity.id == company.id;
             }
 
             @Override
@@ -100,7 +100,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
                 checkState(entities.size() == 1, "I expected only one entity to have an attack surface.");
-                checkState(entities.get(0) == companyId, "I expect this to be the company");
+                checkState(entities.get(0) == company.id, "I expect this to be the company");
                 final int id = entities.get(0);
                 float surface = attackSurface.get(id);
                 attackSurfaceLabel.text.update("Attack surface: " + surface);
@@ -131,15 +131,14 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void makeCompany() {
-        Entity company = world.create(true)
+        company = world.create(true)
                 .add(world.type,
                         world.users,
                         world.attackSurface);
-        companyId = company.id;
         world.type.set(company.id, Type.COMPANY);
         world.users.set(company.id, 0);
         world.attackSurface.set(company.id, 0);
-        game().plat.log().debug("Company created as id " + companyId);
+        game().plat.log().debug("Company created as id " + company.id);
     }
 
     private void makeClock() {
@@ -154,26 +153,26 @@ public class GameScreen extends ScreenStack.UIScreen {
         developer = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked,
-                        world.ownerId,
+                        world.companyId,
                         world.maintenanceSkill);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 1);
-        world.ownerId.set(developer.id, companyId);
+        world.companyId.set(developer.id, company.id);
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.ownerId, world.exposure);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.companyId, world.exposure);
         world.usersPerSecond.set(userGeneratingEntity.id, 1);
-        world.ownerId.set(userGeneratingEntity.id, companyId);
+        world.companyId.set(userGeneratingEntity.id, company.id);
         world.exposure.set(userGeneratingEntity.id, 0.05f);
     }
 
     private void makeFeatureInDevelopment() {
         Entity feature = world.create(false)
-                .add(world.usersPerSecond, world.ownerId, world.exposure);
+                .add(world.usersPerSecond, world.companyId, world.exposure);
         world.usersPerSecond.set(feature.id, 25);
-        world.ownerId.set(feature.id, companyId);
+        world.companyId.set(feature.id, company.id);
         world.exposure.set(feature.id, 0.20f);
 
         Entity development = world.create(true)

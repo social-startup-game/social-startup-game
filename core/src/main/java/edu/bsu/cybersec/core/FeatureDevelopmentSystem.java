@@ -100,7 +100,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         final Entity featureEntity = world.entity(featureEntityId);
         checkState(featureEntity.has(world.exposure), "Features should have the exposure component.");
         final float exposure = world.exposure.get(featureEntityId);
-        final int companyId = world.ownerId.get(featureEntityId);
+        final int companyId = world.companyId.get(featureEntityId);
         world.attackSurface.add(companyId, exposure);
     }
 

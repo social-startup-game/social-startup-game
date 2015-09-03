@@ -39,9 +39,9 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity createDisabledFeatureEntity() {
         Entity featureEntity = world.create(false)
-                .add(world.usersPerSecond, world.ownerId, world.exposure);
+                .add(world.usersPerSecond, world.companyId, world.exposure);
         world.usersPerSecond.set(featureEntity.id, 20);
-        world.ownerId.set(featureEntity.id, company.id);
+        world.companyId.set(featureEntity.id, company.id);
         world.exposure.set(featureEntity.id, 10);
         return featureEntity;
     }

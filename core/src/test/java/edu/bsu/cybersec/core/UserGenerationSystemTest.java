@@ -30,9 +30,9 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
 
     private void createEntityGeneratingUsersPerSecond(float usersPerSecond) {
         Entity entity = world.create(true)
-                .add(world.usersPerSecond, world.ownerId);
+                .add(world.usersPerSecond, world.companyId);
         world.usersPerSecond.set(entity.id, usersPerSecond);
-        world.ownerId.set(entity.id, companyId);
+        world.companyId.set(entity.id, companyId);
     }
 
     private void assertNumberOfUsersIs(int users) {
