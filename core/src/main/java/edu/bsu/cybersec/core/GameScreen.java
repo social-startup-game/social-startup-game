@@ -138,7 +138,6 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.type.set(company.id, Type.COMPANY);
         world.users.set(company.id, 0);
         world.attackSurface.set(company.id, 0);
-        game().plat.log().debug("Company created as id " + company.id);
     }
 
     private void makeClock() {
