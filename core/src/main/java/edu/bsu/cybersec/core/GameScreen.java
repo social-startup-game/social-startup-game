@@ -113,6 +113,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label progressLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
     private final Label attackSurfaceLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final Button attackButton = new AttackButton();
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
     public GameScreen() {
@@ -197,7 +198,8 @@ public class GameScreen extends ScreenStack.UIScreen {
                 world.gameTimeSystem,
                 world.userGenerationSystem,
                 world.featureDevelopmentSystem,
-                world.maintenanceSystem);
+                world.maintenanceSystem,
+                world.expirySystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {
@@ -216,12 +218,13 @@ public class GameScreen extends ScreenStack.UIScreen {
         root.add(AbsoluteLayout.at(timeLabel, 50, 50));
         root.add(AbsoluteLayout.at(usersLabel, 50, 100));
         root.add(AbsoluteLayout.at(progressLabel, 50, 150));
-        root.add(AbsoluteLayout.at(pauseButton, 400, 50));
         root.add(AbsoluteLayout.at(attackSurfaceLabel, 50, 200));
         for (int i = 0, limit = developers.length; i < limit; i++) {
             TaskSelector taskSelector = new TaskSelector(root, developers[i]);
             root.add(AbsoluteLayout.at(taskSelector, 50 + 150 * i, 250));
         }
+        root.add(AbsoluteLayout.at(pauseButton, 400, 50));
+        root.add(AbsoluteLayout.at(attackButton, 400, 100));
         root.setSize(size());
         return root;
     }
@@ -276,6 +279,23 @@ public class GameScreen extends ScreenStack.UIScreen {
             text.update(taskName + " " + DOWN_ARROW);
         }
 
+    }
+
+    private final class AttackButton extends Button {
+        AttackButton() {
+            super("Force an attack");
+            onClick(new Slot<Button>() {
+                @Override
+                public void onEmit(Button button) {
+                    Entity attack = world.create(true)
+                            .add(world.usersPerSecond, world.expiresIn, world.companyId);
+                    world.usersPerSecond.set(attack.id, -2);
+                    world.expiresIn.set(attack.id, 2000);
+                    world.companyId.set(attack.id, company.id);
+                    game().plat.log().debug("Attack!");
+                }
+            });
+        }
     }
 
 }

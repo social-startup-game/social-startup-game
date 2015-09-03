@@ -26,5 +26,6 @@ public class GameWorld extends World {
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
         public final MaintenanceSystem maintenanceSystem = new MaintenanceSystem(this);
+        public final ExpirySystem expirySystem = new ExpirySystem(this);
     }
 }
