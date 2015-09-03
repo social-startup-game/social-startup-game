@@ -32,7 +32,8 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
             int companyId = world.companyId.get(id);
-            float change = clock.dt * world.maintenanceSkill.get(id);
+            float currentSurface = world.attackSurface.get(companyId);
+            float change = currentSurface * world.maintenanceSkill.get(id) * clock.dt / 1000;
             world.attackSurface.add(companyId, -change);
         }
     }
