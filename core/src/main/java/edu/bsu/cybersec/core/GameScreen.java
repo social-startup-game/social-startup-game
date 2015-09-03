@@ -156,7 +156,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                         world.maintenanceSkill);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
-        world.maintenanceSkill.set(developer.id, 1);
+        world.maintenanceSkill.set(developer.id, 0.02f);
         world.companyId.set(developer.id, company.id);
     }
 
@@ -164,7 +164,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.companyId, world.exposure);
         world.usersPerSecond.set(userGeneratingEntity.id, 1);
         world.companyId.set(userGeneratingEntity.id, company.id);
-        world.exposure.set(userGeneratingEntity.id, 0.05f);
+        world.attackSurface.set(company.id, 0.05f);
     }
 
     private void makeFeatureInDevelopment() {
