@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
-    private static final char DOWN_ARROW = '\u25BC';
+    private static final String DOWN_ARROW = "\u25BC";
     private Entity company;
     private Entity[] developers;
     private GameWorld.Systematized world = new GameWorld.Systematized() {
@@ -232,14 +232,14 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     final class TaskSelector extends Button {
+        private final TaskFormatter formatter = new TaskFormatter();
         TaskSelector(Root root, final Entity worker) {
-            super("Select a task " + DOWN_ARROW);
+            super();
+            setTextBasedOnCurrentTaskOf(worker);
             final MenuHost menuHost = new MenuHost(iface, root);
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
             onClick(new Slot<Button>() {
-                private final TaskFormatter formatter = new TaskFormatter();
-
                 @Override
                 public void onEmit(Button button) {
                     MenuHost.Pop pop = new MenuHost.Pop(button,
@@ -268,6 +268,12 @@ public class GameScreen extends ScreenStack.UIScreen {
                     return menu;
                 }
             });
+        }
+
+        private void setTextBasedOnCurrentTaskOf(Entity worker) {
+            final int currentTask = world.tasked.get(worker.id);
+            String taskName = formatter.format(currentTask);
+            text.update(taskName + " " + DOWN_ARROW);
         }
 
     }
