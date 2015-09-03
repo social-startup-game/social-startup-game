@@ -4,6 +4,7 @@ import playn.core.Clock;
 import tripleplay.entity.Entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class MaintenanceSystem extends tripleplay.entity.System {
 
@@ -16,7 +17,13 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.maintenanceSkill) && entity.has(world.ownerId);
+        boolean interested = entity.has(world.tasked)
+                && world.tasked.get(entity.id) == Task.MAINTENANCE;
+        if (interested) {
+            checkState(entity.has(world.maintenanceSkill));
+            checkState(entity.has(world.ownerId));
+        }
+        return interested;
     }
 
     @Override

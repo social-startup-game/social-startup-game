@@ -49,12 +49,28 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
         assertTrue("Attack surface is reduced", currentAttackSurface() < initialSurface);
     }
 
-    private void givenAnActiveMaintainer() {
+    private Entity givenAnActiveMaintainer() {
         Entity maintainer = world.create(true)
                 .add(world.tasked, world.maintenanceSkill, world.ownerId);
         world.tasked.set(maintainer.id, Task.MAINTENANCE);
         world.maintenanceSkill.set(maintainer.id, 1.0f);
         world.ownerId.set(maintainer.id, company.id);
+        return maintainer;
+    }
+
+    @Test
+    public void testIdleMaintainer_doesNotChangeAttackSurface() {
+        final float initialSurface = 1.0f;
+        givenACompanyWithAttackSurface(initialSurface);
+        givenAnIdleMaintainer();
+        advanceOneDay();
+        thenAttackSurfaceIs(initialSurface);
+    }
+
+    private void givenAnIdleMaintainer() {
+        Entity e = givenAnActiveMaintainer();
+        world.tasked.set(e.id, Task.IDLE);
+        e.didChange();
     }
 
 }
