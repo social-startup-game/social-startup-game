@@ -5,6 +5,7 @@ import tripleplay.entity.Entity;
 import tripleplay.entity.IntBag;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public class FeatureDevelopmentSystem extends tripleplay.entity.System {
 
@@ -95,6 +96,12 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         final Entity developmentEntity = world.entity(id);
         developmentEntity.close();
         enableFeatureDevelopedBy(developmentEntity);
+        final int featureEntityId = world.featureId.get(developmentEntity.id);
+        final Entity featureEntity = world.entity(featureEntityId);
+        checkState(featureEntity.has(world.exposure), "Features should have the exposure component.");
+        final float exposure = world.exposure.get(featureEntityId);
+        final int companyId = world.ownerId.get(featureEntityId);
+        world.attackSurface.add(companyId, exposure);
     }
 
     private void enableFeatureDevelopedBy(Entity developmentEntity) {

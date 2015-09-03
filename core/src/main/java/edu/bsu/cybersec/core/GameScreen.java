@@ -100,10 +100,10 @@ public class GameScreen extends ScreenStack.UIScreen {
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
                 checkState(entities.size() == 1, "I expected only one entity to have an attack surface.");
-                int id = entities.get(0);
+                checkState(entities.get(0) == companyId, "I expect this to be the company");
+                final int id = entities.get(0);
                 float surface = attackSurface.get(id);
-                int displayedValue = (int) (surface * 100);
-                attackSurfaceLabel.text.update("Attack surface: " + displayedValue + "%");
+                attackSurfaceLabel.text.update("Attack surface: " + surface);
             }
         };
     };
@@ -139,6 +139,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.type.set(company.id, Type.COMPANY);
         world.users.set(company.id, 0);
         world.attackSurface.set(company.id, 0);
+        game().plat.log().debug("Company created as id " + companyId);
     }
 
     private void makeClock() {
@@ -151,9 +152,14 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void makeDeveloper() {
         developer = world.create(true)
-                .add(world.developmentSkill, world.tasked);
+                .add(world.developmentSkill,
+                        world.tasked,
+                        world.ownerId,
+                        world.maintenanceSkill);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
+        world.maintenanceSkill.set(developer.id, 1);
+        world.ownerId.set(developer.id, companyId);
     }
 
     private void makeExistingFeature() {
@@ -179,7 +185,11 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void configurePauseButton() {
         pauseButton.selected().update(false);
-        final SystemToggle toggle = new SystemToggle(world.gameTimeSystem, world.userGenerationSystem, world.featureDevelopmentSystem);
+        final SystemToggle toggle = new SystemToggle(
+                world.gameTimeSystem,
+                world.userGenerationSystem,
+                world.featureDevelopmentSystem,
+                world.maintenanceSystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {

@@ -16,7 +16,13 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         super.setUp();
         new FeatureDevelopmentSystem(world);
         completedDevelopmentEntity = null;
-        company = world.create(true);
+        createCompany();
+    }
+
+    private void createCompany() {
+        company = world.create(true)
+                .add(world.attackSurface);
+        world.attackSurface.set(company.id, 0);
     }
 
     @Test
@@ -33,9 +39,10 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity createDisabledFeatureEntity() {
         Entity featureEntity = world.create(false)
-                .add(world.usersPerSecond, world.ownerId);
+                .add(world.usersPerSecond, world.ownerId, world.exposure);
         world.usersPerSecond.set(featureEntity.id, 20);
         world.ownerId.set(featureEntity.id, company.id);
+        world.exposure.set(featureEntity.id, 10);
         return featureEntity;
     }
 
@@ -145,5 +152,14 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
             world.tasked.set(entity.id, task);
             return entity;
         }
+    }
+
+    @Test
+    public void testFeatureCompletion_increasesCompanyAttackSurface() {
+        float before = world.attackSurface.get(company.id);
+        whenAFeatureIsCompleted();
+        float after = world.attackSurface.get(company.id);
+        assertTrue(
+                String.format("After (%.2f) is greater than before (%.2f)", after, before), after > before);
     }
 }
