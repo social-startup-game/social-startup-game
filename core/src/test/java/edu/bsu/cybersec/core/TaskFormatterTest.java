@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.google.common.base.Preconditions.checkState;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 
@@ -40,5 +41,12 @@ public final class TaskFormatterTest {
     public void testAsTask_throwsExceptionOnUnrecognizedInput() {
         final String nonTaskString = "";
         formatter.asTask(nonTaskString);
+    }
+
+    @Test
+    public void testAllTasksCanBeFormatted() {
+        for (int task : Task.VALUES) {
+            assertNotNull("There is a format code for task " + task, formatter.format(task));
+        }
     }
 }

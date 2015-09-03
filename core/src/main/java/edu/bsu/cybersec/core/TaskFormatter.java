@@ -9,7 +9,8 @@ public final class TaskFormatter {
 
     private static final BiMap<Integer, String> MAP = ImmutableBiMap.of(
             Task.IDLE, "Idle",
-            Task.DEVELOPMENT, "Development");
+            Task.DEVELOPMENT, "Development",
+            Task.MAINTENANCE, "Maintenance");
 
     public String format(int task) {
         checkArgument(MAP.containsKey(task));
