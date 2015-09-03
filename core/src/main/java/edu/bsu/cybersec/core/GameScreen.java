@@ -292,7 +292,6 @@ public class GameScreen extends ScreenStack.UIScreen {
                     world.usersPerSecond.set(attack.id, -2);
                     world.expiresIn.set(attack.id, 2000);
                     world.companyId.set(attack.id, company.id);
-                    game().plat.log().debug("Attack!");
                 }
             });
         }
