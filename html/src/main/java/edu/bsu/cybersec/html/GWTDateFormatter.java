@@ -7,7 +7,6 @@ import edu.bsu.cybersec.core.PlatformSpecificDateFormatter;
 public class GWTDateFormatter implements PlatformSpecificDateFormatter {
     private final DateTimeFormat format = DateTimeFormat.getFormat("EEE, d MMM yyyy hh:mm:ss aaa");
 
-
     @Override
     public long now() {
         return (long) JsDate.now();

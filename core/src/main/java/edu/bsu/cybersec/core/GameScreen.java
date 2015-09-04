@@ -12,7 +12,8 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
@@ -22,7 +23,15 @@ public class GameScreen extends ScreenStack.UIScreen {
     private GameWorld.Systematized world = new GameWorld.Systematized() {
         @SuppressWarnings("unused")
         private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
-            private final long startTime = ClockUtils.formatter.now();
+            {
+                checkState(game().plat instanceof SimGamePlatform,
+                        "The platform must provide the methods specified in SimGamePlatform");
+            }
+
+            private final PlatformSpecificDateFormatter formatter =
+                    ((SimGamePlatform) game().plat).formatter();
+
+            private final long startTime = formatter.now();
             private long now = startTime;
 
             @Override
@@ -38,7 +47,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                     final int tick = gameTime.get(id);
                     now = startTime + tick;
                 }
-                final String formatted = ClockUtils.formatter.format(now);
+                final String formatted = formatter.format(now);
                 timeLabel.text.update(formatted);
             }
         };
