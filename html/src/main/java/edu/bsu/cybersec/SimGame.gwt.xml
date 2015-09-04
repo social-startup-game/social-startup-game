@@ -1,6 +1,8 @@
 <module rename-to='sim'>
     <inherits name='playn.Scene'/>
     <inherits name='SimGameAssets'/>
+    <inherits name="tripleplay.TriplePlay"/>
+    <inherits name="com.google.common.collect.Collect"/>
 
     <source path='core'/>
     <source path='html'/>

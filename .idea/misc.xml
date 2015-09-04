@@ -15,7 +15,6 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/android/pom.xml" />
-        <option value="$PROJECT_DIR$/html/pom.xml" />
         <option value="$PROJECT_DIR$/robovm/pom.xml" />
       </set>
     </option>

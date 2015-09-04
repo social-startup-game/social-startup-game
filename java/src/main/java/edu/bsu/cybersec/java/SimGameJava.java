@@ -1,8 +1,8 @@
 package edu.bsu.cybersec.java;
 
-import playn.java.LWJGLPlatform;
-
+import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.SimGame;
+import playn.java.LWJGLPlatform;
 
 public class SimGameJava {
 
@@ -11,6 +11,9 @@ public class SimGameJava {
         // use config to customize the Java platform, if needed
         LWJGLPlatform plat = new LWJGLPlatform(config);
         new SimGame(plat);
+
+        ClockUtils.formatter = new Java7DateFormatter();
+
         plat.start();
     }
 }
