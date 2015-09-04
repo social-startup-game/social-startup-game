@@ -22,8 +22,8 @@ public final class GameTimeSystem extends tripleplay.entity.System {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
             float scale = determineScale(id);
-            int elapsedGameTime = (int) (clock.tick * scale);
-            world.gameTime.set(entities.get(i), elapsedGameTime);
+            int elapsedGameTime = (int) (clock.dt * scale);
+            world.gameTime.add(entities.get(i), elapsedGameTime);
         }
     }
 
