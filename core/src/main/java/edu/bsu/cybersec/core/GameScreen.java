@@ -12,11 +12,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
@@ -26,14 +22,8 @@ public class GameScreen extends ScreenStack.UIScreen {
     private GameWorld.Systematized world = new GameWorld.Systematized() {
         @SuppressWarnings("unused")
         private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
-
-            private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
-            private final long START_MS = new GregorianCalendar().getTimeInMillis();
-            private final GregorianCalendar now = new GregorianCalendar();
-
-            {
-                format.setCalendar(now);
-            }
+            private final long startTime = ClockUtils.formatter.now();
+            private long now = startTime;
 
             @Override
             protected boolean isInterested(Entity entity) {
@@ -46,9 +36,9 @@ public class GameScreen extends ScreenStack.UIScreen {
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     final int id = entities.get(i);
                     final int tick = gameTime.get(id);
-                    now.setTimeInMillis(START_MS + tick);
+                    now = startTime + tick;
                 }
-                final String formatted = format.format(now.getTime());
+                final String formatted = ClockUtils.formatter.format(now);
                 timeLabel.text.update(formatted);
             }
         };
@@ -83,8 +73,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                         "I expected at most one featureId in development but found " + entities.size());
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
-                    progressLabel.text.update("Progress: " + String.format("%.1f", progress.get(id))
-                            + " / " + goal.get(id));
+                    progressLabel.text.update("Progress: " + progress.get(id) + " / " + goal.get(id));
                 }
             }
         };
@@ -236,6 +225,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     final class TaskSelector extends Button {
         private final TaskFormatter formatter = new TaskFormatter();
+
         TaskSelector(Root root, final Entity worker) {
             super();
             setTextBasedOnCurrentTaskOf(worker);

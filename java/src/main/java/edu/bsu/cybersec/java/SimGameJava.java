@@ -10,9 +10,8 @@ public class SimGameJava {
         LWJGLPlatform.Config config = new LWJGLPlatform.Config();
         // use config to customize the Java platform, if needed
         LWJGLPlatform plat = new LWJGLPlatform(config);
-        new SimGame(plat);
-
         ClockUtils.formatter = new Java7DateFormatter();
+        new SimGame(plat);
 
         plat.start();
     }
