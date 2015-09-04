@@ -29,9 +29,9 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
 
             private final PlatformSpecificDateFormatter formatter =
-                    ((SimGamePlatform) game().plat).formatter();
+                    ((SimGamePlatform) game().plat).dateFormatter();
 
-            private final long startTime = formatter.now();
+            private final long startTime = new java.util.Date().getTime();
             private long now = startTime;
 
             @Override

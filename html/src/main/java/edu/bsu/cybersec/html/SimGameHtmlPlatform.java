@@ -13,7 +13,7 @@ public class SimGameHtmlPlatform extends HtmlPlatform implements SimGamePlatform
     }
 
     @Override
-    public PlatformSpecificDateFormatter formatter() {
+    public PlatformSpecificDateFormatter dateFormatter() {
         return formatter;
     }
 }

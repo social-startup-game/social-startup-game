@@ -13,7 +13,7 @@ public class SimGameJavaPlatform extends LWJGLPlatform implements SimGamePlatfor
     }
 
     @Override
-    public PlatformSpecificDateFormatter formatter() {
+    public PlatformSpecificDateFormatter dateFormatter() {
         return formatter;
     }
 }

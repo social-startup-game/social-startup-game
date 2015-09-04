@@ -9,15 +9,10 @@ import java.util.GregorianCalendar;
 public class Java7DateFormatter implements PlatformSpecificDateFormatter {
 
     private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
-    private final GregorianCalendar now = new GregorianCalendar();
 
-    {
+    public Java7DateFormatter() {
+        final GregorianCalendar now = new GregorianCalendar();
         format.setCalendar(now);
-    }
-
-    @Override
-    public long now() {
-        return new GregorianCalendar().getTimeInMillis();
     }
 
     @Override
