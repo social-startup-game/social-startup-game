@@ -1,7 +1,9 @@
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.Maps;
 import playn.core.Clock;
 import playn.core.Game;
+import pythagoras.f.Point;
 import react.Slot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
@@ -11,6 +13,8 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
+
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -105,12 +109,77 @@ public class GameScreen extends ScreenStack.UIScreen {
                 attackSurfaceLabel.text.update("Attack surface: " + surface);
             }
         };
+
+        @SuppressWarnings("unused")
+        System workerRenderingSystem = new System(this, 0) {
+
+            private final Point p = new Point();
+            private final Map<Integer, WorkerUI> groups = Maps.newHashMap();
+
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return entity.has(name)
+                        && entity.has(developmentSkill)
+                        && entity.has(maintenanceSkill)
+                        && entity.has(position);
+            }
+
+            @Override
+            protected void wasAdded(Entity entity) {
+                super.wasAdded(entity);
+                checkState(!groups.containsKey(entity.id), "Group for entity already exists");
+                position.get(entity.id, p);
+                String workerName = name.get(entity.id);
+                WorkerUI workerUI = new WorkerUI(entity.id);
+                groups.put(entity.id, workerUI);
+                _root.add(AbsoluteLayout.at(workerUI, p));
+            }
+
+            @Override
+            protected void wasRemoved(Entity entity, int index) {
+                super.wasRemoved(entity, index);
+                groups.remove(entity.id);
+            }
+
+            @Override
+            protected void update(Clock clock, Entities entities) {
+                super.update(clock, entities);
+                for (int i = 0, limit = entities.size(); i < limit; i++) {
+                    updateWorkerUI(entities.get(i));
+                }
+            }
+
+            private void updateWorkerUI(final int id) {
+                WorkerUI ui = groups.get(id);
+                ui.nameLabel.text.update(name.get(id));
+                ui.developmentSkillLabel.text.update(String.valueOf(developmentSkill.get(id)));
+                ui.maintenanceSkillLabel.text.update(String.valueOf(maintenanceSkill.get(id)));
+            }
+
+            final class WorkerUI extends Group {
+                final Label nameLabel = new Label();
+                final Label developmentSkillLabel = new Label();
+                final Label maintenanceSkillLabel = new Label();
+
+                private WorkerUI(final int id) {
+                    super(AxisLayout.vertical());
+                    add(nameLabel,
+                            new Group(AxisLayout.horizontal())
+                                    .add(new Label("D: "),
+                                            developmentSkillLabel),
+                            new Group(AxisLayout.horizontal())
+                                    .add(new Label("M: "),
+                                            maintenanceSkillLabel),
+                            new TaskSelector(_root, entity(id)));
+                }
+            }
+        };
     };
 
-    private final Label timeLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
-    private final Label usersLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
-    private final Label progressLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
-    private final Label attackSurfaceLabel = new Label("").addStyles(Style.COLOR.is(Colors.WHITE));
+    private final Label timeLabel = new Label("");
+    private final Label usersLabel = new Label("");
+    private final Label progressLabel = new Label("");
+    private final Label attackSurfaceLabel = new Label("");
     private final Button attackButton = new AttackButton();
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
@@ -151,21 +220,25 @@ public class GameScreen extends ScreenStack.UIScreen {
         checkState(developers == null, "Expected developers not yet to be initialized");
         developers = new Entity[number];
         for (int i = 0; i < number; i++) {
-            developers[i] = makeDeveloper();
+            developers[i] = makeDeveloper(i * 200 + 100);
         }
         return developers;
     }
 
-    private Entity makeDeveloper() {
+    private Entity makeDeveloper(float x) {
         Entity developer = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked,
                         world.companyId,
-                        world.maintenanceSkill);
+                        world.maintenanceSkill,
+                        world.name,
+                        world.position);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 0.02f);
         world.companyId.set(developer.id, company.id);
+        world.name.set(developer.id, "Bob Ross");
+        world.position.set(developer.id, x, 250);
         return developer;
     }
 
@@ -212,19 +285,21 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, new AbsoluteLayout(), SimpleStyles.newSheet(game().plat.graphics()));
+        Root root = new Root(iface, new AbsoluteLayout(), makeStyleSheet());
         root.add(AbsoluteLayout.at(timeLabel, 50, 50));
         root.add(AbsoluteLayout.at(usersLabel, 50, 100));
         root.add(AbsoluteLayout.at(progressLabel, 50, 150));
         root.add(AbsoluteLayout.at(attackSurfaceLabel, 50, 200));
-        for (int i = 0, limit = developers.length; i < limit; i++) {
-            TaskSelector taskSelector = new TaskSelector(root, developers[i]);
-            root.add(AbsoluteLayout.at(taskSelector, 50 + 150 * i, 250));
-        }
         root.add(AbsoluteLayout.at(pauseButton, 400, 50));
         root.add(AbsoluteLayout.at(attackButton, 400, 100));
         root.setSize(size());
         return root;
+    }
+
+    private Stylesheet makeStyleSheet() {
+        Stylesheet.Builder builder = SimpleStyles.newSheetBuilder(game().plat.graphics());
+        builder.add(Label.class, Style.COLOR.is(Colors.WHITE));
+        return builder.create();
     }
 
     @Override
