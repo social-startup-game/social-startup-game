@@ -1,8 +1,10 @@
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import playn.core.Clock;
 import playn.core.Game;
+import playn.core.Keyboard;
 import pythagoras.f.Point;
 import react.Slot;
 import tripleplay.entity.Entity;
@@ -14,6 +16,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -176,6 +179,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         };
     };
 
+    private final List<Element<?>> interactiveElements = Lists.newArrayList();
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");
     private final Label progressLabel = new Label("");
@@ -187,6 +191,47 @@ public class GameScreen extends ScreenStack.UIScreen {
         world.connect(update, paint);
         initializeWorld();
         configurePauseButton();
+        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
+            @Override
+            public void onEmit(Keyboard.Event event) {
+                if (isPopupTrigger(event)) {
+                    game().plat.log().debug("Bringing up pop-up dialog box " + event);
+                    for (Element<?> element : interactiveElements) {
+                        element.setEnabled(false);
+                    }
+                    pauseButton.selected().update(true);
+
+                    final Group group = new Group(AxisLayout.vertical());
+                    group.setStylesheet(makePopupStylesheet())
+                            .setConstraint(Constraints.fixedSize(600, 400))
+                            .add(new Label("THIS IS A POPUP"),
+                                    new Button("Dismiss")
+                                            .onClick(new Slot<Button>() {
+                                                @Override
+                                                public void onEmit(Button event) {
+                                                    for (Element<?> element : interactiveElements) {
+                                                        element.setEnabled(true);
+                                                    }
+                                                    pauseButton.selected().update(false);
+                                                    _root.remove(group);
+                                                }
+                                            }));
+                    _root.add(AbsoluteLayout.at(group, 200, 200));
+                }
+            }
+
+            private boolean isPopupTrigger(Keyboard.Event event) {
+                return event instanceof Keyboard.KeyEvent
+                        && ((Keyboard.KeyEvent) event).down;
+            }
+
+            private Stylesheet makePopupStylesheet() {
+                Stylesheet.Builder builder = SimpleStyles.newSheetBuilder(game().plat.graphics());
+                builder.add(Group.class, Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
+                builder.add(Label.class, Style.COLOR.is(Colors.CYAN));
+                return builder.create();
+            }
+        });
     }
 
     private void initializeWorld() {
@@ -281,6 +326,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                 }
             }
         });
+        interactiveElements.add(pauseButton);
     }
 
     @Override
@@ -345,6 +391,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                     return menu;
                 }
             });
+            interactiveElements.add(this);
         }
 
         private void setTextBasedOnCurrentTaskOf(Entity worker) {
@@ -368,6 +415,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                     world.companyId.set(attack.id, company.id);
                 }
             });
+            interactiveElements.add(this);
         }
     }
 
