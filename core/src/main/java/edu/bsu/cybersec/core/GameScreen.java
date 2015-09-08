@@ -5,7 +5,9 @@ import com.google.common.collect.Maps;
 import playn.core.Clock;
 import playn.core.Game;
 import playn.core.Keyboard;
+import pythagoras.f.Dimension;
 import pythagoras.f.Point;
+import react.Connection;
 import react.Slot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
@@ -19,8 +21,7 @@ import tripleplay.util.Colors;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
@@ -179,6 +180,12 @@ public class GameScreen extends ScreenStack.UIScreen {
         };
     };
 
+    private final SystemToggle systemToggle = new SystemToggle(
+            world.gameTimeSystem,
+            world.userGenerationSystem,
+            world.featureDevelopmentSystem,
+            world.maintenanceSystem,
+            world.expirySystem);
     private final List<Element<?>> interactiveElements = Lists.newArrayList();
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");
@@ -187,51 +194,117 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final Button attackButton = new AttackButton();
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
+    private interface State {
+        void onEnter();
+        void onExit();
+    }
+
+    private abstract class AbstractState implements State {
+        protected void disableInteractiveElements() {
+            for (Element<?> element : interactiveElements) {
+                element.setEnabled(false);
+            }
+        }
+
+        protected void enableInteractiveElements() {
+            for (Element<?> element : interactiveElements) {
+                element.setEnabled(true);
+            }
+        }
+    }
+
+
+    private final State playingState = new AbstractState() {
+
+        private Connection connection;
+        private Slot<Keyboard.Event> popupTriggerListener = new Slot<Keyboard.Event>() {
+            @Override
+            public void onEmit(Keyboard.Event event) {
+                if (isPopupTrigger(event)) {
+                    enterState(new PopupState("Hello, world!"));
+                }
+            }
+        };
+
+        private boolean isPopupTrigger(Keyboard.Event event) {
+            return event instanceof Keyboard.KeyEvent
+                    && ((Keyboard.KeyEvent) event).down;
+        }
+
+        @Override
+        public void onEnter() {
+            checkState(connection == null, "There is a leaked connection");
+            enableInteractiveElements();
+            connection = game().plat.input().keyboardEvents.connect(popupTriggerListener);
+        }
+
+        @Override
+        public void onExit() {
+            connection.close();
+            connection = null;
+        }
+    };
+
+    private final State pausedState = new AbstractState() {
+
+        @Override
+        public void onEnter() {
+            disableInteractiveElements();
+            pauseButton.setEnabled(true);
+            systemToggle.disable();
+        }
+
+        @Override
+        public void onExit() {
+            systemToggle.enable();
+        }
+    };
+
+    private final class PopupState extends AbstractState {
+        private final Group group;
+
+        PopupState(String message) {
+            group = new SizableGroup(AxisLayout.vertical(), new Dimension(300, 200));
+            group.setStylesheet(makePopupStylesheet())
+                    .add(new Label(message),
+                            new Button("Dismiss")
+                                    .onClick(new Slot<Button>() {
+                                        @Override
+                                        public void onEmit(Button event) {
+                                            enterState(playingState);
+                                        }
+                                    }));
+        }
+
+        private Stylesheet makePopupStylesheet() {
+            Stylesheet.Builder builder = SimpleStyles.newSheetBuilder(game().plat.graphics());
+            builder.add(Group.class, Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
+            builder.add(Label.class, Style.COLOR.is(Colors.CYAN));
+            return builder.create();
+        }
+
+        @Override
+        public void onEnter() {
+            disableInteractiveElements();
+            systemToggle.disable();
+            _root.add(AbsoluteLayout.at(group, 200, 200));
+        }
+
+        @Override
+        public void onExit() {
+            enableInteractiveElements();
+            systemToggle.enable();
+            _root.remove(group);
+        }
+    }
+
+    private State state;
+
     public GameScreen() {
         world.connect(update, paint);
         initializeWorld();
         configurePauseButton();
-        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
-            @Override
-            public void onEmit(Keyboard.Event event) {
-                if (isPopupTrigger(event)) {
-                    game().plat.log().debug("Bringing up pop-up dialog box " + event);
-                    for (Element<?> element : interactiveElements) {
-                        element.setEnabled(false);
-                    }
-                    pauseButton.selected().update(true);
-
-                    final Group group = new Group(AxisLayout.vertical());
-                    group.setStylesheet(makePopupStylesheet())
-                            .setConstraint(Constraints.fixedSize(600, 400))
-                            .add(new Label("THIS IS A POPUP"),
-                                    new Button("Dismiss")
-                                            .onClick(new Slot<Button>() {
-                                                @Override
-                                                public void onEmit(Button event) {
-                                                    for (Element<?> element : interactiveElements) {
-                                                        element.setEnabled(true);
-                                                    }
-                                                    pauseButton.selected().update(false);
-                                                    _root.remove(group);
-                                                }
-                                            }));
-                    _root.add(AbsoluteLayout.at(group, 200, 200));
-                }
-            }
-
-            private boolean isPopupTrigger(Keyboard.Event event) {
-                return event instanceof Keyboard.KeyEvent
-                        && ((Keyboard.KeyEvent) event).down;
-            }
-
-            private Stylesheet makePopupStylesheet() {
-                Stylesheet.Builder builder = SimpleStyles.newSheetBuilder(game().plat.graphics());
-                builder.add(Group.class, Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
-                builder.add(Label.class, Style.COLOR.is(Colors.CYAN));
-                return builder.create();
-            }
-        });
+        enterState(playingState);
     }
 
     private void initializeWorld() {
@@ -310,23 +383,26 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void configurePauseButton() {
         pauseButton.selected().update(false);
-        final SystemToggle toggle = new SystemToggle(
-                world.gameTimeSystem,
-                world.userGenerationSystem,
-                world.featureDevelopmentSystem,
-                world.maintenanceSystem,
-                world.expirySystem);
         pauseButton.selected().connect(new Slot<Boolean>() {
             @Override
             public void onEmit(Boolean selected) {
                 if (selected) {
-                    toggle.disable();
+                    enterState(pausedState);
                 } else {
-                    toggle.enable();
+                    enterState(playingState);
                 }
             }
         });
         interactiveElements.add(pauseButton);
+    }
+
+    private void enterState(State state) {
+        checkNotNull(state);
+        if (this.state != null) {
+            this.state.onExit();
+        }
+        this.state = state;
+        this.state.onEnter();
     }
 
     @Override
