@@ -1,12 +1,12 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import playn.core.Clock;
 import playn.core.Game;
 import playn.core.Keyboard;
+import playn.scene.Mouse;
+import playn.scene.Pointer;
 import pythagoras.f.Dimension;
-import pythagoras.f.Point;
 import react.Connection;
 import react.Slot;
 import tripleplay.entity.Entity;
@@ -15,17 +15,15 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
-    private static final String DOWN_ARROW = "\u25BC";
+
     private Entity company;
     private Entity[] developers;
     private GameWorld.Systematized world = new GameWorld.Systematized() {
@@ -111,71 +109,6 @@ public class GameScreen extends ScreenStack.UIScreen {
                 final int id = entities.get(0);
                 float surface = attackSurface.get(id);
                 attackSurfaceLabel.text.update("Attack surface: " + surface);
-            }
-        };
-
-        @SuppressWarnings("unused")
-        System workerRenderingSystem = new System(this, 0) {
-
-            private final Point p = new Point();
-            private final Map<Integer, WorkerUI> groups = Maps.newHashMap();
-
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.has(name)
-                        && entity.has(developmentSkill)
-                        && entity.has(maintenanceSkill)
-                        && entity.has(position);
-            }
-
-            @Override
-            protected void wasAdded(Entity entity) {
-                super.wasAdded(entity);
-                checkState(!groups.containsKey(entity.id), "Group for entity already exists");
-                position.get(entity.id, p);
-                String workerName = name.get(entity.id);
-                WorkerUI workerUI = new WorkerUI(entity.id);
-                groups.put(entity.id, workerUI);
-                _root.add(AbsoluteLayout.at(workerUI, p));
-            }
-
-            @Override
-            protected void wasRemoved(Entity entity, int index) {
-                super.wasRemoved(entity, index);
-                groups.remove(entity.id);
-            }
-
-            @Override
-            protected void update(Clock clock, Entities entities) {
-                super.update(clock, entities);
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    updateWorkerUI(entities.get(i));
-                }
-            }
-
-            private void updateWorkerUI(final int id) {
-                WorkerUI ui = groups.get(id);
-                ui.nameLabel.text.update(name.get(id));
-                ui.developmentSkillLabel.text.update(String.valueOf(developmentSkill.get(id)));
-                ui.maintenanceSkillLabel.text.update(String.valueOf(maintenanceSkill.get(id)));
-            }
-
-            final class WorkerUI extends Group {
-                final Label nameLabel = new Label();
-                final Label developmentSkillLabel = new Label();
-                final Label maintenanceSkillLabel = new Label();
-
-                private WorkerUI(final int id) {
-                    super(AxisLayout.vertical());
-                    add(nameLabel,
-                            new Group(AxisLayout.horizontal())
-                                    .add(new Label("D: "),
-                                            developmentSkillLabel),
-                            new Group(AxisLayout.horizontal())
-                                    .add(new Label("M: "),
-                                            maintenanceSkillLabel),
-                            new TaskSelector(_root, entity(id)));
-                }
             }
         };
     };
@@ -301,6 +234,8 @@ public class GameScreen extends ScreenStack.UIScreen {
     private State state;
 
     public GameScreen() {
+        new Pointer(game().plat, layer, true);
+        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, false));
         world.connect(update, paint);
         initializeWorld();
         configurePauseButton();
@@ -414,6 +349,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         root.add(AbsoluteLayout.at(attackSurfaceLabel, 50, 200));
         root.add(AbsoluteLayout.at(pauseButton, 400, 50));
         root.add(AbsoluteLayout.at(attackButton, 400, 100));
+        root.add(AbsoluteLayout.at(new WorkerGroup(world, iface), 0, size().height() / 2, size().width(), size().height() / 2));
         root.setSize(size());
         return root;
     }
@@ -427,55 +363,6 @@ public class GameScreen extends ScreenStack.UIScreen {
     @Override
     public Game game() {
         return SimGame.game;
-    }
-
-    final class TaskSelector extends Button {
-        private final TaskFormatter formatter = new TaskFormatter();
-
-        TaskSelector(Root root, final Entity worker) {
-            super();
-            setTextBasedOnCurrentTaskOf(worker);
-            final MenuHost menuHost = new MenuHost(iface, root);
-            BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
-            addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
-            onClick(new Slot<Button>() {
-                @Override
-                public void onEmit(Button button) {
-                    MenuHost.Pop pop = new MenuHost.Pop(button,
-                            createMenu());
-                    pop.menu.itemTriggered().connect(updater(button));
-                    menuHost.popup(pop);
-                }
-
-                private Slot<MenuItem> updater(final Button button) {
-                    return new Slot<MenuItem>() {
-                        @Override
-                        public void onEmit(MenuItem menuItem) {
-                            button.text.update(menuItem.text.get() + " " + DOWN_ARROW);
-                            int assignedTask = formatter.asTask(menuItem.text.get());
-                            world.tasked.set(worker.id, assignedTask);
-                            worker.didChange();
-                        }
-                    };
-                }
-
-                private Menu createMenu() {
-                    Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
-                    for (int task : Task.VALUES) {
-                        menu.add(new MenuItem(formatter.format(task)));
-                    }
-                    return menu;
-                }
-            });
-            interactiveElements.add(this);
-        }
-
-        private void setTextBasedOnCurrentTaskOf(Entity worker) {
-            final int currentTask = world.tasked.get(worker.id);
-            String taskName = formatter.format(currentTask);
-            text.update(taskName + " " + DOWN_ARROW);
-        }
-
     }
 
     private final class AttackButton extends Button {

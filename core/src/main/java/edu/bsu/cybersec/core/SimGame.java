@@ -14,7 +14,7 @@ public class SimGame extends SceneGame {
         super(plat, 33);
         game = this;
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
-        screenStack.push(new CollapsingScreen());
+        screenStack.push(new GameScreen());
     }
 
 }
