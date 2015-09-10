@@ -1,8 +1,10 @@
 package edu.bsu.cybersec.core;
 
 import playn.core.Game;
+import playn.scene.Layer;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
+import pythagoras.f.Point;
 import react.Value;
 import react.ValueView;
 import tripleplay.anim.Animation;
@@ -16,14 +18,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CollapsingScreen extends ScreenStack.UIScreen {
 
-    private Value<Widget<?>> focus = Value.create(null);
+    private Value<Element<?>> focus = Value.create(null);
 
     public CollapsingScreen() {
-        new Pointer(game().plat, layer, true);
-        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, false));
-        focus.connect(new ValueView.Listener<Widget<?>>() {
+        configurePointerInput();
+        focus.connect(new ValueView.Listener<Element<?>>() {
             @Override
-            public void onChange(Widget<?> value, Widget<?> oldValue) {
+            public void onChange(Element<?> value, Element<?> oldValue) {
                 final float duration = 1000f;
                 if (oldValue != null) {
                     iface.anim.tween(new WeightValue(oldValue)).from(5).to(1).in(duration).easeOut();
@@ -35,11 +36,16 @@ public class CollapsingScreen extends ScreenStack.UIScreen {
         });
     }
 
+    private void configurePointerInput() {
+        new Pointer(game().plat, layer, true);
+        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, false));
+    }
+
     private class WeightValue implements Animation.Value {
 
-        private Widget<?> widget;
+        private Element<?> widget;
 
-        public WeightValue(Widget<?> widget) {
+        public WeightValue(Element<?> widget) {
             this.widget = checkNotNull(widget);
         }
 
@@ -58,11 +64,11 @@ public class CollapsingScreen extends ScreenStack.UIScreen {
     @Override
     protected Root createRoot() {
         Group topGroup = new Group(AxisLayout.vertical().stretchByDefault().offStretch().gap(0));
-        final Widget<?> g1 = new ClickableLabel("Foo")
+        final Element<?> g1 = new ClickableGroup("Foo")
                 .setStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
-        final Widget<?> g2 = new ClickableLabel("Bar")
+        final Element<?> g2 = new ClickableGroup("Bar")
                 .setStyles(Style.BACKGROUND.is(Background.solid(Colors.CYAN)));
-        final Widget<?> g3 = new ClickableLabel("Baz")
+        final Element<?> g3 = new ClickableGroup("Baz")
                 .setStyles(Style.BACKGROUND.is(Background.solid(Colors.BLUE)));
 
         topGroup.add(g1, g2, g3);
@@ -78,49 +84,30 @@ public class CollapsingScreen extends ScreenStack.UIScreen {
         return root;
     }
 
-    private class ClickableLabel extends Label {
+    private class ClickableGroup extends Group {
 
-        public ClickableLabel(String text) {
-            super(text);
+        public ClickableGroup(final String text) {
+            super(AxisLayout.horizontal().offStretch());
+            add(new Label(text));
             layer.setInteractive(true);
-        }
-
-        @Override
-        protected Behavior<Label> createBehavior() {
-            return new AbstractBehavior<Label>(this) {
+            layer.setHitTester(new Layer.HitTester() {
                 @Override
-                public void onClick(Pointer.Interaction iact) {
-                    if (focus.get() == ClickableLabel.this) {
+                public Layer hitTest(Layer layer, Point p) {
+                    return (p.x >= 0 && p.y >= 0 &&
+                            p.x() <= _size.width && p.y() <= _size.height)
+                            ? layer : null;
+                }
+            });
+            layer.events().connect(new Pointer.Listener() {
+                @Override
+                public void onStart(Pointer.Interaction iact) {
+                    if (focus.get() == ClickableGroup.this) {
                         focus.update(null);
                     } else {
-                        focus.update(ClickableLabel.this);
+                        focus.update(ClickableGroup.this);
                     }
                 }
-            };
-        }
-    }
-
-    private static abstract class AbstractBehavior<T extends Widget<T>> extends Behavior<T> {
-
-        public AbstractBehavior(T owner) {
-            super(owner);
-        }
-
-        @Override
-        public void onPress(Pointer.Interaction iact) {
-        }
-
-        @Override
-        public void onHover(Pointer.Interaction iact, boolean inBounds) {
-        }
-
-        @Override
-        public boolean onRelease(Pointer.Interaction iact) {
-            return true;
-        }
-
-        @Override
-        public void onClick(Pointer.Interaction iact) {
+            });
         }
     }
 
