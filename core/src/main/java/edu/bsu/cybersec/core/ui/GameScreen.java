@@ -130,6 +130,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private interface State {
         void onEnter();
+
         void onExit();
     }
 
@@ -343,16 +344,22 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, new AbsoluteLayout(), makeStyleSheet());
-        root.add(AbsoluteLayout.at(timeLabel, 50, 50));
-        root.add(AbsoluteLayout.at(usersLabel, 50, 100));
-        root.add(AbsoluteLayout.at(progressLabel, 50, 150));
-        root.add(AbsoluteLayout.at(attackSurfaceLabel, 50, 200));
-        root.add(AbsoluteLayout.at(pauseButton, 400, 50));
-        root.add(AbsoluteLayout.at(attackButton, 400, 100));
-        root.add(AbsoluteLayout.at(new WorkerGroup(world, iface), 0, size().height() / 2, size().width(), size().height() / 2));
+        Root root = new Root(iface, AxisLayout.vertical(), makeStyleSheet());
+        root.add(new TopStatusBar());
+        root.add(new WorkerGroup(world, iface)
+                .setConstraint(Constraints.fixedSize(size().width(), size().height() / 2)));
+        root.add(makeGroupContainingLeftoverWidgetsFromOldUi());
         root.setSize(size());
         return root;
+    }
+
+    private Group makeGroupContainingLeftoverWidgetsFromOldUi() {
+        Group leftovers = new Group(new AbsoluteLayout());
+        leftovers.add(AbsoluteLayout.at(progressLabel, 50, 150),
+                AbsoluteLayout.at(attackSurfaceLabel, 50, 200),
+                AbsoluteLayout.at(pauseButton, 400, 50),
+                AbsoluteLayout.at(attackButton, 400, 100));
+        return leftovers;
     }
 
     private Stylesheet makeStyleSheet() {
@@ -364,6 +371,14 @@ public class GameScreen extends ScreenStack.UIScreen {
     @Override
     public Game game() {
         return SimGame.game;
+    }
+
+    private final class TopStatusBar extends Group {
+        public TopStatusBar() {
+            super(AxisLayout.horizontal().stretchByDefault());
+            add(timeLabel);
+            add(usersLabel);
+        }
     }
 
     private final class AttackButton extends Button {
