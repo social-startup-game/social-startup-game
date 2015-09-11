@@ -1,6 +1,7 @@
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Lists;
+import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Game;
 import playn.core.Keyboard;

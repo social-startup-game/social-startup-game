@@ -1,4 +1,4 @@
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.ui;
 
 import playn.scene.Pointer;
 import react.Signal;

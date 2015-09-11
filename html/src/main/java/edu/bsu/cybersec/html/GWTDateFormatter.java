@@ -1,7 +1,7 @@
 package edu.bsu.cybersec.html;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import edu.bsu.cybersec.core.PlatformSpecificDateFormatter;
+import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 
 public class GWTDateFormatter implements PlatformSpecificDateFormatter {
     private final DateTimeFormat format = DateTimeFormat.getFormat("EEE, d MMM yyyy hh:mm:ss aaa");

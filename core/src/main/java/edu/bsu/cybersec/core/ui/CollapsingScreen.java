@@ -1,5 +1,6 @@
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.scene.Layer;
 import playn.scene.Mouse;

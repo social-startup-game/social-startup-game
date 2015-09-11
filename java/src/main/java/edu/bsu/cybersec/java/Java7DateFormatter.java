@@ -1,6 +1,6 @@
 package edu.bsu.cybersec.java;
 
-import edu.bsu.cybersec.core.PlatformSpecificDateFormatter;
+import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

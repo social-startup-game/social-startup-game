@@ -1,7 +1,7 @@
 package edu.bsu.cybersec.html;
 
-import edu.bsu.cybersec.core.PlatformSpecificDateFormatter;
 import edu.bsu.cybersec.core.SimGamePlatform;
+import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 import playn.html.HtmlPlatform;
 
 public class SimGameHtmlPlatform extends HtmlPlatform implements SimGamePlatform {

@@ -1,7 +1,7 @@
 package edu.bsu.cybersec.java;
 
-import edu.bsu.cybersec.core.PlatformSpecificDateFormatter;
 import edu.bsu.cybersec.core.SimGamePlatform;
+import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 import playn.java.LWJGLPlatform;
 
 public class SimGameJavaPlatform extends LWJGLPlatform implements SimGamePlatform {
