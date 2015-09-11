@@ -125,7 +125,6 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final Label usersLabel = new Label("");
     private final Label progressLabel = new Label("");
     private final Label attackSurfaceLabel = new Label("");
-    private final Button attackButton = new AttackButton();
     private final ToggleButton pauseButton = new ToggleButton("Pause");
 
     private interface State {
@@ -344,7 +343,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), makeStyleSheet());
+        Root root = new Root(iface, AxisLayout.vertical().gap(0).offStretch(), makeStyleSheet());
         root.add(new TopStatusBar());
         root.add(new WorkerGroup(world, iface)
                 .setConstraint(Constraints.fixedSize(size().width(), size().height() / 2)));
@@ -353,13 +352,13 @@ public class GameScreen extends ScreenStack.UIScreen {
         return root;
     }
 
-    private Group makeGroupContainingLeftoverWidgetsFromOldUi() {
-        Group leftovers = new Group(new AbsoluteLayout());
-        leftovers.add(AbsoluteLayout.at(progressLabel, 50, 150),
-                AbsoluteLayout.at(attackSurfaceLabel, 50, 200),
-                AbsoluteLayout.at(pauseButton, 400, 50),
-                AbsoluteLayout.at(attackButton, 400, 100));
-        return leftovers;
+    private Tabs makeGroupContainingLeftoverWidgetsFromOldUi() {
+        Tabs tabs = new Tabs().addStyles(Style.BACKGROUND.is(Background.solid(Colors.DARK_GRAY)));
+        tabs.add("foo", new Label("Bar"));
+        tabs.add("zoo", new Label("Zebra"));
+        tabs.setConstraint(AxisLayout.stretched());
+        return tabs;
+
     }
 
     private Stylesheet makeStyleSheet() {
@@ -378,23 +377,8 @@ public class GameScreen extends ScreenStack.UIScreen {
             super(AxisLayout.horizontal().stretchByDefault());
             add(timeLabel);
             add(usersLabel);
-        }
-    }
-
-    private final class AttackButton extends Button {
-        AttackButton() {
-            super("Force an attack");
-            onClick(new Slot<Button>() {
-                @Override
-                public void onEmit(Button button) {
-                    Entity attack = world.create(true)
-                            .add(world.usersPerSecond, world.expiresIn, world.companyId);
-                    world.usersPerSecond.set(attack.id, -2);
-                    world.expiresIn.set(attack.id, 2000);
-                    world.companyId.set(attack.id, company.id);
-                }
-            });
-            interactiveElements.add(this);
+            setConstraint(Constraints.fixedHeight(25));
+            addStyles(Style.BACKGROUND.is(Background.solid(Colors.DARK_GRAY)));
         }
     }
 
