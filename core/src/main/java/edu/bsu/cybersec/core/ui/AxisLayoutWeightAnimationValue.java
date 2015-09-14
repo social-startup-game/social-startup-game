@@ -1,10 +1,10 @@
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.ui;
 
 import tripleplay.anim.Animation;
 import tripleplay.ui.Element;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class AxisLayoutWeightAnimationValue implements Animation.Value {
 

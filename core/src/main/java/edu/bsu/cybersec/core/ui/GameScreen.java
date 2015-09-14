@@ -344,21 +344,15 @@ public class GameScreen extends ScreenStack.UIScreen {
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, AxisLayout.vertical().gap(0).offStretch(), makeStyleSheet());
-        root.add(new TopStatusBar());
-        root.add(new WorkerGroup(world, iface)
-                .setConstraint(Constraints.fixedSize(size().width(), size().height() / 2)));
-        root.add(makeGroupContainingLeftoverWidgetsFromOldUi());
+        root.add(new TopStatusBar()
+                .setConstraint(Constraints.fixedHeight(30)));
+        root.add(new MainUIGroup(world, iface)
+                .setConstraint(AxisLayout.stretched()));
+        root.add(new Group(AxisLayout.horizontal())
+                .add(new Button("Buttons"), new Button("Go"), new Button("Here"))
+                .setConstraint(Constraints.fixedHeight(30)));
         root.setSize(size());
         return root;
-    }
-
-    private Tabs makeGroupContainingLeftoverWidgetsFromOldUi() {
-        Tabs tabs = new Tabs().addStyles(Style.BACKGROUND.is(Background.solid(Colors.DARK_GRAY)));
-        tabs.add("foo", new Label("Bar"));
-        tabs.add("zoo", new Label("Zebra"));
-        tabs.setConstraint(AxisLayout.stretched());
-        return tabs;
-
     }
 
     private Stylesheet makeStyleSheet() {

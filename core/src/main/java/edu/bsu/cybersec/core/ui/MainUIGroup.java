@@ -1,6 +1,5 @@
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.AxisLayoutWeightAnimationValue;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.Task;
 import edu.bsu.cybersec.core.TaskFormatter;
@@ -14,18 +13,19 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
-public class WorkerGroup extends Group {
+public class MainUIGroup extends Group {
     private static final String DOWN_ARROW = "\u25BC";
 
     private final Interface iface;
     private final GameWorld gameWorld;
     private final int[] COLORS = {Colors.ORANGE, Colors.WHITE, Colors.GREEN};
     private final Value<Group> focus = Value.create(null);
+    private Group contentGroup;
 
-    public WorkerGroup(final GameWorld gameWorld, final Interface iface) {
-        super(AxisLayout.vertical().offStretch().stretchByDefault().gap(0));
+    public MainUIGroup(final GameWorld gameWorld, final Interface iface) {
+        super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
         setupUIConfigurationSystem();
@@ -46,7 +46,8 @@ public class WorkerGroup extends Group {
                     int id = entities.get(i);
                     String name = gameWorld.name.get(id);
                     final Group group = new Group(AxisLayout.horizontal())
-                            .addStyles(Style.BACKGROUND.is(Background.solid(COLORS[i])));
+                            .addStyles(Style.BACKGROUND.is(Background.solid(COLORS[i])))
+                            .setConstraint(AxisLayout.stretched());
                     Label label = new ClickableLabel(name)
                             .onClick(new Slot<ClickableLabel>() {
                                 @Override
@@ -62,6 +63,11 @@ public class WorkerGroup extends Group {
                     group.add(label, new TaskSelector(root(), gameWorld.entity(id)));
                     add(group);
                 }
+                contentGroup = new Group(AxisLayout.horizontal())
+                        .add(new Label("This is the rest of the screen"))
+                        .addStyles(Style.BACKGROUND.is(Background.solid(Colors.MAGENTA)))
+                        .setConstraint(AxisLayout.stretched(2));
+                add(contentGroup);
                 setEnabled(false);
             }
         };
@@ -69,17 +75,52 @@ public class WorkerGroup extends Group {
 
     private void animateFocusChanges() {
         focus.connect(new ValueView.Listener<Group>() {
+            private static final float SELECTED_GROUP_WEIGHT = 3;
+            private static final float UNSELECTED_GROUP_WEIGHT = 1;
+            private static final float DEFAULT_CONTENT_GROUP_WEIGHT = 2;
+            private static final float INVISIBLE_CONTENT_GROUP_WEIGHT = 0;
+            private static final float ANIMATION_DURATION = 1000f;
+            private static final float TRANSPARENT = 0f;
+            private static final float OPAQUE = 1f;
+
             @Override
-            public void onChange(Group value, Group oldValue) {
-                final float duration = 1000f;
-                if (oldValue != null) {
-                    iface.anim.tween(new AxisLayoutWeightAnimationValue(oldValue))
-                            .from(5).to(1).in(duration).easeOut();
+            public void onChange(Group newSelection, Group previousSelection) {
+                if (previousSelection != null) {
+                    shrinkWorkerGroup(previousSelection);
                 }
-                if (value != null) {
-                    iface.anim.tween(new AxisLayoutWeightAnimationValue(value))
-                            .from(1).to(5).in(duration).easeOut();
+                if (newSelection != null) {
+                    expandWorkerGroup(newSelection);
                 }
+                if (previousSelection != null && newSelection == null) {
+                    expandContentArea();
+                }
+                if (previousSelection == null && newSelection != null) {
+                    shrinkContentArea();
+                }
+            }
+
+            private void shrinkWorkerGroup(Group previousSelection) {
+                iface.anim.tween(new AxisLayoutWeightAnimationValue(previousSelection))
+                        .from(SELECTED_GROUP_WEIGHT).to(UNSELECTED_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
+            }
+
+            private void expandWorkerGroup(Group newSelection) {
+                iface.anim.tween(new AxisLayoutWeightAnimationValue(newSelection))
+                        .from(UNSELECTED_GROUP_WEIGHT).to(SELECTED_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
+            }
+
+            private void expandContentArea() {
+                iface.anim.tween(new AxisLayoutWeightAnimationValue(contentGroup))
+                        .from(INVISIBLE_CONTENT_GROUP_WEIGHT).to(DEFAULT_CONTENT_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
+                iface.anim.tweenAlpha(contentGroup.layer)
+                        .from(TRANSPARENT).to(OPAQUE).in(ANIMATION_DURATION / 2);
+            }
+
+            private void shrinkContentArea() {
+                iface.anim.tween(new AxisLayoutWeightAnimationValue(contentGroup))
+                        .from(DEFAULT_CONTENT_GROUP_WEIGHT).to(INVISIBLE_CONTENT_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
+                iface.anim.tweenAlpha(contentGroup.layer)
+                        .from(OPAQUE).to(TRANSPARENT).in(ANIMATION_DURATION / 2);
             }
         });
     }
@@ -122,8 +163,6 @@ public class WorkerGroup extends Group {
                     return menu;
                 }
             });
-            //TODO fix this
-            //    interactiveElements.add(this);
         }
 
         private void setTextBasedOnCurrentTaskOf(Entity worker) {
