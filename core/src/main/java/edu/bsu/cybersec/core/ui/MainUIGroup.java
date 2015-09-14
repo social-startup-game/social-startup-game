@@ -1,9 +1,15 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.Task;
 import edu.bsu.cybersec.core.TaskFormatter;
 import playn.core.Clock;
+import playn.core.Image;
+import playn.core.Tile;
+import playn.core.TileSource;
+import playn.scene.ImageLayer;
+import pythagoras.f.IDimension;
 import react.Slot;
 import react.Value;
 import react.ValueView;
@@ -20,7 +26,6 @@ public class MainUIGroup extends Group {
 
     private final Interface iface;
     private final GameWorld gameWorld;
-    private final int[] COLORS = {Colors.ORANGE, Colors.WHITE, Colors.GREEN};
     private final Value<Group> focus = Value.create(null);
     private Group contentGroup;
 
@@ -42,11 +47,15 @@ public class MainUIGroup extends Group {
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
+
+                Image image = SimGame.game.plat.assets().getImageSync("images/bobross.jpg");
+                Tile tile = image.tile();
+
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
                     String name = gameWorld.name.get(id);
                     final Group group = new Group(AxisLayout.horizontal())
-                            .addStyles(Style.BACKGROUND.is(Background.solid(COLORS[i])))
+                            .addStyles(Style.BACKGROUND.is(makeExpandableImageBackground(tile.texture())))
                             .setConstraint(AxisLayout.stretched());
                     Label label = new ClickableLabel(name)
                             .onClick(new Slot<ClickableLabel>() {
@@ -59,7 +68,7 @@ public class MainUIGroup extends Group {
                                     }
                                 }
                             })
-                            .addStyles(Style.COLOR.is(Colors.BLACK));
+                            .addStyles(Style.COLOR.is(Colors.WHITE));
                     group.add(label, new TaskSelector(root(), gameWorld.entity(id)));
                     add(group);
                 }
@@ -170,6 +179,16 @@ public class MainUIGroup extends Group {
             String taskName = formatter.format(currentTask);
             text.update(taskName + " " + DOWN_ARROW);
         }
+    }
 
+    private static Background makeExpandableImageBackground(final TileSource source) {
+        return new Background() {
+            @Override
+            protected Instance instantiate(IDimension size) {
+                ImageLayer layer = new ImageLayer(source);
+                layer.setSize(size.width(), source.tile().height());
+                return new LayerInstance(size, layer);
+            }
+        };
     }
 }

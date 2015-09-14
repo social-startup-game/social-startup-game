@@ -350,7 +350,8 @@ public class GameScreen extends ScreenStack.UIScreen {
                 .setConstraint(AxisLayout.stretched()));
         root.add(new Group(AxisLayout.horizontal())
                 .add(new Button("Buttons"), new Button("Go"), new Button("Here"))
-                .setConstraint(Constraints.fixedHeight(30)));
+                .setConstraint(Constraints.fixedHeight(30)))
+                .addStyles(Style.BACKGROUND.is(Background.solid(Colors.BLACK)));
         root.setSize(size());
         return root;
     }
