@@ -4,11 +4,8 @@ import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.Task;
 import edu.bsu.cybersec.core.TaskFormatter;
-import playn.core.Clock;
-import playn.core.Image;
-import playn.core.Tile;
-import playn.core.TileSource;
-import playn.scene.ImageLayer;
+import playn.core.*;
+import playn.scene.Layer;
 import pythagoras.f.IDimension;
 import react.Slot;
 import react.Value;
@@ -19,7 +16,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainUIGroup extends Group {
     private static final String DOWN_ARROW = "\u25BC";
@@ -184,10 +181,24 @@ public class MainUIGroup extends Group {
     private static Background makeExpandableImageBackground(final TileSource source) {
         return new Background() {
             @Override
-            protected Instance instantiate(IDimension size) {
-                ImageLayer layer = new ImageLayer(source);
-                layer.setSize(size.width(), source.tile().height());
-                return new LayerInstance(size, layer);
+            protected Instance instantiate(final IDimension size) {
+                return new LayerInstance(size, new Layer() {
+                    @Override
+                    protected void paintImpl(Surface surf) {
+                        final Tile tile = source.tile();
+                        final float destinationX = 0;
+                        final float destinationY = 0;
+                        final float destinationWidth = size.width();
+                        final float destinationHeight = size.height();
+                        final float sourceX = 0;
+                        final float sourceY = 0;
+                        final float sourceWidth = tile.width();
+                        final float sourceHeight = size.height();
+                        surf.draw(tile,
+                                destinationX, destinationY, destinationWidth, destinationHeight,
+                                sourceX, sourceY, sourceWidth, sourceHeight);
+                    }
+                });
             }
         };
     }
