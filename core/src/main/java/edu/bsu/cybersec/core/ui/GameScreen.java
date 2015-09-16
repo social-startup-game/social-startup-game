@@ -8,6 +8,7 @@ import playn.core.Keyboard;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
 import pythagoras.f.Dimension;
+import pythagoras.f.Rectangle;
 import react.Connection;
 import react.Slot;
 import tripleplay.entity.Entity;
@@ -24,6 +25,7 @@ import static com.google.common.base.Preconditions.*;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float SECONDS_PER_HOUR = 60 * 60;
+    private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
 
     private Entity company;
     private Entity[] developers;
@@ -343,17 +345,25 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical().gap(0).offStretch(), makeStyleSheet());
-        root.add(new TopStatusBar()
+        Rectangle contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(size());
+        Group content = createContentGroup();
+        return new Root(iface, new AbsoluteLayout(), makeStyleSheet())
+                .add(AbsoluteLayout.at(content,
+                        contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
+                .setSize(size());
+    }
+
+    private Group createContentGroup() {
+        final Group content = new Group(AxisLayout.vertical().gap(0).offStretch());
+        content.add(new TopStatusBar()
                 .setConstraint(Constraints.fixedHeight(30)));
-        root.add(new MainUIGroup(world, iface)
+        content.add(new MainUIGroup(world, iface)
                 .setConstraint(AxisLayout.stretched()));
-        root.add(new Group(AxisLayout.horizontal())
+        content.add(new Group(AxisLayout.horizontal())
                 .add(new Button("Buttons"), new Button("Go"), new Button("Here"))
                 .setConstraint(Constraints.fixedHeight(30)))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Colors.BLACK)));
-        root.setSize(size());
-        return root;
+        return content;
     }
 
     private Stylesheet makeStyleSheet() {

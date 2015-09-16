@@ -2,8 +2,8 @@ package edu.bsu.cybersec.core;
 
 import org.junit.After;
 import org.junit.Test;
-import playn.scene.GroupLayer;
 import pythagoras.f.Dimension;
+import pythagoras.f.Rectangle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,13 +13,13 @@ public class AspectRatioToolTest {
     private static final float EPSILON = 0.0001f;
 
     private AspectRatioTool tool;
-    private GroupLayer root;
-    private GroupLayer child;
+    private Dimension rootSize;
+    private Rectangle child;
 
     @After
     public void tearDown() {
         tool = null;
-        root = null;
+        rootSize = null;
         child = null;
     }
 
@@ -36,16 +36,15 @@ public class AspectRatioToolTest {
 
     private void configureTest(float desiredRatio, float viewWidth, float viewHeight) {
         tool = new AspectRatioTool(desiredRatio);
-        root = new GroupLayer(viewWidth, viewHeight);
+        rootSize = new Dimension(viewWidth, viewHeight);
     }
 
     private void whenALayerIsCreated() {
-        child = tool.createLayer(root);
+        child = tool.createBoundingBoxWithin(rootSize);
     }
 
     private void thenChildSizeEqualsRootSize() {
         Dimension childSize = new Dimension(child.width(), child.height());
-        Dimension rootSize = new Dimension(root.width(), root.height());
         assertEquals(rootSize, childSize);
     }
 
@@ -53,7 +52,7 @@ public class AspectRatioToolTest {
     public void testCreateLayer_viewWiderThanDesired_childFitsHeight() {
         givenViewWiderThanDesired();
         whenALayerIsCreated();
-        assertEquals(root.height(), child.height(), EPSILON);
+        assertEquals(rootSize.height(), child.height(), EPSILON);
     }
 
     private void givenViewWiderThanDesired() {
@@ -64,35 +63,35 @@ public class AspectRatioToolTest {
     public void testCreateLayer_viewWiderThanDesired_childIsTopAligned() {
         givenViewWiderThanDesired();
         whenALayerIsCreated();
-        assertEquals(0, child.ty(), EPSILON);
+        assertEquals(0, child.y, EPSILON);
     }
 
     @Test
     public void testCreateLayer_viewWiderThanDesired_childXIsPositive() {
         givenViewWiderThanDesired();
         whenALayerIsCreated();
-        assertTrue(child.tx() > 0);
+        assertTrue(child.x > 0);
     }
 
     @Test
     public void testCreateLayer_viewTallerThanDesired_childFitsWidth() {
         givenViewTallerThanDesired();
         whenALayerIsCreated();
-        assertEquals(root.width(), child.width(), EPSILON);
+        assertEquals(rootSize.width(), child.width(), EPSILON);
     }
 
     @Test
     public void testCreateLayer_viewTallerThanDesired_childIsLeftAligned() {
         givenViewTallerThanDesired();
         whenALayerIsCreated();
-        assertEquals(0, child.tx(), EPSILON);
+        assertEquals(0, child.x, EPSILON);
     }
 
     @Test
     public void testCreateLayer_viewTallerThanDesired_childYIsPositive() {
         givenViewTallerThanDesired();
         whenALayerIsCreated();
-        assertTrue(child.ty() > 0);
+        assertTrue(child.y > 0);
     }
 
     private void givenViewTallerThanDesired() {

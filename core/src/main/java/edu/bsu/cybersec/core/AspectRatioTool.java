@@ -1,6 +1,7 @@
 package edu.bsu.cybersec.core;
 
-import playn.scene.GroupLayer;
+import pythagoras.f.IDimension;
+import pythagoras.f.Rectangle;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -14,25 +15,21 @@ public final class AspectRatioTool {
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    public GroupLayer createLayer(GroupLayer parent) {
+    public Rectangle createBoundingBoxWithin(IDimension parent) {
         final float parentWidth = parent.width();
         final float parentHeight = parent.height();
         final float viewAspectRatio = parentWidth / parentHeight;
-        GroupLayer child;
         if (desiredAspectRatio < viewAspectRatio) {
             final float childHeight = parentHeight;
             final float childWidth = desiredAspectRatio * childHeight;
-            child = new GroupLayer(childWidth, childHeight);
             final float xDiff = parentWidth - childWidth;
-            child.setTx(xDiff / 2);
+            return new Rectangle(xDiff / 2, 0, childWidth, childHeight);
         } else {
             final float childWidth = parentWidth;
             final float childHeight = parentWidth / desiredAspectRatio;
-            child = new GroupLayer(childWidth, childHeight);
             final float yDiff = parentHeight - childHeight;
-            child.setTy(yDiff / 2);
+            return new Rectangle(0, yDiff / 2, childWidth, childHeight);
         }
-        return child;
     }
 
 
