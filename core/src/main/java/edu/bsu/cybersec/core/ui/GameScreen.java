@@ -24,104 +24,108 @@ import java.util.List;
 import static com.google.common.base.Preconditions.*;
 
 public class GameScreen extends ScreenStack.UIScreen {
-    private static final float SECONDS_PER_HOUR = 60 * 60;
     private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
 
-    private Entity company;
-    private Entity[] developers;
-    private GameWorld.Systematized world = new GameWorld.Systematized() {
-        @SuppressWarnings("unused")
-        private tripleplay.entity.System timeRenderingSystem = new System(this, 0) {
-            {
-                checkState(game().plat instanceof SimGamePlatform,
-                        "The platform must provide the methods specified in SimGamePlatform");
+    private final GameWorld.Systematized gameWorld;
+    private final Entity company;
+
+    {
+        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory();
+        gameWorld = playableWorldFactory.createPlayableGameWorld();
+        company = playableWorldFactory.company;
+    }
+
+    @SuppressWarnings("unused")
+    private tripleplay.entity.System timeRenderingSystem = new System(gameWorld, 0) {
+        {
+            checkState(game().plat instanceof SimGamePlatform,
+                    "The platform must provide the methods specified in SimGamePlatform");
+        }
+
+        private final PlatformSpecificDateFormatter formatter =
+                ((SimGamePlatform) game().plat).dateFormatter();
+
+        private final long startTime = new java.util.Date().getTime();
+        private long now = startTime;
+
+        @Override
+        protected boolean isInterested(Entity entity) {
+            return entity.has(gameWorld.gameTime);
+        }
+
+        @Override
+        protected void update(Clock clock, System.Entities entities) {
+            checkState(entities.size() == 1, "I expected exactly one clock.");
+            for (int i = 0, limit = entities.size(); i < limit; i++) {
+                final int id = entities.get(i);
+                final int tick = gameWorld.gameTime.get(id);
+                now = startTime + tick;
             }
+            final String formatted = formatter.format(now);
+            timeLabel.text.update(formatted);
+        }
+    };
 
-            private final PlatformSpecificDateFormatter formatter =
-                    ((SimGamePlatform) game().plat).dateFormatter();
+    @SuppressWarnings("unused")
+    tripleplay.entity.System hudRenderingSystem = new System(gameWorld, 0) {
+        @Override
+        protected boolean isInterested(Entity entity) {
+            return entity.id == company.id;
+        }
 
-            private final long startTime = new java.util.Date().getTime();
-            private long now = startTime;
+        @Override
+        protected void update(Clock clock, Entities entities) {
+            super.update(clock, entities);
+            checkArgument(entities.size() == 1);
+            float numberOfUsers = gameWorld.users.get(entities.get(0));
+            usersLabel.text.update("Users: " + (int) numberOfUsers);
+        }
+    };
 
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.has(gameTime);
+    @SuppressWarnings("unused")
+    tripleplay.entity.System progressRenderingSystem = new System(gameWorld, 0) {
+        @Override
+        protected boolean isInterested(Entity entity) {
+            return entity.has(gameWorld.featureId) && entity.has(gameWorld.progress);
+        }
+
+        @Override
+        protected void update(Clock clock, Entities entities) {
+            super.update(clock, entities);
+            checkState(entities.size() <= 1,
+                    "I expected at most one featureId in development but found " + entities.size());
+            for (int i = 0, limit = entities.size(); i < limit; i++) {
+                int id = entities.get(i);
+                progressLabel.text.update("Progress: " + gameWorld.progress.get(id) + " / " + gameWorld.goal.get(id));
             }
+        }
+    };
 
-            @Override
-            protected void update(Clock clock, System.Entities entities) {
-                checkState(entities.size() == 1, "I expected exactly one clock.");
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    final int id = entities.get(i);
-                    final int tick = gameTime.get(id);
-                    now = startTime + tick;
-                }
-                final String formatted = formatter.format(now);
-                timeLabel.text.update(formatted);
-            }
-        };
+    @SuppressWarnings("unused")
+    System attackSurfaceRenderingSystem = new System(gameWorld, 0) {
 
-        @SuppressWarnings("unused")
-        tripleplay.entity.System hudRenderingSystem = new System(this, 0) {
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.id == company.id;
-            }
+        @Override
+        protected boolean isInterested(Entity entity) {
+            return entity.has(gameWorld.attackSurface);
+        }
 
-            @Override
-            protected void update(Clock clock, Entities entities) {
-                super.update(clock, entities);
-                checkArgument(entities.size() == 1);
-                float numberOfUsers = users.get(entities.get(0));
-                usersLabel.text.update("Users: " + (int) numberOfUsers);
-            }
-        };
-
-        @SuppressWarnings("unused")
-        tripleplay.entity.System progressRenderingSystem = new System(this, 0) {
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.has(featureId) && entity.has(progress);
-            }
-
-            @Override
-            protected void update(Clock clock, Entities entities) {
-                super.update(clock, entities);
-                checkState(entities.size() <= 1,
-                        "I expected at most one featureId in development but found " + entities.size());
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    int id = entities.get(i);
-                    progressLabel.text.update("Progress: " + progress.get(id) + " / " + goal.get(id));
-                }
-            }
-        };
-
-        @SuppressWarnings("unused")
-        System attackSurfaceRenderingSystem = new System(this, 0) {
-
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.has(attackSurface);
-            }
-
-            @Override
-            protected void update(Clock clock, Entities entities) {
-                super.update(clock, entities);
-                checkState(entities.size() == 1, "I expected only one entity to have an attack surface.");
-                checkState(entities.get(0) == company.id, "I expect this to be the company");
-                final int id = entities.get(0);
-                float surface = attackSurface.get(id);
-                attackSurfaceLabel.text.update("Attack surface: " + surface);
-            }
-        };
+        @Override
+        protected void update(Clock clock, Entities entities) {
+            super.update(clock, entities);
+            checkState(entities.size() == 1, "I expected only one entity to have an attack surface.");
+            checkState(entities.get(0) == company.id, "I expect this to be the company");
+            final int id = entities.get(0);
+            float surface = gameWorld.attackSurface.get(id);
+            attackSurfaceLabel.text.update("Attack surface: " + surface);
+        }
     };
 
     private final SystemToggle systemToggle = new SystemToggle(
-            world.gameTimeSystem,
-            world.userGenerationSystem,
-            world.featureDevelopmentSystem,
-            world.maintenanceSystem,
-            world.expirySystem);
+            gameWorld.gameTimeSystem,
+            gameWorld.userGenerationSystem,
+            gameWorld.featureDevelopmentSystem,
+            gameWorld.maintenanceSystem,
+            gameWorld.expirySystem);
     private final List<Element<?>> interactiveElements = Lists.newArrayList();
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");
@@ -239,84 +243,9 @@ public class GameScreen extends ScreenStack.UIScreen {
     public GameScreen() {
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, false));
-        world.connect(update, paint);
-        initializeWorld();
+        gameWorld.connect(update, paint);
         configurePauseButton();
         enterState(playingState);
-    }
-
-    private void initializeWorld() {
-        makeCompany();
-        makeClock();
-        makeExistingFeature();
-        makeFeatureInDevelopment();
-        makeDevelopers(3);
-    }
-
-    private void makeCompany() {
-        company = world.create(true)
-                .add(world.type,
-                        world.users,
-                        world.attackSurface);
-        world.type.set(company.id, Type.COMPANY);
-        world.users.set(company.id, 0);
-        world.attackSurface.set(company.id, 0);
-    }
-
-    private void makeClock() {
-        Entity clock = world.create(true).add(world.type, world.gameTime, world.gameTimeScale);
-        final int id = clock.id;
-        world.type.set(id, Type.CLOCK);
-        world.gameTime.set(id, 0);
-        world.gameTimeScale.set(id, SECONDS_PER_HOUR);
-    }
-
-    private Entity[] makeDevelopers(int number) {
-        checkArgument(number >= 0);
-        checkState(developers == null, "Expected developers not yet to be initialized");
-        developers = new Entity[number];
-        for (int i = 0; i < number; i++) {
-            developers[i] = makeDeveloper(i * 200 + 100);
-        }
-        return developers;
-    }
-
-    private Entity makeDeveloper(float x) {
-        Entity developer = world.create(true)
-                .add(world.developmentSkill,
-                        world.tasked,
-                        world.companyId,
-                        world.maintenanceSkill,
-                        world.name,
-                        world.position);
-        world.tasked.set(developer.id, Task.IDLE);
-        world.developmentSkill.set(developer.id, 5);
-        world.maintenanceSkill.set(developer.id, 0.02f);
-        world.companyId.set(developer.id, company.id);
-        world.name.set(developer.id, "Bob Ross");
-        world.position.set(developer.id, x, 250);
-        return developer;
-    }
-
-    private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.companyId, world.exposure);
-        world.usersPerSecond.set(userGeneratingEntity.id, 1);
-        world.companyId.set(userGeneratingEntity.id, company.id);
-        world.attackSurface.set(company.id, 0.05f);
-    }
-
-    private void makeFeatureInDevelopment() {
-        Entity feature = world.create(false)
-                .add(world.usersPerSecond, world.companyId, world.exposure);
-        world.usersPerSecond.set(feature.id, 25);
-        world.companyId.set(feature.id, company.id);
-        world.exposure.set(feature.id, 0.20f);
-
-        Entity development = world.create(true)
-                .add(world.progress, world.goal, world.featureId);
-        world.progress.set(development.id, 0);
-        world.goal.set(development.id, 20);
-        world.featureId.set(development.id, feature.id);
     }
 
     private void configurePauseButton() {
@@ -357,7 +286,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         final Group content = new Group(AxisLayout.vertical().gap(0).offStretch());
         content.add(new TopStatusBar()
                 .setConstraint(Constraints.fixedHeight(30)));
-        content.add(new MainUIGroup(world, iface)
+        content.add(new MainUIGroup(gameWorld, iface)
                 .setConstraint(AxisLayout.stretched()));
         content.add(new Group(AxisLayout.horizontal())
                 .add(new Button("Buttons"), new Button("Go"), new Button("Here"))
