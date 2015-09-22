@@ -1,13 +1,18 @@
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.ImmutableList;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.*;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 public class PlayableWorldFactory {
 
     private static final float SECONDS_PER_HOUR = 60 * 60;
 
+    private final List<String> names = ImmutableList.of("Esteban", "Nancy", "Jerry");
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     public Entity company;
     private Entity[] developers;
@@ -48,25 +53,23 @@ public class PlayableWorldFactory {
         checkState(developers == null, "Expected developers not yet to be initialized");
         developers = new Entity[number];
         for (int i = 0; i < number; i++) {
-            developers[i] = makeDeveloper(i * 200 + 100);
+            developers[i] = makeDeveloper(names.get(i));
         }
         return developers;
     }
 
-    private Entity makeDeveloper(float x) {
+    private Entity makeDeveloper(String name) {
         Entity developer = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked,
                         world.companyId,
                         world.maintenanceSkill,
-                        world.name,
-                        world.position);
+                        world.name);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 0.02f);
         world.companyId.set(developer.id, company.id);
-        world.name.set(developer.id, "Bob Ross");
-        world.position.set(developer.id, x, 250);
+        world.name.set(developer.id, name);
         return developer;
     }
 

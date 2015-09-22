@@ -44,11 +44,8 @@ public class MainUIGroup extends Group {
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
-
-                Image image = SimGame.game.plat.assets().getImageSync("images/bobross.jpg");
-                Tile tile = image.tile();
-
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
+                    final Tile tile = loadEmployeeImage(i);
                     int id = entities.get(i);
                     String name = gameWorld.name.get(id);
                     final Group group = new Group(AxisLayout.horizontal())
@@ -75,6 +72,11 @@ public class MainUIGroup extends Group {
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);
                 setEnabled(false);
+            }
+
+            private Tile loadEmployeeImage(int i) {
+                Image image = SimGame.game.plat.assets().getImageSync("images/employee_" + (i + 1) + ".png");
+                return image.tile();
             }
         };
     }
