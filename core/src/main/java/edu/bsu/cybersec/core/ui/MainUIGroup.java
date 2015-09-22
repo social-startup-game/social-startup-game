@@ -67,7 +67,7 @@ public class MainUIGroup extends Group {
                     add(group);
                 }
                 contentGroup = new Group(AxisLayout.horizontal())
-                        .add(new Label("This is the rest of the screen"))
+                        .add(new CompanyStatusGroupSystem(gameWorld).group)
                         .addStyles(Style.BACKGROUND.is(Background.solid(Colors.MAGENTA)))
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);
