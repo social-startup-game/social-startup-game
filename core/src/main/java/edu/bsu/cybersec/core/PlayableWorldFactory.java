@@ -1,18 +1,22 @@
 package edu.bsu.cybersec.core;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import tripleplay.entity.Entity;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class PlayableWorldFactory {
 
     private static final float SECONDS_PER_HOUR = 60 * 60;
 
-    private final List<String> names = ImmutableList.of("Esteban", "Nancy", "Jerry");
+    private final String IMAGE_PREFIX = "images/";
+    private final Map<String, String> nameImageMap = ImmutableMap.of(
+            "Esteban", IMAGE_PREFIX + "employee_1.png",
+            "Nancy", IMAGE_PREFIX + "employee_2.png",
+            "Jerry", IMAGE_PREFIX + "employee_3.png");
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     public Entity company;
     private Entity[] developers;
@@ -52,24 +56,29 @@ public class PlayableWorldFactory {
         checkArgument(number >= 0);
         checkState(developers == null, "Expected developers not yet to be initialized");
         developers = new Entity[number];
+        Iterator<String> nameIterator = nameImageMap.keySet().iterator();
         for (int i = 0; i < number; i++) {
-            developers[i] = makeDeveloper(names.get(i));
+            final String name = nameIterator.next();
+            developers[i] = makeDeveloper(name);
         }
         return developers;
     }
 
     private Entity makeDeveloper(String name) {
+        checkNotNull(name);
         Entity developer = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked,
                         world.companyId,
                         world.maintenanceSkill,
-                        world.name);
+                        world.name,
+                        world.imagePath);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 0.02f);
         world.companyId.set(developer.id, company.id);
         world.name.set(developer.id, name);
+        world.imagePath.set(developer.id, nameImageMap.get(name));
         return developer;
     }
 

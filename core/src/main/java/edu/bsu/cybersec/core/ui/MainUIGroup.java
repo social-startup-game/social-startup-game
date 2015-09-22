@@ -45,8 +45,8 @@ public class MainUIGroup extends Group {
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    final Tile tile = loadEmployeeImage(i);
                     int id = entities.get(i);
+                    final Tile tile = loadEmployeeImage(id);
                     String name = gameWorld.name.get(id);
                     final Group group = new Group(AxisLayout.horizontal())
                             .addStyles(Style.BACKGROUND.is(makeExpandableImageBackground(tile.texture())))
@@ -74,8 +74,9 @@ public class MainUIGroup extends Group {
                 setEnabled(false);
             }
 
-            private Tile loadEmployeeImage(int i) {
-                Image image = SimGame.game.plat.assets().getImageSync("images/employee_" + (i + 1) + ".png");
+            private Tile loadEmployeeImage(int entityId) {
+                final String path = gameWorld.imagePath.get(entityId);
+                Image image = SimGame.game.plat.assets().getImageSync(path);
                 return image.tile();
             }
         };
