@@ -25,11 +25,13 @@ public class MainUIGroup extends Group {
     private final GameWorld gameWorld;
     private final Value<Group> focus = Value.create(null);
     private Group contentGroup;
+    private final CompanyStatusGroupSystem companyStatusGroupSystem;
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface) {
         super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
+        this.companyStatusGroupSystem = new CompanyStatusGroupSystem(gameWorld);
         setupUIConfigurationSystem();
         animateFocusChanges();
     }
@@ -67,7 +69,7 @@ public class MainUIGroup extends Group {
                     add(group);
                 }
                 contentGroup = new Group(AxisLayout.horizontal())
-                        .add(new CompanyStatusGroupSystem(gameWorld).group)
+                        .add(companyStatusGroupSystem.group)
                         .addStyles(Style.BACKGROUND.is(Background.solid(Colors.MAGENTA)))
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);

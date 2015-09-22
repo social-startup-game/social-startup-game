@@ -6,7 +6,8 @@ import tripleplay.entity.Entity;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PlayableWorldFactory {
 
@@ -19,7 +20,6 @@ public class PlayableWorldFactory {
             "Jerry", IMAGE_PREFIX + "employee_3.png");
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     public Entity company;
-    private Entity[] developers;
 
     public GameWorld.Systematized createPlayableGameWorld() {
         initializeWorld();
@@ -52,16 +52,13 @@ public class PlayableWorldFactory {
         world.gameTimeScale.set(id, SECONDS_PER_HOUR);
     }
 
-    private Entity[] makeDevelopers(int number) {
+    private void makeDevelopers(int number) {
         checkArgument(number >= 0);
-        checkState(developers == null, "Expected developers not yet to be initialized");
-        developers = new Entity[number];
         Iterator<String> nameIterator = nameImageMap.keySet().iterator();
         for (int i = 0; i < number; i++) {
             final String name = nameIterator.next();
-            developers[i] = makeDeveloper(name);
+            makeDeveloper(name);
         }
-        return developers;
     }
 
     private Entity makeDeveloper(String name) {
