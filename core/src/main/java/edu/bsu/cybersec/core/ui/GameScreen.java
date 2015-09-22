@@ -2,8 +2,7 @@ package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.*;
-import playn.core.Clock;
-import playn.core.Game;
+import playn.core.*;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
 import pythagoras.f.Rectangle;
@@ -192,6 +191,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         gameWorld.connect(update, paint);
         configurePauseButton();
         enterState(playingState);
+        registerWorldDebugHook();
     }
 
     private void configurePauseButton() {
@@ -216,6 +216,30 @@ public class GameScreen extends ScreenStack.UIScreen {
         }
         this.state = state;
         this.state.onEnter();
+    }
+
+    private void registerWorldDebugHook() {
+        final WorldDebugSystem worldDebugSystem = new WorldDebugSystem(gameWorld);
+        worldDebugSystem.setEnabled(false);
+        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
+            @Override
+            public void onEmit(Keyboard.Event event) {
+                if (isDebugTrigger(event)) {
+                    debugWorld();
+                }
+            }
+
+            private boolean isDebugTrigger(Event event) {
+                if (event instanceof Keyboard.KeyEvent) {
+                    Keyboard.KeyEvent keyEvent = (Keyboard.KeyEvent) event;
+                    return keyEvent.down && keyEvent.key == Key.L;
+                } else return false;
+            }
+
+            private void debugWorld() {
+                worldDebugSystem.setEnabled(true);
+            }
+        });
     }
 
     @Override
