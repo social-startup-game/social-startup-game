@@ -10,8 +10,8 @@ public class ClickableLabel extends Label {
 
     private final Signal<ClickableLabel> onClick = Signal.create();
 
-    public ClickableLabel(String text) {
-        super(text);
+    public ClickableLabel(String name) {
+        super(name);
     }
 
     public ClickableLabel onClick(Slot<? super ClickableLabel> slot) {

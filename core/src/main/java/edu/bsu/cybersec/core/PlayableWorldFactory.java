@@ -1,10 +1,6 @@
 package edu.bsu.cybersec.core;
 
-import com.google.common.collect.ImmutableMap;
 import tripleplay.entity.Entity;
-
-import java.util.Iterator;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -12,12 +8,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PlayableWorldFactory {
 
     private static final float SECONDS_PER_HOUR = 60 * 60;
-
-    private final String IMAGE_PREFIX = "images/";
-    private final Map<String, String> nameImageMap = ImmutableMap.of(
-            "Esteban", IMAGE_PREFIX + "employee_1.png",
-            "Nancy", IMAGE_PREFIX + "employee_2.png",
-            "Jerry", IMAGE_PREFIX + "employee_3.png");
+    private static final String IMAGE_PREFIX = "images/";
+    private static final String[] NAMES = {"Esteban", "Nancy", "Jerry"};
+    
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     public Entity company;
 
@@ -54,9 +47,8 @@ public class PlayableWorldFactory {
 
     private void makeDevelopers(int number) {
         checkArgument(number >= 0);
-        Iterator<String> nameIterator = nameImageMap.keySet().iterator();
         for (int i = 0; i < number; i++) {
-            final String name = nameIterator.next();
+            final String name = NAMES[i];
             makeDeveloper(name);
         }
     }
@@ -75,7 +67,7 @@ public class PlayableWorldFactory {
         world.maintenanceSkill.set(developer.id, 0.02f);
         world.companyId.set(developer.id, company.id);
         world.name.set(developer.id, name);
-        world.imagePath.set(developer.id, nameImageMap.get(name));
+        world.imagePath.set(developer.id, IMAGE_PREFIX + name + ".png");
         return developer;
     }
 

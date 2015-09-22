@@ -26,6 +26,7 @@ public class MainUIGroup extends Group {
     private final Value<Group> focus = Value.create(null);
     private Group contentGroup;
     private final CompanyStatusGroupSystem companyStatusGroupSystem;
+    private final Image employeeBackground = SimGame.game.plat.assets().getImageSync("images/employee_bg.png");
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface) {
         super(AxisLayout.vertical().offStretch().gap(0));
@@ -48,12 +49,14 @@ public class MainUIGroup extends Group {
                 super.update(clock, entities);
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
-                    final Tile tile = loadEmployeeImage(id);
-                    String name = gameWorld.name.get(id);
-                    final Group group = new Group(AxisLayout.horizontal())
-                            .addStyles(Style.BACKGROUND.is(makeExpandableImageBackground(tile.texture())))
+                    final Image image = SimGame.game.plat.assets().getImageSync(gameWorld.imagePath.get(id));
+
+                    final Group group = new Group(AxisLayout.horizontal().offStretch())
+                            .addStyles(Style.BACKGROUND.is(makeExpandableImageBackground(image, employeeBackground.tile())))
                             .setConstraint(AxisLayout.stretched());
-                    Label label = new ClickableLabel(name)
+
+
+                    Label label = new ClickableLabel("")
                             .onClick(new Slot<ClickableLabel>() {
                                 @Override
                                 public void onEmit(ClickableLabel event) {
@@ -64,8 +67,17 @@ public class MainUIGroup extends Group {
                                     }
                                 }
                             })
-                            .addStyles(Style.COLOR.is(Colors.WHITE));
-                    group.add(label, new TaskSelector(root(), gameWorld.entity(id)));
+                            .addStyles(Style.COLOR.is(Colors.WHITE))
+                            .setConstraint(AxisLayout.stretched(1f));
+                    final String name = gameWorld.name.get(id);
+                    group.add(label,
+                            new Group(AxisLayout.vertical())
+                                    .add(new Shim(0, percentOfViewHeight(0.05f)),
+                                            new Label(name),
+                                            new TaskSelector(root(), gameWorld.entity(id)),
+                                            new Shim(0, 0).setConstraint(AxisLayout.stretched())
+                                    )
+                                    .setConstraint(AxisLayout.stretched(0.5f)));
                     add(group);
                 }
                 contentGroup = new Group(AxisLayout.horizontal())
@@ -76,10 +88,8 @@ public class MainUIGroup extends Group {
                 setEnabled(false);
             }
 
-            private Tile loadEmployeeImage(int entityId) {
-                final String path = gameWorld.imagePath.get(entityId);
-                Image image = SimGame.game.plat.assets().getImageSync(path);
-                return image.tile();
+            private float percentOfViewHeight(float v) {
+                return SimGame.game.plat.graphics().viewSize.height() * v;
             }
         };
     }
@@ -183,14 +193,19 @@ public class MainUIGroup extends Group {
         }
     }
 
-    private static Background makeExpandableImageBackground(final TileSource source) {
+    private static Background makeExpandableImageBackground(final TileSource foreground, final TileSource background) {
         return new Background() {
             @Override
             protected Instance instantiate(final IDimension size) {
                 return new LayerInstance(size, new Layer() {
                     @Override
                     protected void paintImpl(Surface surf) {
-                        final Tile tile = source.tile();
+                        paintBackground(surf);
+                        paintForeground(surf);
+                    }
+
+                    private void paintBackground(Surface surf) {
+                        final Tile tile = background.tile();
                         final float destinationX = 0;
                         final float destinationY = 0;
                         final float destinationWidth = size.width();
@@ -203,6 +218,23 @@ public class MainUIGroup extends Group {
                                 destinationX, destinationY, destinationWidth, destinationHeight,
                                 sourceX, sourceY, sourceWidth, sourceHeight);
                     }
+
+
+                    private void paintForeground(Surface surf) {
+                        final Tile tile = foreground.tile();
+                        final float destinationX = 0;
+                        final float destinationY = size.height() * 0.15f;
+                        final float destinationWidth = tile.width();
+                        final float destinationHeight = size.height();
+                        final float sourceX = 0;
+                        final float sourceY = 0;
+                        final float sourceWidth = tile.width();
+                        final float sourceHeight = size.height();
+                        surf.draw(tile,
+                                destinationX, destinationY, destinationWidth, destinationHeight,
+                                sourceX, sourceY, sourceWidth, sourceHeight);
+                    }
+
                 });
             }
         };
