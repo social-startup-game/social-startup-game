@@ -4,10 +4,8 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Game;
-import playn.core.Keyboard;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
-import pythagoras.f.Dimension;
 import pythagoras.f.Rectangle;
 import react.Connection;
 import react.Slot;
@@ -157,25 +155,11 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final State playingState = new AbstractState() {
 
         private Connection connection;
-        private Slot<Keyboard.Event> popupTriggerListener = new Slot<Keyboard.Event>() {
-            @Override
-            public void onEmit(Keyboard.Event event) {
-                if (isPopupTrigger(event)) {
-                    enterState(new PopupState("Hello, world!"));
-                }
-            }
-        };
-
-        private boolean isPopupTrigger(Keyboard.Event event) {
-            return event instanceof Keyboard.KeyEvent
-                    && ((Keyboard.KeyEvent) event).down;
-        }
 
         @Override
         public void onEnter() {
             checkState(connection == null, "There is a leaked connection");
             enableInteractiveElements();
-            connection = game().plat.input().keyboardEvents.connect(popupTriggerListener);
         }
 
         @Override
@@ -199,44 +183,6 @@ public class GameScreen extends ScreenStack.UIScreen {
             systemToggle.enable();
         }
     };
-
-    private final class PopupState extends AbstractState {
-        private final Group group;
-
-        PopupState(String message) {
-            group = new SizableGroup(AxisLayout.vertical(), new Dimension(300, 200));
-            group.setStylesheet(makePopupStylesheet())
-                    .add(new Label(message),
-                            new Button("Dismiss")
-                                    .onClick(new Slot<Button>() {
-                                        @Override
-                                        public void onEmit(Button event) {
-                                            enterState(playingState);
-                                        }
-                                    }));
-        }
-
-        private Stylesheet makePopupStylesheet() {
-            Stylesheet.Builder builder = SimpleStyles.newSheetBuilder(game().plat.graphics());
-            builder.add(Group.class, Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
-            builder.add(Label.class, Style.COLOR.is(Colors.CYAN));
-            return builder.create();
-        }
-
-        @Override
-        public void onEnter() {
-            disableInteractiveElements();
-            systemToggle.disable();
-            _root.add(AbsoluteLayout.at(group, 200, 200));
-        }
-
-        @Override
-        public void onExit() {
-            enableInteractiveElements();
-            systemToggle.enable();
-            _root.remove(group);
-        }
-    }
 
     private State state;
 
