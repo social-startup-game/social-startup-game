@@ -4,9 +4,8 @@ import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.Task;
 import edu.bsu.cybersec.core.TaskFormatter;
-import playn.core.*;
-import playn.scene.Layer;
-import pythagoras.f.IDimension;
+import playn.core.Clock;
+import playn.core.Image;
 import react.Slot;
 import react.Value;
 import react.ValueView;
@@ -52,9 +51,9 @@ public class MainUIGroup extends Group {
                     final Image image = SimGame.game.plat.assets().getImageSync(gameWorld.imagePath.get(id));
 
                     final Group group = new Group(AxisLayout.horizontal().offStretch())
-                            .addStyles(Style.BACKGROUND.is(makeExpandableImageBackground(image, employeeBackground.tile())))
+                            .addStyles(Style.BACKGROUND.is(
+                                    ExpandableParallaxBackground.foreground(image).background(employeeBackground.tile())))
                             .setConstraint(AxisLayout.stretched());
-
 
                     Label label = new ClickableLabel("")
                             .onClick(new Slot<ClickableLabel>() {
@@ -193,50 +192,4 @@ public class MainUIGroup extends Group {
         }
     }
 
-    private static Background makeExpandableImageBackground(final TileSource foreground, final TileSource background) {
-        return new Background() {
-            @Override
-            protected Instance instantiate(final IDimension size) {
-                return new LayerInstance(size, new Layer() {
-                    @Override
-                    protected void paintImpl(Surface surf) {
-                        paintBackground(surf);
-                        paintForeground(surf);
-                    }
-
-                    private void paintBackground(Surface surf) {
-                        final Tile tile = background.tile();
-                        final float destinationX = 0;
-                        final float destinationY = 0;
-                        final float destinationWidth = size.width();
-                        final float destinationHeight = size.height();
-                        final float sourceX = 0;
-                        final float sourceY = 0;
-                        final float sourceWidth = tile.width();
-                        final float sourceHeight = size.height();
-                        surf.draw(tile,
-                                destinationX, destinationY, destinationWidth, destinationHeight,
-                                sourceX, sourceY, sourceWidth, sourceHeight);
-                    }
-
-
-                    private void paintForeground(Surface surf) {
-                        final Tile tile = foreground.tile();
-                        final float destinationX = 0;
-                        final float destinationY = size.height() * 0.15f;
-                        final float destinationWidth = tile.width();
-                        final float destinationHeight = size.height();
-                        final float sourceX = 0;
-                        final float sourceY = 0;
-                        final float sourceWidth = tile.width();
-                        final float sourceHeight = size.height();
-                        surf.draw(tile,
-                                destinationX, destinationY, destinationWidth, destinationHeight,
-                                sourceX, sourceY, sourceWidth, sourceHeight);
-                    }
-
-                });
-            }
-        };
-    }
 }
