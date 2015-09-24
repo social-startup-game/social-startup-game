@@ -9,7 +9,8 @@ import java.util.Map;
 public class GameWorld extends World {
     public final Map<String, Component> components = Maps.newHashMap();
 
-    public long gameTimeMs;
+    public int prevGameTimeMs;
+    public int gameTimeMs;
 
     public final Component.IScalar tasked = register("tasked", new Component.IScalar(this));
     public final Component.IScalar developmentSkill = register("developmentSkill", new Component.IScalar(this));
@@ -27,10 +28,17 @@ public class GameWorld extends World {
     public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
     public final Component.Generic<String> imagePath = register("imagePath", new Component.Generic<String>(this));
     public final Component.Generic<Updatable> onUpdate = register("onUpdate", new Component.Generic<Updatable>(this));
+    public final Component.IScalar timeTrigger = register("timeTrigger", new Component.IScalar(this));
+    public final Component.Generic<Runnable> event = register("event", new Component.Generic<Runnable>(this));
 
     private <T extends Component> T register(String name, T component) {
         components.put(name, component);
         return component;
+    }
+
+    public void advanceGameTime(int ms) {
+        this.prevGameTimeMs = gameTimeMs;
+        this.gameTimeMs += ms;
     }
 
     public static class Systematized extends GameWorld {
