@@ -15,6 +15,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainUIGroup extends Group {
@@ -24,14 +25,13 @@ public class MainUIGroup extends Group {
     private final GameWorld gameWorld;
     private final Value<Group> focus = Value.create(null);
     private Group contentGroup;
-    private final CompanyStatusGroupSystem companyStatusGroupSystem;
+
     private final Image employeeBackground = SimGame.game.plat.assets().getImageSync("images/employee_bg.png");
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface) {
         super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
-        this.companyStatusGroupSystem = new CompanyStatusGroupSystem(gameWorld);
         setupUIConfigurationSystem();
         animateFocusChanges();
     }
@@ -46,6 +46,7 @@ public class MainUIGroup extends Group {
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
+                checkArgument(entities.size() == 3, "Current UI layout assumes three workers.");
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
                     final Image image = SimGame.game.plat.assets().getImageSync(gameWorld.imagePath.get(id));
@@ -80,8 +81,7 @@ public class MainUIGroup extends Group {
                     add(group);
                 }
                 contentGroup = new Group(AxisLayout.horizontal())
-                        .add(companyStatusGroupSystem.group)
-                        .addStyles(Style.BACKGROUND.is(Background.solid(Colors.MAGENTA)))
+                        .add(new GameInteractionArea(gameWorld))
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);
                 setEnabled(false);
