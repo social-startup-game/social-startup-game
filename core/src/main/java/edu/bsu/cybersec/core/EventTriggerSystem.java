@@ -17,7 +17,9 @@ public final class EventTriggerSystem extends tripleplay.entity.System {
     @Override
     protected boolean isInterested(Entity entity) {
         boolean interested = entity.has(gameWorld.timeTrigger);
-        checkState(entity.has(gameWorld.event), "I expect every time triggerable thing to have an event.");
+        if (interested) {
+            checkState(entity.has(gameWorld.event), "I expect every time triggerable thing to have an event.");
+        }
         return interested;
     }
 
