@@ -67,7 +67,7 @@ public final class ExpandableParallaxBackground extends Background {
                 final float destinationX = 0;
                 final float destinationY = size.height() * 0.15f;
                 final float destinationWidth = tile.width();
-                final float destinationHeight = size.height();
+                final float destinationHeight = size.height() - destinationY;
                 final float sourceX = 0;
                 final float sourceY = 0;
                 final float sourceWidth = tile.width();
