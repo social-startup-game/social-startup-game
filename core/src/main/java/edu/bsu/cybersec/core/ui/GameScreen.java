@@ -37,6 +37,16 @@ public class GameScreen extends ScreenStack.UIScreen {
         {
             checkState(game().plat instanceof SimGamePlatform,
                     "The platform must provide the methods specified in SimGamePlatform");
+            Entity updater = gameWorld.create(true).add(gameWorld.onUpdate);
+            gameWorld.onUpdate.set(updater.id, new Updatable() {
+                @Override
+                public void update(Clock clock) {
+                    final long tick = gameWorld.gameTimeMs;
+                    now = startTime + tick;
+                    final String formatted = formatter.format(now);
+                    timeLabel.text.update(formatted);
+                }
+            });
         }
 
         private final PlatformSpecificDateFormatter formatter =
@@ -48,16 +58,6 @@ public class GameScreen extends ScreenStack.UIScreen {
         @Override
         protected boolean isInterested(Entity entity) {
             return false;
-        }
-
-        @Override
-        protected void update(Clock clock, System.Entities entities) {
-            for (int i = 0, limit = entities.size(); i < limit; i++) {
-                final long tick = gameWorld.gameTimeMs;
-                now = startTime + tick;
-            }
-            final String formatted = formatter.format(now);
-            timeLabel.text.update(formatted);
         }
     };
 
@@ -116,6 +116,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     };
 
     private final SystemToggle systemToggle = new SystemToggle(
+            gameWorld.updatingSystem,
             gameWorld.gameTimeSystem,
             gameWorld.userGenerationSystem,
             gameWorld.featureDevelopmentSystem,

@@ -22,7 +22,6 @@ public class GameWorld extends World {
     public final Component.FScalar usersPerSecond = register("usersPerSecond", new Component.FScalar(this));
     public final Component.IScalar companyId = register("companyId", new Component.IScalar(this));
     public final Component.FScalar users = register("users", new Component.FScalar(this));
-    public final Component.FScalar gameTimeScale = register("gameTimeScale", new Component.FScalar(this));
     public final Component.FScalar attackSurface = register("attackSurface", new Component.FScalar(this));
     public final Component.FScalar exposure = register("exposure", new Component.FScalar(this));
     public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
@@ -35,6 +34,7 @@ public class GameWorld extends World {
     }
 
     public static class Systematized extends GameWorld {
+        public final UpdatingSystem updatingSystem = new UpdatingSystem(this);
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);

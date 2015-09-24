@@ -20,6 +20,7 @@ public class PlayableWorldFactory {
     }
 
     private void initializeWorld() {
+        world.gameTimeSystem.setScale(SECONDS_PER_HOUR);
         makeCompany();
         makeExistingFeature();
         makeFeatureInDevelopment();
