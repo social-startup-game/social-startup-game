@@ -21,7 +21,6 @@ public class PlayableWorldFactory {
 
     private void initializeWorld() {
         makeCompany();
-        makeClock();
         makeExistingFeature();
         makeFeatureInDevelopment();
         makeDevelopers(3);
@@ -35,14 +34,6 @@ public class PlayableWorldFactory {
         world.type.set(company.id, Type.COMPANY);
         world.users.set(company.id, 0);
         world.attackSurface.set(company.id, 0);
-    }
-
-    private void makeClock() {
-        Entity clock = world.create(true).add(world.type, world.gameTime, world.gameTimeScale);
-        final int id = clock.id;
-        world.type.set(id, Type.CLOCK);
-        world.gameTime.set(id, 0);
-        world.gameTimeScale.set(id, SECONDS_PER_HOUR);
     }
 
     private void makeDevelopers(int number) {
