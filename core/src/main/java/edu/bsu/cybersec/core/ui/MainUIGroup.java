@@ -25,6 +25,7 @@ public class MainUIGroup extends Group {
     private final GameWorld gameWorld;
     private final Value<Group> focus = Value.create(null);
     private Group contentGroup;
+    private final GameInteractionArea gameInteractionArea;
 
     private final Image employeeBackground = SimGame.game.plat.assets().getImageSync("images/employee_bg.png");
 
@@ -32,6 +33,7 @@ public class MainUIGroup extends Group {
         super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
+        gameInteractionArea = new GameInteractionArea(gameWorld);
         setupUIConfigurationSystem();
         animateFocusChanges();
     }
@@ -80,8 +82,8 @@ public class MainUIGroup extends Group {
                                     .setConstraint(AxisLayout.stretched(0.5f)));
                     add(group);
                 }
-                contentGroup = new Group(AxisLayout.horizontal())
-                        .add(new GameInteractionArea(gameWorld))
+                contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
+                        .add(gameInteractionArea)
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);
                 setEnabled(false);
