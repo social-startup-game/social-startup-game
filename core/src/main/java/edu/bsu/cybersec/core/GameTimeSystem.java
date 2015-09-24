@@ -23,7 +23,7 @@ public final class GameTimeSystem extends tripleplay.entity.System {
             @Override
             public void update(Clock clock) {
                 int elapsedGameTime = (int) (clock.dt * scale);
-                gameWorld.gameTimeMs += elapsedGameTime;
+                gameWorld.advanceGameTime(elapsedGameTime);
             }
         });
     }
