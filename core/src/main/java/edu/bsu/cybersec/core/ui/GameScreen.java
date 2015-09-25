@@ -33,7 +33,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     @SuppressWarnings("unused")
-    private tripleplay.entity.System timeRenderingSystem = new System(gameWorld, 0) {
+    private tripleplay.entity.System timeRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         {
             checkState(game().plat instanceof SimGamePlatform,
                     "The platform must provide the methods specified in SimGamePlatform");
@@ -62,7 +62,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     };
 
     @SuppressWarnings("unused")
-    tripleplay.entity.System hudRenderingSystem = new System(gameWorld, 0) {
+    tripleplay.entity.System hudRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         @Override
         protected boolean isInterested(Entity entity) {
             return entity.id == company.id;
@@ -78,7 +78,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     };
 
     @SuppressWarnings("unused")
-    tripleplay.entity.System progressRenderingSystem = new System(gameWorld, 0) {
+    tripleplay.entity.System progressRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         @Override
         protected boolean isInterested(Entity entity) {
             return entity.has(gameWorld.featureId) && entity.has(gameWorld.progress);
@@ -97,7 +97,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     };
 
     @SuppressWarnings("unused")
-    System attackSurfaceRenderingSystem = new System(gameWorld, 0) {
+    System attackSurfaceRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
 
         @Override
         protected boolean isInterested(Entity entity) {

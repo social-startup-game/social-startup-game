@@ -7,7 +7,7 @@ public class UserGenerationSystem extends tripleplay.entity.System {
     private final GameWorld world;
 
     public UserGenerationSystem(GameWorld world) {
-        super(world, 0);
+        super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = world;
     }
 

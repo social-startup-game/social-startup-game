@@ -11,7 +11,7 @@ public final class GameTimeSystem extends tripleplay.entity.System {
     private float scale = 1f;
 
     public GameTimeSystem(GameWorld world) {
-        super(world, 0);
+        super(world, SystemPriority.CLOCK_LEVEL.value);
         this.gameWorld = world;
     }
 

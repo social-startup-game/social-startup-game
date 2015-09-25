@@ -1,14 +1,14 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 import tripleplay.ui.Group;
 import tripleplay.ui.Label;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public final class CompanyStatusGroupSystem extends tripleplay.entity.System {
 
@@ -17,7 +17,7 @@ public final class CompanyStatusGroupSystem extends tripleplay.entity.System {
     private final Label progressLabel = new Label("");
 
     public CompanyStatusGroupSystem(GameWorld world) {
-        super(world, 0);
+        super(world, SystemPriority.UI_LEVEL.value);
         this.gameWorld = checkNotNull(world);
         group = new Group(AxisLayout.vertical())
                 .add(progressLabel);

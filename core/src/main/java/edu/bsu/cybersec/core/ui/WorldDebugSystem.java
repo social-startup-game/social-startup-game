@@ -2,6 +2,7 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
 import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
@@ -11,7 +12,7 @@ public final class WorldDebugSystem extends tripleplay.entity.System {
     private final GameWorld gameWorld;
 
     public WorldDebugSystem(GameWorld gameWorld) {
-        super(gameWorld, 0);
+        super(gameWorld, SystemPriority.DEBUG_LEVEL.value);
         this.gameWorld = gameWorld;
     }
 

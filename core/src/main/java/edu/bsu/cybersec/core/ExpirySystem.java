@@ -3,13 +3,13 @@ package edu.bsu.cybersec.core;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public final class ExpirySystem extends tripleplay.entity.System {
     private final GameWorld world;
 
     public ExpirySystem(GameWorld world) {
-        super(world, 0);
+        super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
     }
 

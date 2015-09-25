@@ -3,14 +3,13 @@ package edu.bsu.cybersec.core;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public final class EventTriggerSystem extends tripleplay.entity.System {
     private final GameWorld gameWorld;
 
     public EventTriggerSystem(GameWorld gameWorld) {
-        super(gameWorld, 0);
+        super(gameWorld, SystemPriority.MODEL_LEVEL.value);
         this.gameWorld = checkNotNull(gameWorld);
     }
 

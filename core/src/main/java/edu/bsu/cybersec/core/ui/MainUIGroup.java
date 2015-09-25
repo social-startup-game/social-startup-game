@@ -1,9 +1,6 @@
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.Task;
-import edu.bsu.cybersec.core.TaskFormatter;
+import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Image;
 import react.Slot;
@@ -15,8 +12,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class MainUIGroup extends Group {
     private static final String DOWN_ARROW = "\u25BC";
@@ -39,7 +35,7 @@ public class MainUIGroup extends Group {
     }
 
     private void setupUIConfigurationSystem() {
-        new tripleplay.entity.System(gameWorld, 0) {
+        new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
             @Override
             protected boolean isInterested(Entity entity) {
                 return entity.has(gameWorld.name);

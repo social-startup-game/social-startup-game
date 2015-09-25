@@ -4,8 +4,7 @@ import playn.core.Clock;
 import tripleplay.entity.Entity;
 import tripleplay.entity.IntBag;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class FeatureDevelopmentSystem extends tripleplay.entity.System {
 
@@ -14,7 +13,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     private final IntBag developerBag = new IntBag();
 
     public FeatureDevelopmentSystem(GameWorld world) {
-        super(world, 0);
+        super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
     }
 
