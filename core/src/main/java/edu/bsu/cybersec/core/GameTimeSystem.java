@@ -32,4 +32,16 @@ public final class GameTimeSystem extends tripleplay.entity.System {
         this.scale = scale;
         return this;
     }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (!enabled) {
+            forceElapsedTimeToBeZeroWhileDisabled();
+        }
+    }
+
+    private void forceElapsedTimeToBeZeroWhileDisabled() {
+        gameWorld.prevGameTimeMs = gameWorld.gameTimeMs;
+    }
 }

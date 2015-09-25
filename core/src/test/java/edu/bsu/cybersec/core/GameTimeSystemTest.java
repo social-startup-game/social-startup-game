@@ -36,4 +36,19 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
         assertEquals(0, world.gameTimeMs);
     }
 
+    @Test
+    public void testSystemDisable_noElapsedTime() {
+        system.setEnabled(false);
+        advanceOneMillisecond();
+        assertTrue(world.gameTimeMs == world.prevGameTimeMs);
+    }
+
+    @Test
+    public void testSystemDisableAfterHavingRun_noElapsedTime() {
+        advanceOneMillisecond();
+        system.setEnabled(false);
+        advanceOneMillisecond();
+        assertTrue(world.gameTimeMs == world.prevGameTimeMs);
+    }
+
 }

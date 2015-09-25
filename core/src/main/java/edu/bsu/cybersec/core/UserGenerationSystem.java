@@ -14,10 +14,11 @@ public class UserGenerationSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
+        float delta = world.gameTimeMs - world.prevGameTimeMs;
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
             float usersPerSecond = world.usersPerSecond.get(id);
-            float additionalUsers = usersPerSecond * clock.dt / 1000;
+            float additionalUsers = usersPerSecond * delta / 1000;
             int ownerId = world.companyId.get(id);
             world.users.add(ownerId, additionalUsers);
         }

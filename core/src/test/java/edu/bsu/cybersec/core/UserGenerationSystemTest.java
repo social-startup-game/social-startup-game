@@ -3,7 +3,7 @@ package edu.bsu.cybersec.core;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class UserGenerationSystemTest extends AbstractSystemTest {
 
@@ -24,8 +24,18 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     @Test
     public void testOnePerSecond_GainOneUser() {
         createEntityGeneratingUsersPerSecond(1);
-        advanceOneSecond();
+        whenOneSecondElapses();
         assertNumberOfUsersIs(1);
+    }
+
+    private void whenOneSecondElapses() {
+        advanceGameTimeToSimulateAFunctioningGameTimeSystem();
+        advanceOneSecond();
+    }
+
+    private void advanceGameTimeToSimulateAFunctioningGameTimeSystem() {
+        world.prevGameTimeMs = world.gameTimeMs;
+        world.gameTimeMs += 1000;
     }
 
     private void createEntityGeneratingUsersPerSecond(float usersPerSecond) {
@@ -43,22 +53,22 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     @Test
     public void testFivePerSecond_gainFiveUsers() {
         createEntityGeneratingUsersPerSecond(5);
-        advanceOneSecond();
+        whenOneSecondElapses();
         assertNumberOfUsersIs(5);
     }
 
     @Test
     public void testOnePerTwoSeconds_oneSecondsElapse_noUsers() {
         createEntityGeneratingUsersPerSecond(0.5f);
-        advanceOneSecond();
+        whenOneSecondElapses();
         assertNumberOfUsersIs(0);
     }
 
     @Test
     public void testOnePerTwoSeconds_twoSecondsElapse_oneUser() {
         createEntityGeneratingUsersPerSecond(0.5f);
-        advanceOneSecond();
-        advanceOneSecond();
+        whenOneSecondElapses();
+        whenOneSecondElapses();
         assertNumberOfUsersIs(1);
     }
 }

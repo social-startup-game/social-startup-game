@@ -11,10 +11,13 @@ import tripleplay.ui.Style;
 import tripleplay.ui.layout.AxisLayout;
 
 public class EventsGroup extends Group {
+    private final GameWorld gameworld;
+    private final Label noEventsLabel = new Label("Nothing to see here. Move along.");
 
     public EventsGroup(GameWorld gameWorld) {
         super(AxisLayout.vertical().offStretch());
-        add(new Label("No events yet"));
+        add(noEventsLabel);
+        this.gameworld = gameWorld;
 
         Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
         gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1000 * 60 * 60 * 5);
@@ -39,6 +42,7 @@ public class EventsGroup extends Group {
     }
 
     private void post(NarrativeEvent narrativeEvent) {
+        ((GameWorld.Systematized) gameworld).gameTimeSystem.setEnabled(false);
         removeAll();
         add(new Label(narrativeEvent.text).addStyles(Style.TEXT_WRAP.is(true)));
         Group buttonGroup = new Group(AxisLayout.horizontal());
@@ -47,6 +51,9 @@ public class EventsGroup extends Group {
                 @Override
                 public void onEmit(Button button) {
                     option.action.run();
+                    ((GameWorld.Systematized) gameworld).gameTimeSystem.setEnabled(true);
+                    removeAll();
+                    add(noEventsLabel);
                 }
             }));
         }
