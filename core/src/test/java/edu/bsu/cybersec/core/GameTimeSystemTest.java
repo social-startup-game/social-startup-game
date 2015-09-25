@@ -2,8 +2,7 @@ package edu.bsu.cybersec.core;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public final class GameTimeSystemTest extends AbstractSystemTest {
 
@@ -28,6 +27,13 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
         advanceOneMillisecond();
         advanceOneMillisecond();
         assertTrue(world.prevGameTimeMs > 0);
+    }
+
+    @Test
+    public void testSystemDisable_timeStopsMoving() {
+        system.setEnabled(false);
+        advanceOneMillisecond();
+        assertEquals(0, world.gameTimeMs);
     }
 
 }

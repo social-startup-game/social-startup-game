@@ -3,7 +3,7 @@ package edu.bsu.cybersec.core;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.*;
 
 public final class GameTimeSystem extends tripleplay.entity.System {
 
@@ -13,24 +13,18 @@ public final class GameTimeSystem extends tripleplay.entity.System {
     public GameTimeSystem(GameWorld world) {
         super(world, 0);
         this.gameWorld = world;
-        configureClockUpdates();
-    }
-
-    private void configureClockUpdates() {
-        Entity e = gameWorld.create(true)
-                .add(gameWorld.onUpdate);
-        gameWorld.onUpdate.set(e.id, new Updatable() {
-            @Override
-            public void update(Clock clock) {
-                int elapsedGameTime = (int) (clock.dt * scale);
-                gameWorld.advanceGameTime(elapsedGameTime);
-            }
-        });
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return false;
+        return true;
+    }
+
+    @Override
+    protected void update(Clock clock, Entities entities) {
+        super.update(clock, entities);
+        int elapsedGameTime = (int) (clock.dt * scale);
+        gameWorld.advanceGameTime(elapsedGameTime);
     }
 
     public GameTimeSystem setScale(float scale) {
