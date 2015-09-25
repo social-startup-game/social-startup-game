@@ -7,13 +7,17 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.FlowLayout;
 import tripleplay.util.Colors;
 
+import static com.google.common.base.Preconditions.*;
+
 public final class GameInteractionArea extends Group {
 
+    private final GameWorld gameWorld;
     private Group shown = new Group(new FlowLayout());
     private final CompanyStatusGroupSystem companyStatusGroupSystem;
 
     public GameInteractionArea(GameWorld gameWorld) {
         super(AxisLayout.vertical());
+        this.gameWorld = checkNotNull(gameWorld);
         this.companyStatusGroupSystem = new CompanyStatusGroupSystem(gameWorld);
 
         shown.add(companyStatusGroupSystem.group);
@@ -27,7 +31,7 @@ public final class GameInteractionArea extends Group {
                 .add(new ChangeViewButton("Status", companyStatusGroupSystem.group),
                         new ChangeViewButton("Features", new Label("Features")),
                         new ChangeViewButton("Defects", new Label("Defects")),
-                        new ChangeViewButton("Events", new Label("News and events")));
+                        new ChangeViewButton("Events", new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {

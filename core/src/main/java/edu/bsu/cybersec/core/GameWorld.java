@@ -48,5 +48,6 @@ public class GameWorld extends World {
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
         public final MaintenanceSystem maintenanceSystem = new MaintenanceSystem(this);
         public final ExpirySystem expirySystem = new ExpirySystem(this);
+        public final EventTriggerSystem eventTriggerSystem = new EventTriggerSystem(this);
     }
 }
