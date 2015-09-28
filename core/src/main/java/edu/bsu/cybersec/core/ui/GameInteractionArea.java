@@ -1,6 +1,9 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SimGame;
+import playn.core.Image;
+import pythagoras.f.IDimension;
 import react.Slot;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
@@ -28,15 +31,19 @@ public final class GameInteractionArea extends Group {
 
     private Element makeButtonArea() {
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton("Status", companyStatusGroupSystem.group),
-                        new ChangeViewButton("Features", new Label("Features")),
-                        new ChangeViewButton("Defects", new Label("Defects")),
-                        new ChangeViewButton("Events", new EventsGroup(gameWorld)));
+                .add(new ChangeViewButton("dollar-sign.png", companyStatusGroupSystem.group),
+                        new ChangeViewButton("star.png", new Label("Features")),
+                        new ChangeViewButton("wrench.png", new Label("Defects")),
+                        new ChangeViewButton("envelope.png", new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {
-        ChangeViewButton(String text, final Element<?> view) {
-            super(text);
+        private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
+
+        ChangeViewButton(String fileName, final Element<?> view) {
+            super("");
+            final Icon icon = makeIconFromImage("images/" + fileName);
+            super.icon.update(icon);
             onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button event) {
@@ -44,6 +51,14 @@ public final class GameInteractionArea extends Group {
                     shown.add(view);
                 }
             });
+        }
+
+        private Icon makeIconFromImage(String path) {
+            final Image iconImage = SimGame.game.plat.assets().getImageSync(path);
+            final IDimension viewSize = SimGame.game.plat.graphics().viewSize;
+            final float desiredHeight = viewSize.height() * PERCENT_OF_VIEW_HEIGHT;
+            final float scale = desiredHeight / iconImage.height();
+            return Icons.scaled(Icons.image(iconImage), scale);
         }
     }
 }
