@@ -2,9 +2,11 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
+import playn.core.Graphics;
 import playn.core.Image;
 import pythagoras.f.IDimension;
 import react.Slot;
+import tripleplay.entity.Entity;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.FlowLayout;
@@ -34,7 +36,21 @@ public final class GameInteractionArea extends Group {
                 .add(new ChangeViewButton("dollar-sign.png", companyStatusGroupSystem.group),
                         new ChangeViewButton("star.png", new Label("Features")),
                         new ChangeViewButton("wrench.png", new Label("Defects")),
-                        new ChangeViewButton("envelope.png", new EventsGroup(gameWorld)));
+                        makeButtonThatTurnsBlackAfterHalfADay("envelope.png"));
+    }
+
+    private ChangeViewButton makeButtonThatTurnsBlackAfterHalfADay(String fileName) {
+        final ChangeViewButton button = new ChangeViewButton(fileName, new EventsGroup(gameWorld));
+        Entity e = gameWorld.create(true)
+                .add(gameWorld.timeTrigger, gameWorld.event);
+        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 60 * 60 * 12 * 1000);
+        gameWorld.event.set(e.id, new Runnable() {
+            @Override
+            public void run() {
+                button.attention();
+            }
+        });
+        return button;
     }
 
     private final class ChangeViewButton extends Button {
@@ -59,6 +75,18 @@ public final class GameInteractionArea extends Group {
             final float desiredHeight = viewSize.height() * PERCENT_OF_VIEW_HEIGHT;
             final float scale = desiredHeight / iconImage.height();
             return Icons.scaled(Icons.image(iconImage), scale);
+        }
+
+        private void attention() {
+            setStyles(Style.BACKGROUND.is(makeCalloutBackground()));
+        }
+
+        private Background makeCalloutBackground() {
+            Graphics gfx = SimGame.game.plat.graphics();
+            //this come from triplePlay simpeStyles class: https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/ui/SimpleStyles.java#L27
+            //Once we make our own styles, we can replace this.
+            int ulColor = 0xFFEEEEEE;
+            return Background.roundRect(gfx, Colors.BLACK, 5, ulColor, 2).inset(5, 6, 2, 6);
         }
     }
 }
