@@ -40,6 +40,9 @@ public final class ExpandableParallaxBackground extends Background {
     @Override
     protected Instance instantiate(final IDimension size) {
         return new LayerInstance(size, new Layer() {
+            private final float foregroundAspectRatio = foreground.tile().width() / foreground.tile().height();
+            private final float characterWidthPercentOfScreen = 0.60f;
+
             @Override
             protected void paintImpl(Surface surf) {
                 paintBackground(surf);
@@ -66,12 +69,12 @@ public final class ExpandableParallaxBackground extends Background {
                 final Tile tile = foreground.tile();
                 final float destinationX = 0;
                 final float destinationY = size.height() * 0.15f;
-                final float destinationWidth = tile.width();
-                final float destinationHeight = size.height() - destinationY;
+                final float destinationWidth = size.width() * characterWidthPercentOfScreen;
+                final float destinationHeight = destinationWidth / foregroundAspectRatio;
                 final float sourceX = 0;
                 final float sourceY = 0;
                 final float sourceWidth = tile.width();
-                final float sourceHeight = size.height();
+                final float sourceHeight = tile.height();
                 surf.draw(tile,
                         destinationX, destinationY, destinationWidth, destinationHeight,
                         sourceX, sourceY, sourceWidth, sourceHeight);
