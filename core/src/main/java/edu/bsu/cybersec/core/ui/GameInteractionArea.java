@@ -8,7 +8,6 @@ import react.Slot;
 import react.ValueView;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.ui.layout.FlowLayout;
 import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -16,18 +15,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class GameInteractionArea extends Group {
 
     private final GameWorld gameWorld;
-    private Group shown = new Group(new FlowLayout());
+    private Group shown = new Group(AxisLayout.vertical().offStretch())
+            .setConstraint(AxisLayout.stretched())
+            .addStyles(Style.BACKGROUND.is(Background.solid(Colors.RED)));
     private final CompanyStatusGroupSystem companyStatusGroupSystem;
 
     public GameInteractionArea(GameWorld gameWorld) {
-        super(AxisLayout.vertical());
+        super(AxisLayout.vertical().offStretch());
         this.gameWorld = checkNotNull(gameWorld);
         this.companyStatusGroupSystem = new CompanyStatusGroupSystem(gameWorld);
 
-        shown.add(companyStatusGroupSystem.group);
-        add(shown.setConstraint(AxisLayout.stretched()));
+        showDefaultView();
+        add(shown);
         add(makeButtonArea().setConstraint(AxisLayout.fixed()));
         addStyles(Style.BACKGROUND.is(Background.solid(Colors.MAGENTA)));
+    }
+
+    private void showDefaultView() {
+        shown.add(companyStatusGroupSystem.group);
     }
 
     private Element makeButtonArea() {
@@ -65,7 +70,7 @@ public final class GameInteractionArea extends Group {
                 @Override
                 public void onEmit(Button event) {
                     shown.removeAll();
-                    shown.add(view);
+                    shown.add(view.setConstraint(AxisLayout.stretched()));
                 }
             });
         }
