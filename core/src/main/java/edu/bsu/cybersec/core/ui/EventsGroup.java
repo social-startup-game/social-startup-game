@@ -10,20 +10,25 @@ import tripleplay.ui.Label;
 import tripleplay.ui.Style;
 import tripleplay.ui.layout.AxisLayout;
 
-public class EventsGroup extends Group {
-    private final GameWorld gameworld;
+public class EventsGroup extends InteractionAreaGroup {
+    private final GameWorld gameWorld;
     private final Label noEventsLabel = new Label("Nothing to see here. Move along.");
 
     public EventsGroup(GameWorld gameWorld) {
         super(AxisLayout.vertical().offStretch());
         add(noEventsLabel);
-        this.gameworld = gameWorld;
+        this.gameWorld = gameWorld;
+        initialzeSampleEvent();
+    }
 
+    private void initialzeSampleEvent() {
+        final int realTimeSecondsUntilEvent = 2;
         Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
-        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1000 * 60 * 60 * 5);
+        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1000 * 60 * 60 * realTimeSecondsUntilEvent);
         gameWorld.event.set(e.id, new Runnable() {
             @Override
             public void run() {
+                needsAttention.update(true);
                 post(new NarrativeEvent("Your workers don't know what they are doing. Train them?",
                         new Option("Yes", new Runnable() {
                             @Override
@@ -37,12 +42,13 @@ public class EventsGroup extends Group {
                                 SimGame.game.plat.log().debug("Clicked no");
                             }
                         })));
+
             }
         });
     }
 
     private void post(NarrativeEvent narrativeEvent) {
-        ((GameWorld.Systematized) gameworld).gameTimeSystem.setEnabled(false);
+        ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
         removeAll();
         add(new Label(narrativeEvent.text).addStyles(Style.TEXT_WRAP.is(true)));
         Group buttonGroup = new Group(AxisLayout.horizontal());
@@ -51,8 +57,9 @@ public class EventsGroup extends Group {
                 @Override
                 public void onEmit(Button button) {
                     option.action.run();
-                    ((GameWorld.Systematized) gameworld).gameTimeSystem.setEnabled(true);
+                    ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(true);
                     removeAll();
+                    needsAttention.update(false);
                     add(noEventsLabel);
                 }
             }));

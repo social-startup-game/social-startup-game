@@ -2,17 +2,16 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Graphics;
 import playn.core.Image;
 import pythagoras.f.IDimension;
 import react.Slot;
-import tripleplay.entity.Entity;
+import react.ValueView;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.FlowLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class GameInteractionArea extends Group {
 
@@ -34,32 +33,34 @@ public final class GameInteractionArea extends Group {
     private Element makeButtonArea() {
         return new Group(AxisLayout.horizontal())
                 .add(new ChangeViewButton("dollar-sign.png", companyStatusGroupSystem.group),
-                        new ChangeViewButton("star.png", new Label("Features")),
-                        new ChangeViewButton("wrench.png", new Label("Defects")),
-                        makeButtonThatTurnsBlackAfterHalfADay("envelope.png"));
-    }
-
-    private ChangeViewButton makeButtonThatTurnsBlackAfterHalfADay(String fileName) {
-        final ChangeViewButton button = new ChangeViewButton(fileName, new EventsGroup(gameWorld));
-        Entity e = gameWorld.create(true)
-                .add(gameWorld.timeTrigger, gameWorld.event);
-        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 60 * 60 * 12 * 1000);
-        gameWorld.event.set(e.id, new Runnable() {
-            @Override
-            public void run() {
-                button.attention();
-            }
-        });
-        return button;
+                        new ChangeViewButton("star.png", new FeatureGroup()),
+                        new ChangeViewButton("wrench.png", new DefectsGroup()),
+                        new ChangeViewButton("envelope.png", new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
+        //this come from triplePlay simpeStyles class: https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/ui/SimpleStyles.java#L27
+        //Once we make our own styles, we can replace this.
+        private final Background CALLOUT_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
+                Colors.BLACK, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
+        private final Background REGULAR_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
+                0xFFCCCCCC, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
 
-        ChangeViewButton(String fileName, final Element<?> view) {
+        ChangeViewButton(String fileName, final InteractionAreaGroup view) {
             super("");
             final Icon icon = makeIconFromImage("images/" + fileName);
             super.icon.update(icon);
+            view.onAttention().connect(new ValueView.Listener<Boolean>() {
+                @Override
+                public void onChange(Boolean needsAttention, Boolean oldValue) {
+                    if (needsAttention) {
+                        setStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
+                    } else {
+                        setStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
+                    }
+                }
+            });
             onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button event) {
@@ -77,16 +78,22 @@ public final class GameInteractionArea extends Group {
             return Icons.scaled(Icons.image(iconImage), scale);
         }
 
-        private void attention() {
-            setStyles(Style.BACKGROUND.is(makeCalloutBackground()));
-        }
-
-        private Background makeCalloutBackground() {
-            Graphics gfx = SimGame.game.plat.graphics();
-            //this come from triplePlay simpeStyles class: https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/ui/SimpleStyles.java#L27
-            //Once we make our own styles, we can replace this.
-            int ulColor = 0xFFEEEEEE;
-            return Background.roundRect(gfx, Colors.BLACK, 5, ulColor, 2).inset(5, 6, 2, 6);
-        }
     }
 }
+
+
+final class FeatureGroup extends InteractionAreaGroup {
+    public FeatureGroup() {
+        super(AxisLayout.horizontal());
+        add(new Label("Features"));
+    }
+}
+
+
+final class DefectsGroup extends InteractionAreaGroup {
+    public DefectsGroup() {
+        super(AxisLayout.horizontal());
+        add(new Label("Defects"));
+    }
+}
+
