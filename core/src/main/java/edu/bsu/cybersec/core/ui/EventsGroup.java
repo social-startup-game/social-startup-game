@@ -3,10 +3,12 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Graphics;
+import playn.core.Image;
 import react.Slot;
 import tripleplay.entity.Entity;
 import tripleplay.ui.*;
 import tripleplay.ui.bgs.RoundRectBackground;
+import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
@@ -22,6 +24,7 @@ public class EventsGroup extends InteractionAreaGroup {
 
     private final GameWorld gameWorld;
     private final Label noEventsLabel = new Label("Nothing to see here. Move along.");
+    private final Image eventSpeakerImage = SimGame.game.plat.assets().getImageSync("images/admin.png");
 
     public EventsGroup(GameWorld gameWorld) {
         super(AxisLayout.vertical().offStretch());
@@ -60,7 +63,7 @@ public class EventsGroup extends InteractionAreaGroup {
     private void post(NarrativeEvent narrativeEvent) {
         ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
         removeAll();
-        Group callout = new Group(AxisLayout.vertical())
+        Group callout = new Group(AxisLayout.vertical()).add(new Shim(0, 5))
                 .add(new Label(narrativeEvent.text)
                         .addStyles(Style.TEXT_WRAP.is(true),
                                 Style.COLOR.is(Colors.BLACK)))
@@ -80,7 +83,15 @@ public class EventsGroup extends InteractionAreaGroup {
             }));
         }
         callout.add(buttonGroup.setConstraint(AxisLayout.fixed()));
-        add(callout);
+        callout.add(new Shim(0, 70));
+        addAbsoluteLayout(callout);
+    }
+
+    private void addAbsoluteLayout(Group callout) {
+        Group group = new Group(new AbsoluteLayout());
+        group.add(AbsoluteLayout.at(callout, 10, 10))
+                .add(AbsoluteLayout.at(new Label(Icons.image(eventSpeakerImage)), 340, 150));
+        add(group);
     }
 }
 
