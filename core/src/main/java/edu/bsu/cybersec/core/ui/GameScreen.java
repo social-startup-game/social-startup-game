@@ -191,7 +191,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         gameWorld.connect(update, paint);
         configurePauseButton();
         enterState(playingState);
-        registerWorldDebugHook();
+        registerWorldLogSystemKeyboardHook();
     }
 
     private void configurePauseButton() {
@@ -218,9 +218,9 @@ public class GameScreen extends ScreenStack.UIScreen {
         this.state.onEnter();
     }
 
-    private void registerWorldDebugHook() {
-        final WorldDebugSystem worldDebugSystem = new WorldDebugSystem(gameWorld);
-        worldDebugSystem.setEnabled(false);
+    private void registerWorldLogSystemKeyboardHook() {
+        final WorldLogSystem worldLogSystem = new WorldLogSystem(gameWorld);
+        worldLogSystem.setEnabled(false);
         game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
             @Override
             public void onEmit(Keyboard.Event event) {
@@ -237,7 +237,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
 
             private void debugWorld() {
-                worldDebugSystem.setEnabled(true);
+                worldLogSystem.setEnabled(true);
             }
         });
     }
