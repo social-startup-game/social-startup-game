@@ -5,7 +5,6 @@ import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Graphics;
 import react.Slot;
-import tripleplay.entity.Entity;
 import tripleplay.ui.*;
 import tripleplay.ui.bgs.RoundRectBackground;
 import tripleplay.ui.layout.AxisLayout;
@@ -35,7 +34,6 @@ public class EventsGroup extends InteractionAreaGroup {
                 post(event);
             }
         });
-        initializeSampleEvent();
     }
 
     private void post(NarrativeEvent narrativeEvent) {
@@ -63,24 +61,5 @@ public class EventsGroup extends InteractionAreaGroup {
         }
         callout.add(buttonGroup.setConstraint(AxisLayout.fixed()));
         add(callout);
-    }
-
-    private void initializeSampleEvent() {
-        final int realTimeSecondsUntilEvent = 2;
-        Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
-        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1000 * 60 * 60 * realTimeSecondsUntilEvent);
-        gameWorld.event.set(e.id, new NarrativeEvent(gameWorld, "Your workers don't know what they are doing. Train them?",
-                new NarrativeEvent.Option("Yes", new Runnable() {
-                    @Override
-                    public void run() {
-                        SimGame.game.plat.log().debug("Clicked yes");
-                    }
-                }),
-                new NarrativeEvent.Option("No", new Runnable() {
-                    @Override
-                    public void run() {
-                        SimGame.game.plat.log().debug("Clicked no");
-                    }
-                })));
     }
 }
