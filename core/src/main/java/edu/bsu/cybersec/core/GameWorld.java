@@ -1,6 +1,7 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.Maps;
+import react.Signal;
 import tripleplay.entity.Component;
 import tripleplay.entity.World;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 public class GameWorld extends World {
     public final Map<String, Component> components = Maps.newHashMap();
 
+    public final Signal<NarrativeEvent> onNarrativeEvent = Signal.create();
     public int prevGameTimeMs;
     public int gameTimeMs;
 

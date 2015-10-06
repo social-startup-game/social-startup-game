@@ -12,7 +12,8 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainUIGroup extends Group {
     private static final String DOWN_ARROW = "\u25BC";
@@ -29,7 +30,7 @@ public class MainUIGroup extends Group {
         super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
-        gameInteractionArea = new GameInteractionArea(gameWorld);
+        gameInteractionArea = new GameInteractionArea(gameWorld, iface);
         setupUIConfigurationSystem();
         animateFocusChanges();
     }

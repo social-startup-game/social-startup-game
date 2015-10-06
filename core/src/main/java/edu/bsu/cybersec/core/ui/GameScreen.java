@@ -191,7 +191,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         gameWorld.connect(update, paint);
         configurePauseButton();
         enterState(playingState);
-        registerWorldDebugHook();
+        registerDebugHooks();
     }
 
     private void configurePauseButton() {
@@ -218,14 +218,19 @@ public class GameScreen extends ScreenStack.UIScreen {
         this.state.onEnter();
     }
 
-    private void registerWorldDebugHook() {
-        final WorldDebugSystem worldDebugSystem = new WorldDebugSystem(gameWorld);
-        worldDebugSystem.setEnabled(false);
+    private void registerDebugHooks() {
+        registerWorldLogSystemHook();
+        registerArtificialEventHook();
+    }
+
+    private void registerWorldLogSystemHook() {
+        final WorldLogSystem worldLogSystem = new WorldLogSystem(gameWorld);
+        worldLogSystem.setEnabled(false);
         game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
             @Override
             public void onEmit(Keyboard.Event event) {
                 if (isDebugTrigger(event)) {
-                    debugWorld();
+                    worldLogSystem.setEnabled(true);
                 }
             }
 
@@ -235,9 +240,41 @@ public class GameScreen extends ScreenStack.UIScreen {
                     return keyEvent.down && keyEvent.key == Key.L;
                 } else return false;
             }
+        });
+    }
 
-            private void debugWorld() {
-                worldDebugSystem.setEnabled(true);
+    private void registerArtificialEventHook() {
+        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
+            @Override
+            public void onEmit(Keyboard.Event event) {
+                if (isDebugTrigger(event)) {
+                    makeArtificialEvent();
+                }
+            }
+
+            private boolean isDebugTrigger(Event event) {
+                if (event instanceof Keyboard.KeyEvent) {
+                    Keyboard.KeyEvent keyEvent = (Keyboard.KeyEvent) event;
+                    return keyEvent.down && keyEvent.key == Key.E;
+                } else return false;
+            }
+
+            private void makeArtificialEvent() {
+                Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
+                gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1);
+                gameWorld.event.set(e.id, new NarrativeEvent(gameWorld, "Your workers don't know what they are doing. Train them?",
+                        new NarrativeEvent.Option("Yes", new Runnable() {
+                            @Override
+                            public void run() {
+                                SimGame.game.plat.log().debug("Clicked yes");
+                            }
+                        }),
+                        new NarrativeEvent.Option("No", new Runnable() {
+                            @Override
+                            public void run() {
+                                SimGame.game.plat.log().debug("Clicked no");
+                            }
+                        })));
             }
         });
     }

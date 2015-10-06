@@ -1,17 +1,14 @@
-package edu.bsu.cybersec.core.ui;
+package edu.bsu.cybersec.core;
 
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
 import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
 
-public final class WorldDebugSystem extends tripleplay.entity.System {
+public final class WorldLogSystem extends tripleplay.entity.System {
 
     private final GameWorld gameWorld;
 
-    public WorldDebugSystem(GameWorld gameWorld) {
+    public WorldLogSystem(GameWorld gameWorld) {
         super(gameWorld, SystemPriority.DEBUG_LEVEL.value);
         this.gameWorld = gameWorld;
     }

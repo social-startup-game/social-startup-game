@@ -6,6 +6,8 @@ import playn.core.Image;
 import pythagoras.f.IDimension;
 import react.Slot;
 import react.ValueView;
+import tripleplay.anim.AnimGroup;
+import tripleplay.anim.Animation;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
@@ -15,14 +17,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class GameInteractionArea extends Group {
 
     private final GameWorld gameWorld;
+    private final Interface iface;
     private Group shown = new Group(AxisLayout.vertical().offStretch())
             .setConstraint(AxisLayout.stretched())
             .addStyles(Style.BACKGROUND.is(Background.solid(Colors.RED)));
     private final CompanyStatusGroupSystem companyStatusGroupSystem;
 
-    public GameInteractionArea(GameWorld gameWorld) {
+    public GameInteractionArea(GameWorld gameWorld, Interface iface) {
         super(AxisLayout.vertical().offStretch());
         this.gameWorld = checkNotNull(gameWorld);
+        this.iface = checkNotNull(iface);
         this.companyStatusGroupSystem = new CompanyStatusGroupSystem(gameWorld);
 
         showDefaultView();
@@ -45,12 +49,49 @@ public final class GameInteractionArea extends Group {
 
     private final class ChangeViewButton extends Button {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
+        private static final float FLASH_PERIOD = 300f;
+
         //this come from triplePlay simpeStyles class: https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/ui/SimpleStyles.java#L27
         //Once we make our own styles, we can replace this.
         private final Background CALLOUT_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
                 Colors.BLACK, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
         private final Background REGULAR_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
                 0xFFCCCCCC, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
+
+        /**
+         * Tag a continued animation onto the end of this one.
+         * <p/>
+         * It's not clear from the TriplePlay documentation, but you cannot put an Action animation
+         * inside of a Repeat animation. The reason for this, as of TP-2.0-rc1, is that Action
+         * nulls its reference to its runnable. Hence, to get repeating Action animations (as required
+         * here to change label styles), we have to manually append new animations to the end of the
+         * current animation when they are done.
+         *
+         * @see <a href="https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/anim/Animation.java">
+         * TriplePlay Animation</a>
+         */
+        private final Runnable animationContinuer = new Runnable() {
+            @Override
+            public void run() {
+                loopAnimation();
+            }
+        };
+
+        private final Runnable calloutThemer = new Runnable() {
+            @Override
+            public void run() {
+                setStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
+            }
+        };
+
+        private final Runnable regularThemer = new Runnable() {
+            @Override
+            public void run() {
+                setStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
+            }
+        };
+
+        private Animation.Handle animationHandle;
 
         ChangeViewButton(String fileName, final InteractionAreaGroup view) {
             super("");
@@ -60,9 +101,10 @@ public final class GameInteractionArea extends Group {
                 @Override
                 public void onChange(Boolean needsAttention, Boolean oldValue) {
                     if (needsAttention) {
-                        setStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
+                        loopAnimation();
                     } else {
-                        setStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
+                        animationHandle.cancel();
+                        regularThemer.run();
                     }
                 }
             });
@@ -75,6 +117,25 @@ public final class GameInteractionArea extends Group {
             });
         }
 
+        private void loopAnimation() {
+            animationHandle = iface.anim.add(makeFlashOnceAnimation())
+                    .then()
+                    .action(animationContinuer)
+                    .handle();
+        }
+
+        private Animation makeFlashOnceAnimation() {
+            AnimGroup group = new AnimGroup();
+            group.action(calloutThemer)
+                    .then()
+                    .delay(FLASH_PERIOD)
+                    .then()
+                    .action(regularThemer)
+                    .then()
+                    .delay(FLASH_PERIOD);
+            return group.toAnim();
+        }
+
         private Icon makeIconFromImage(String path) {
             final Image iconImage = SimGame.game.plat.assets().getImageSync(path);
             final IDimension viewSize = SimGame.game.plat.graphics().viewSize;
@@ -84,21 +145,22 @@ public final class GameInteractionArea extends Group {
         }
 
     }
-}
 
+    final class FeatureGroup extends InteractionAreaGroup {
+        public FeatureGroup() {
+            super(AxisLayout.horizontal());
+            add(new Label("Features"));
+        }
+    }
 
-final class FeatureGroup extends InteractionAreaGroup {
-    public FeatureGroup() {
-        super(AxisLayout.horizontal());
-        add(new Label("Features"));
+    final class DefectsGroup extends InteractionAreaGroup {
+        public DefectsGroup() {
+            super(AxisLayout.horizontal());
+            add(new Label("Defects"));
+        }
     }
 }
 
 
-final class DefectsGroup extends InteractionAreaGroup {
-    public DefectsGroup() {
-        super(AxisLayout.horizontal());
-        add(new Label("Defects"));
-    }
-}
+
 
