@@ -1,6 +1,7 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Graphics;
 import react.Slot;
@@ -28,36 +29,17 @@ public class EventsGroup extends InteractionAreaGroup {
         addStyles(Style.BACKGROUND.is(Background.solid(Colors.CYAN)));
         add(noEventsLabel);
         this.gameWorld = gameWorld;
+        gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
+            @Override
+            public void onEmit(NarrativeEvent event) {
+                post(event);
+            }
+        });
         initializeSampleEvent();
     }
 
-    private void initializeSampleEvent() {
-        final int realTimeSecondsUntilEvent = 2;
-        Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
-        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1000 * 60 * 60 * realTimeSecondsUntilEvent);
-        gameWorld.event.set(e.id, new Runnable() {
-            @Override
-            public void run() {
-                needsAttention.update(true);
-                post(new NarrativeEvent("Your workers don't know what they are doing. Train them?",
-                        new Option("Yes", new Runnable() {
-                            @Override
-                            public void run() {
-                                SimGame.game.plat.log().debug("Clicked yes");
-                            }
-                        }),
-                        new Option("No", new Runnable() {
-                            @Override
-                            public void run() {
-                                SimGame.game.plat.log().debug("Clicked no");
-                            }
-                        })));
-
-            }
-        });
-    }
-
     private void post(NarrativeEvent narrativeEvent) {
+        needsAttention.update(true);
         ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
         removeAll();
         Group callout = new Group(AxisLayout.vertical())
@@ -67,7 +49,7 @@ public class EventsGroup extends InteractionAreaGroup {
                 .addStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND))
                 .setConstraint(AxisLayout.stretched());
         Group buttonGroup = new Group(AxisLayout.horizontal());
-        for (final Option option : narrativeEvent.options) {
+        for (final NarrativeEvent.Option option : narrativeEvent.options) {
             buttonGroup.add(new Button(option.text).onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button button) {
@@ -82,24 +64,23 @@ public class EventsGroup extends InteractionAreaGroup {
         callout.add(buttonGroup.setConstraint(AxisLayout.fixed()));
         add(callout);
     }
-}
 
-final class NarrativeEvent {
-    public final String text;
-    public final Option[] options;
-
-    NarrativeEvent(String text, Option... options) {
-        this.text = text;
-        this.options = options;
-    }
-}
-
-final class Option {
-    public final String text;
-    public final Runnable action;
-
-    Option(String text, Runnable action) {
-        this.text = text;
-        this.action = action;
+    private void initializeSampleEvent() {
+        final int realTimeSecondsUntilEvent = 2;
+        Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
+        gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1000 * 60 * 60 * realTimeSecondsUntilEvent);
+        gameWorld.event.set(e.id, new NarrativeEvent(gameWorld, "Your workers don't know what they are doing. Train them?",
+                new NarrativeEvent.Option("Yes", new Runnable() {
+                    @Override
+                    public void run() {
+                        SimGame.game.plat.log().debug("Clicked yes");
+                    }
+                }),
+                new NarrativeEvent.Option("No", new Runnable() {
+                    @Override
+                    public void run() {
+                        SimGame.game.plat.log().debug("Clicked no");
+                    }
+                })));
     }
 }
