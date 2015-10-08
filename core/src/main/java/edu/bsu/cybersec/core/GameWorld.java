@@ -32,6 +32,7 @@ public class GameWorld extends World {
     public final Component.FScalar vulnerability = register("vulnerability", new Component.FScalar(this));
     public final Component.IScalar vulnerabilityState = register("vulnerabilityState", new Component.IScalar(this));
     public final Component.IScalar usersPerHourState = register("usersPerHourState", new Component.IScalar(this));
+    public final Component.IScalar featureNumber = register("featureNumber", new Component.IScalar(this));
 
     private <T extends Component> T register(String name, T component) {
         components.put(name, component);

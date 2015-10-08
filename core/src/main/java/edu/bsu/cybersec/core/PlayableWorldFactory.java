@@ -50,13 +50,13 @@ public class PlayableWorldFactory {
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.featureDevelopmentSystem.makeCompletedFeature();
+        Entity userGeneratingEntity = world.featureDevelopmentSystem.makeCompletedFeature(0);
         world.usersPerHour.set(userGeneratingEntity.id, 1);
         world.vulnerability.set(userGeneratingEntity.id, 10);
     }
 
     private void makeFeatureInDevelopment() {
-        Entity e = world.featureDevelopmentSystem.makeFeatureInDevelopment();
+        Entity e = world.featureDevelopmentSystem.makeFeatureInDevelopment(1);
         world.usersPerHour.set(e.id, 25);
         world.developmentProgress.set(e.id, 0);
         world.goal.set(e.id, 20);

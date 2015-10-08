@@ -35,7 +35,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private Entity makeFeatureInDevelopment() {
-        Entity featureEntity = system.makeFeatureInDevelopment();
+        Entity featureEntity = system.makeFeatureInDevelopment(0);
         world.usersPerHour.set(featureEntity.id, 20);
         world.developmentProgress.set(featureEntity.id, 0);
         world.goal.set(featureEntity.id, 100);
@@ -133,6 +133,13 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         advanceOneDay(); // NOT advancing game time
         world.gameTimeMs = world.prevGameTimeMs = 0;
         thenThereIsNoProgressOn(e);
+    }
+
+    @Test
+    public void testMakeFeatureInDevelopment_associatesFeatureNumberWithEntity() {
+        final int FEATURE_NUMBER = 5;
+        Entity e = system.makeFeatureInDevelopment(FEATURE_NUMBER);
+        assertEquals(5, world.featureNumber.get(e.id));
     }
 
     private final class DeveloperBuilder {

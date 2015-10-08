@@ -106,26 +106,28 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         developerBag.removeAll();
     }
 
-    public Entity makeFeatureInDevelopment() {
-        Entity entity = world.create(true)
-                .add(world.developmentProgress,
-                        world.goal);
-        addCommonFeatureComponentsTo(entity);
+    public Entity makeFeatureInDevelopment(int featureNumber) {
+        Entity entity = makeFeature(featureNumber);
+        entity.add(world.developmentProgress,
+                world.goal);
         world.vulnerabilityState.set(entity.id, VulnerabilityState.INACTIVE.value);
         world.usersPerHourState.set(entity.id, UsersPerHourState.INACTIVE.value);
         return entity;
     }
 
-    private void addCommonFeatureComponentsTo(Entity entity) {
-        entity.add(world.usersPerHour,
-                world.usersPerHourState,
-                world.vulnerability,
-                world.vulnerabilityState);
+    private Entity makeFeature(int featureNumber) {
+        Entity entity = world.create(true)
+                .add(world.featureNumber,
+                        world.usersPerHour,
+                        world.usersPerHourState,
+                        world.vulnerability,
+                        world.vulnerabilityState);
+        world.featureNumber.set(entity.id, featureNumber);
+        return entity;
     }
 
-    public Entity makeCompletedFeature() {
-        Entity entity = world.create(true);
-        addCommonFeatureComponentsTo(entity);
+    public Entity makeCompletedFeature(int featureNumber) {
+        Entity entity = makeFeature(featureNumber);
         world.vulnerabilityState.set(entity.id, VulnerabilityState.ACTIVE.value);
         world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
         return entity;
