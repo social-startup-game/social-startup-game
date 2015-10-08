@@ -2,6 +2,7 @@ package edu.bsu.cybersec.core;
 
 import com.google.common.collect.Maps;
 import react.Signal;
+import react.Value;
 import tripleplay.entity.Component;
 import tripleplay.entity.World;
 
@@ -13,8 +14,8 @@ public class GameWorld extends World {
     public final Signal<NarrativeEvent> onNarrativeEvent = Signal.create();
     public int prevGameTimeMs;
     public int gameTimeMs;
-    public float exposure;
-    public float users;
+    public final Value<Float> exposure = Value.create(0f);
+    public final Value<Float> users = Value.create(0f);
 
     public final Component.IScalar tasked = register("tasked", new Component.IScalar(this));
     public final Component.IScalar developmentSkill = register("developmentSkill", new Component.IScalar(this));
@@ -50,5 +51,6 @@ public class GameWorld extends World {
         public final MaintenanceSystem maintenanceSystem = new MaintenanceSystem(this);
         public final ExpirySystem expirySystem = new ExpirySystem(this);
         public final EventTriggerSystem eventTriggerSystem = new EventTriggerSystem(this);
+        public final VulnerabilitySystem vulnerabilitySystem = new VulnerabilitySystem(this);
     }
 }

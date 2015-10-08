@@ -22,11 +22,11 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     }
 
     private void givenACompanyWithExposure(float exposure) {
-        world.exposure = exposure;
+        world.exposure.update(exposure);
     }
 
     private float currentExposure() {
-        return world.exposure;
+        return world.exposure.get();
     }
 
 

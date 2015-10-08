@@ -3,6 +3,7 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
+import react.ValueView;
 import tripleplay.entity.Entity;
 import tripleplay.ui.Label;
 import tripleplay.ui.layout.AxisLayout;
@@ -24,6 +25,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
 
     private void layoutUI() {
         add(usersPerSecondLabel);
+        add(new EstimatedExposureLabel(gameWorld));
     }
 
     private final class UsersPerSecondLabelSystem extends tripleplay.entity.System {
@@ -44,6 +46,20 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
                 sum += gameWorld.usersPerHour.get(entities.get(i));
             }
             usersPerSecondLabel.text.update(TEXT + sum);
+        }
+    }
+
+    private static final class EstimatedExposureLabel extends Label {
+        private static final String TEXT_TEMPLATE = "Estimated exposure: ";
+
+        private EstimatedExposureLabel(GameWorld gameWorld) {
+            super(TEXT_TEMPLATE + gameWorld.exposure.get());
+            gameWorld.exposure.connect(new ValueView.Listener<Float>() {
+                @Override
+                public void onChange(Float value, Float oldValue) {
+                    text.update(TEXT_TEMPLATE + value);
+                }
+            });
         }
     }
 

@@ -39,7 +39,7 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     }
 
     private void assertIntegerNumberOfUsersIs(int users) {
-        assertEquals(users, (int) world.users, EPSILON);
+        assertEquals(users, world.users.get().intValue(), EPSILON);
     }
 
     @Test

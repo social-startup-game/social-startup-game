@@ -70,7 +70,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         @Override
         protected void update(Clock clock, Entities entities) {
             super.update(clock, entities);
-            float numberOfUsers = gameWorld.users;
+            final float numberOfUsers = gameWorld.users.get();
             usersLabel.text.update("Users: " + (int) numberOfUsers);
         }
     };
@@ -116,7 +116,8 @@ public class GameScreen extends ScreenStack.UIScreen {
             gameWorld.featureDevelopmentSystem,
             gameWorld.maintenanceSystem,
             gameWorld.expirySystem,
-            gameWorld.eventTriggerSystem);
+            gameWorld.eventTriggerSystem,
+            gameWorld.vulnerabilitySystem);
     private final List<Element<?>> interactiveElements = Lists.newArrayList();
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");
