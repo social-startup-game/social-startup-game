@@ -19,12 +19,12 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return isFeatureDevelopment(entity)
+        return isFeatureInDevelopment(entity)
                 || isDeveloper(entity);
     }
 
-    private boolean isFeatureDevelopment(Entity entity) {
-        return entity.has(world.featureId);
+    private boolean isFeatureInDevelopment(Entity entity) {
+        return entity.has(world.developmentProgress);
     }
 
     private boolean isDeveloper(Entity entity) {
@@ -37,7 +37,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
         triageEntitiesIntoBags(entities);
-        distributeEffortEvenlyAcrossFeaturesInDevelopment(clock);
+        distributeEffortEvenlyAcrossFeaturesInDevelopment();
         processCompletedFeatures();
         clearBags();
     }
@@ -46,7 +46,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int entityId = entities.get(i);
             final Entity entity = world.entity(entityId);
-            if (isFeatureDevelopment(entity)) {
+            if (isFeatureInDevelopment(entity)) {
                 developmentBag.add(entityId);
             } else {
                 developerBag.add(entityId);
@@ -54,11 +54,12 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         }
     }
 
-    private void distributeEffortEvenlyAcrossFeaturesInDevelopment(Clock clock) {
+    private void distributeEffortEvenlyAcrossFeaturesInDevelopment() {
+        float dt = world.gameTimeMs - world.prevGameTimeMs;
         float effortPerFeature = computeTotalDevelopmentEffort() / developmentBag.size();
         for (int i = 0, limit = developmentBag.size(); i < limit; i++) {
             int id = developmentBag.get(i);
-            float delta = effortPerFeature * clock.dt / ClockUtils.MS_PER_HOUR;
+            float delta = effortPerFeature * dt / ClockUtils.MS_PER_HOUR;
             world.developmentProgress.add(id, delta);
         }
     }
@@ -88,19 +89,15 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private boolean isComplete(int id) {
-        return world.developmentProgress.get(id) >= world.goal.get(id);
+
+        return world.entity(id).has(world.developmentProgress)
+                && world.developmentProgress.get(id) >= world.goal.get(id);
     }
 
     private void complete(int id) {
-        final Entity developmentEntity = world.entity(id);
-        developmentEntity.close();
-        enableFeatureDevelopedBy(developmentEntity);
-    }
-
-    private void enableFeatureDevelopedBy(Entity developmentEntity) {
-        final int featureEntityId = world.featureId.get(developmentEntity.id);
-        final Entity featureEntity = world.entity(featureEntityId);
-        featureEntity.setEnabled(true);
+        final Entity e = world.entity(id);
+        e.remove(world.developmentProgress);
+        world.vulnerabilityState.set(id, VulnerabilityState.ACTIVE.value);
     }
 
     private void clearBags() {
@@ -108,4 +105,16 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         developerBag.removeAll();
     }
 
+    public Entity makeFeatureEntity() {
+        Entity entity = world.create(true)
+                .add(world.developmentProgress,
+                        world.goal,
+                        world.usersPerSecond,
+                        world.vulnerability,
+                        world.vulnerabilityState);
+        world.developmentProgress.set(entity.id, 0);
+        world.usersPerSecond.set(entity.id, 0);
+        world.vulnerabilityState.set(entity.id, VulnerabilityState.INACTIVE.value);
+        return entity;
+    }
 }

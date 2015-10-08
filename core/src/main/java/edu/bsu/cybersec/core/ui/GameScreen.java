@@ -81,7 +81,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     tripleplay.entity.System progressRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         @Override
         protected boolean isInterested(Entity entity) {
-            return entity.has(gameWorld.featureId) && entity.has(gameWorld.developmentProgress);
+            return entity.has(gameWorld.developmentProgress);
         }
 
         @Override

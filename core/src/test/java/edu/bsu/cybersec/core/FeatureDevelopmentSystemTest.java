@@ -3,46 +3,45 @@ package edu.bsu.cybersec.core;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity completedDevelopmentEntity;
+    private FeatureDevelopmentSystem system;
 
     @Override
     public void setUp() {
         super.setUp();
-        new FeatureDevelopmentSystem(world);
+        system = new FeatureDevelopmentSystem(world);
         completedDevelopmentEntity = null;
     }
 
     @Test
     public void testUpdate_noDevelopers_noProgress() {
-        Entity developmentEntity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
-        advanceOneDay();
+        Entity developmentEntity = makeFeatureInDevelopment();
+        whenOneDayOfGameTimeElapses();
         thenThereIsNoProgressOn(developmentEntity);
     }
 
-    private Entity makeFeatureInDevelopmentAndReturnDevelopmentEntity() {
-        Entity featureEntity = createDisabledFeatureEntity();
-        return createDevelopmentEntityForFeature(featureEntity);
+    private void whenOneDayOfGameTimeElapses() {
+        world.advanceGameTime(ClockUtils.MS_PER_DAY);
+        advanceOneDay();
     }
 
-    private Entity createDisabledFeatureEntity() {
-        Entity featureEntity = world.create(false)
-                .add(world.usersPerSecond, world.companyId);
+    private void whenOneHourOfGameTimeElapses() {
+        world.advanceGameTime(ClockUtils.MS_PER_HOUR);
+        advanceOneHour();
+    }
+
+    private Entity makeFeatureInDevelopment() {
+        Entity featureEntity = system.makeFeatureEntity();
         world.usersPerSecond.set(featureEntity.id, 20);
+        world.developmentProgress.set(featureEntity.id, 0);
+        world.goal.set(featureEntity.id, 100);
+        world.vulnerability.set(featureEntity.id, 10);
+        world.vulnerabilityState.set(featureEntity.id, VulnerabilityState.INACTIVE.value);
         return featureEntity;
-    }
-
-    private Entity createDevelopmentEntityForFeature(Entity featureEntity) {
-        Entity developmentEntity = world.create(true)
-                .add(world.developmentProgress, world.goal, world.featureId);
-        world.developmentProgress.set(developmentEntity.id, 0);
-        world.goal.set(developmentEntity.id, 100);
-        world.featureId.set(developmentEntity.id, featureEntity.id);
-        return developmentEntity;
     }
 
     private void thenThereIsNoProgressOn(Entity developmentEntity) {
@@ -52,8 +51,8 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdate_oneIdleDeveloper_oneFeatureToDevelop_noProgress() {
         createIdleDeveloper();
-        Entity developmentEntity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
-        advanceOneDay();
+        Entity developmentEntity = makeFeatureInDevelopment();
+        whenOneDayOfGameTimeElapses();
         thenThereIsNoProgressOn(developmentEntity);
     }
 
@@ -72,9 +71,9 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     @Test
     public void testPositiveProgressRate_positiveProgress() {
-        Entity entity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
+        Entity entity = makeFeatureInDevelopment();
         createActiveDeveloper(10);
-        advanceOneDay();
+        whenOneDayOfGameTimeElapses();
         thenProgressIsPositiveOn(entity);
     }
 
@@ -84,46 +83,52 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     @Test
     public void testUpdate_defaultProgressUnitsArePerHour() {
-        final float amountPerHour = 10;
-        Entity entity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
+        Entity entity = makeFeatureInDevelopment();
         createActiveDeveloper(10);
-        advanceOneHour();
-        assertEquals(amountPerHour, world.developmentProgress.get(entity.id), EPSILON);
+        whenOneHourOfGameTimeElapses();
+        assertEquals(10, world.developmentProgress.get(entity.id), EPSILON);
     }
 
     private void whenAFeatureIsCompleted() {
         completedDevelopmentEntity = makeFeatureInDevelopmentRequiring(0);
         createActiveDeveloper(10);
-        advanceOneSecond();
+        whenOneDayOfGameTimeElapses();
     }
 
     private Entity makeFeatureInDevelopmentRequiring(int goal) {
-        Entity e = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
+        Entity e = makeFeatureInDevelopment();
         e.add(world.goal);
         world.goal.set(e.id, goal);
         return e;
     }
 
     @Test
-    public void testFeatureCompletion_removesDevelopmentEntity() {
+    public void testFeatureCompletion_removesDevelopmentProgressComponent() {
         whenAFeatureIsCompleted();
-        advanceOneMillisecond();
-        assertTrue(completedDevelopmentEntity.isDisposed());
+        whenOneDayOfGameTimeElapses();
+        assertFalse(completedDevelopmentEntity.has(world.developmentProgress));
     }
 
     @Test
-    public void testFeatureCompletion_enablesFeatureEntity() {
+    public void testFeatureCompletion_enablesVulnerability() {
         whenAFeatureIsCompleted();
-        thenTheDevelopedFeatureIsEnabled();
+        whenOneDayOfGameTimeElapses();
+        assertEquals(VulnerabilityState.ACTIVE.value, world.vulnerabilityState.get(completedDevelopmentEntity.id));
     }
 
-    private void thenTheDevelopedFeatureIsEnabled() {
-        final int featureId = world.featureId.get(completedDevelopmentEntity.id);
-        final Entity featureEntity = world.entity(featureId);
-        assertTrue(featureEntity.isEnabled());
+    /**
+     * Test that progress advancement is based on <em>game time</em>, not <em>clock time</em>.
+     */
+    @Test
+    public void testUpdate_clockAdvanceWithoutGameTimeAdvance_noProgress() {
+        Entity e = makeFeatureInDevelopment();
+        createActiveDeveloper(1000);
+        advanceOneDay(); // NOT advancing game time
+        world.gameTimeMs = world.prevGameTimeMs = 0;
+        thenThereIsNoProgressOn(e);
     }
 
-    private class DeveloperBuilder {
+    private final class DeveloperBuilder {
         private Entity entity = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked);
