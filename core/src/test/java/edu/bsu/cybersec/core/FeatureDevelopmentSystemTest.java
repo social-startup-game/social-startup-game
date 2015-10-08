@@ -83,12 +83,12 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testUpdate_defaultProgressUnitsArePerSecond() {
-        final float amountPerSecond = 10;
+    public void testUpdate_defaultProgressUnitsArePerHour() {
+        final float amountPerHour = 10;
         Entity entity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         createActiveDeveloper(10);
-        advanceOneSecond();
-        assertEquals(amountPerSecond, world.developmentProgress.get(entity.id), EPSILON);
+        advanceOneHour();
+        assertEquals(amountPerHour, world.developmentProgress.get(entity.id), EPSILON);
     }
 
     private void whenAFeatureIsCompleted() {

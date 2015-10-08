@@ -58,7 +58,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         float effortPerFeature = computeTotalDevelopmentEffort() / developmentBag.size();
         for (int i = 0, limit = developmentBag.size(); i < limit; i++) {
             int id = developmentBag.get(i);
-            float delta = effortPerFeature * clock.dt / 1000;
+            float delta = effortPerFeature * clock.dt / ClockUtils.MS_PER_HOUR;
             world.developmentProgress.add(id, delta);
         }
     }

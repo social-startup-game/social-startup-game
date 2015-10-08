@@ -25,6 +25,10 @@ public abstract class AbstractSystemTest {
         clockUtil.advance(1000);
     }
 
+    protected void advanceOneHour() {
+        clockUtil.advance(ClockUtils.MS_PER_HOUR);
+    }
+
     protected void advanceOneDay() {
         clockUtil.advance(ClockUtils.MS_PER_DAY);
     }
