@@ -39,7 +39,7 @@ public class MainUIGroup extends Group {
         new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(gameWorld.name);
+                return entity.has(gameWorld.tasked);
             }
 
             @Override

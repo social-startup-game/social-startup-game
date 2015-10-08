@@ -46,7 +46,7 @@ public class FeatureGroup extends InteractionAreaGroup {
             private Label makeLabelFor(int id) {
                 final Entity entity = gameWorld.entity(id);
                 final int number = gameWorld.featureNumber.get(id);
-                final String initial = "Feature " + number;
+                final String initial = "Feature " + number + " (" + gameWorld.name.get(id) + ") ";
 
                 if (entity.has(gameWorld.developmentProgress)) {
                     final int progress = (int) (gameWorld.developmentProgress.get(id) / gameWorld.goal.get(id) * 100);

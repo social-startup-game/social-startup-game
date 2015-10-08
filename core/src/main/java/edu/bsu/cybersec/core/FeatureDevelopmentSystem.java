@@ -118,11 +118,13 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     private Entity makeFeature(int featureNumber) {
         Entity entity = world.create(true)
                 .add(world.featureNumber,
+                        world.name,
                         world.usersPerHour,
                         world.usersPerHourState,
                         world.vulnerability,
                         world.vulnerabilityState);
         world.featureNumber.set(entity.id, featureNumber);
+        world.name.set(entity.id, "Unnamed feature");
         return entity;
     }
 
