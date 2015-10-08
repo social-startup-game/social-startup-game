@@ -98,6 +98,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         final Entity e = world.entity(id);
         e.remove(world.developmentProgress);
         world.vulnerabilityState.set(id, VulnerabilityState.ACTIVE.value);
+        world.usersPerHourState.set(id, UsersPerHourState.ACTIVE.value);
     }
 
     private void clearBags() {
@@ -108,21 +109,25 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     public Entity makeFeatureInDevelopment() {
         Entity entity = world.create(true)
                 .add(world.developmentProgress,
-                        world.goal,
-                        world.usersPerHour,
-                        world.vulnerability,
-                        world.vulnerabilityState);
+                        world.goal);
+        addCommonFeatureComponentsTo(entity);
         world.vulnerabilityState.set(entity.id, VulnerabilityState.INACTIVE.value);
+        world.usersPerHourState.set(entity.id, UsersPerHourState.INACTIVE.value);
         return entity;
     }
 
+    private void addCommonFeatureComponentsTo(Entity entity) {
+        entity.add(world.usersPerHour,
+                world.usersPerHourState,
+                world.vulnerability,
+                world.vulnerabilityState);
+    }
+
     public Entity makeCompletedFeature() {
-        Entity entity = world.create(true)
-                .add(world.goal,
-                        world.usersPerHour,
-                        world.vulnerability,
-                        world.vulnerabilityState);
+        Entity entity = world.create(true);
+        addCommonFeatureComponentsTo(entity);
         world.vulnerabilityState.set(entity.id, VulnerabilityState.ACTIVE.value);
+        world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
         return entity;
     }
 }

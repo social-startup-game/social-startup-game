@@ -30,10 +30,12 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
         world.gameTimeMs += ClockUtils.MS_PER_HOUR;
     }
 
-    private void createEntityGeneratingUsersPerHour(float usersPerHour) {
+    private Entity createEntityGeneratingUsersPerHour(float usersPerHour) {
         Entity entity = world.create(true)
-                .add(world.usersPerHour);
+                .add(world.usersPerHour, world.usersPerHourState);
+        world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
         world.usersPerHour.set(entity.id, usersPerHour);
+        return entity;
     }
 
     private void assertIntegerNumberOfUsersIs(int users) {
@@ -60,5 +62,13 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
         whenOneHourElapses();
         whenOneHourElapses();
         assertIntegerNumberOfUsersIs(1);
+    }
+
+    @Test
+    public void testUpdate_usersPerHourInactive_noChange() {
+        Entity e = createEntityGeneratingUsersPerHour(5);
+        world.usersPerHourState.set(e.id, UsersPerHourState.INACTIVE.value);
+        whenOneHourElapses();
+        assertIntegerNumberOfUsersIs(0);
     }
 }

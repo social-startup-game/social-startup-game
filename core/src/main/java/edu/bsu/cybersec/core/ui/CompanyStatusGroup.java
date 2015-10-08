@@ -34,7 +34,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
 
         @Override
         protected boolean isInterested(Entity entity) {
-            return entity.has(gameWorld.usersPerHour);
+            return ((GameWorld.Systematized) gameWorld).userGenerationSystem.isActiveUserGeneratingEntity(entity);
         }
 
         @Override

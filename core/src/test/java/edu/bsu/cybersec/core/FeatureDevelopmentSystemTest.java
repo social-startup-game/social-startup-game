@@ -116,6 +116,13 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         assertEquals(VulnerabilityState.ACTIVE.value, world.vulnerabilityState.get(completedDevelopmentEntity.id));
     }
 
+    @Test
+    public void testFeatureCompletion_enablesUserGeneration() {
+        whenAFeatureIsCompleted();
+        whenOneDayOfGameTimeElapses();
+        assertEquals(UsersPerHourState.ACTIVE.value, world.usersPerHourState.get(completedDevelopmentEntity.id));
+    }
+
     /**
      * Test that progress advancement is based on <em>game time</em>, not <em>clock time</em>.
      */

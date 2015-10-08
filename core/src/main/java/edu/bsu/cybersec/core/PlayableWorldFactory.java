@@ -53,7 +53,6 @@ public class PlayableWorldFactory {
         Entity userGeneratingEntity = world.featureDevelopmentSystem.makeCompletedFeature();
         world.usersPerHour.set(userGeneratingEntity.id, 1);
         world.vulnerability.set(userGeneratingEntity.id, 10);
-        world.vulnerabilityState.set(userGeneratingEntity.id, VulnerabilityState.ACTIVE.value);
     }
 
     private void makeFeatureInDevelopment() {

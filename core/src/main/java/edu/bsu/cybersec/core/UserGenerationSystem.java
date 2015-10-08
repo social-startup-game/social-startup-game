@@ -25,6 +25,11 @@ public class UserGenerationSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.usersPerHour);
+        return isActiveUserGeneratingEntity(entity);
+    }
+
+    public boolean isActiveUserGeneratingEntity(Entity entity) {
+        return entity.has(world.usersPerHour)
+                && world.usersPerHourState.get(entity.id) == UsersPerHourState.ACTIVE.value;
     }
 }
