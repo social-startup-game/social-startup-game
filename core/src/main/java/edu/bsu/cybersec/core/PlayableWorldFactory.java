@@ -77,8 +77,8 @@ public class PlayableWorldFactory {
         world.companyId.set(feature.id, company.id);
 
         Entity development = world.create(true)
-                .add(world.progress, world.goal, world.featureId);
-        world.progress.set(development.id, 0);
+                .add(world.developmentProgress, world.goal, world.featureId);
+        world.developmentProgress.set(development.id, 0);
         world.goal.set(development.id, 20);
         world.featureId.set(development.id, feature.id);
     }

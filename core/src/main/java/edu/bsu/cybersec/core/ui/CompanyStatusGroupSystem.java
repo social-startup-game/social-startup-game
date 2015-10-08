@@ -25,16 +25,16 @@ public final class CompanyStatusGroupSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(gameWorld.progress);
+        return entity.has(gameWorld.developmentProgress);
     }
 
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
         final int limit = entities.size();
-        checkArgument(limit <= 1, "Expected no more than one progress entity, got " + limit);
+        checkArgument(limit <= 1, "Expected no more than one developmentProgress entity, got " + limit);
         if (limit > 0) {
-            final float progress = gameWorld.progress.get(entities.get(0));
+            final float progress = gameWorld.developmentProgress.get(entities.get(0));
             progressLabel.text.update("Progress: " + progress);
         } else {
             progressLabel.text.update("Done.");

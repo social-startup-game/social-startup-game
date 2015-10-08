@@ -59,7 +59,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         for (int i = 0, limit = developmentBag.size(); i < limit; i++) {
             int id = developmentBag.get(i);
             float delta = effortPerFeature * clock.dt / 1000;
-            world.progress.add(id, delta);
+            world.developmentProgress.add(id, delta);
         }
     }
 
@@ -88,7 +88,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private boolean isComplete(int id) {
-        return world.progress.get(id) >= world.goal.get(id);
+        return world.developmentProgress.get(id) >= world.goal.get(id);
     }
 
     private void complete(int id) {

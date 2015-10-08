@@ -81,7 +81,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     tripleplay.entity.System progressRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         @Override
         protected boolean isInterested(Entity entity) {
-            return entity.has(gameWorld.featureId) && entity.has(gameWorld.progress);
+            return entity.has(gameWorld.featureId) && entity.has(gameWorld.developmentProgress);
         }
 
         @Override
@@ -91,7 +91,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                     "I expected at most one featureId in development but found " + entities.size());
             for (int i = 0, limit = entities.size(); i < limit; i++) {
                 int id = entities.get(i);
-                progressLabel.text.update("Progress: " + gameWorld.progress.get(id) + " / " + gameWorld.goal.get(id));
+                progressLabel.text.update("Progress: " + gameWorld.developmentProgress.get(id) + " / " + gameWorld.goal.get(id));
             }
         }
     };

@@ -38,15 +38,15 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity createDevelopmentEntityForFeature(Entity featureEntity) {
         Entity developmentEntity = world.create(true)
-                .add(world.progress, world.goal, world.featureId);
-        world.progress.set(developmentEntity.id, 0);
+                .add(world.developmentProgress, world.goal, world.featureId);
+        world.developmentProgress.set(developmentEntity.id, 0);
         world.goal.set(developmentEntity.id, 100);
         world.featureId.set(developmentEntity.id, featureEntity.id);
         return developmentEntity;
     }
 
     private void thenThereIsNoProgressOn(Entity developmentEntity) {
-        assertEquals(0, world.progress.get(developmentEntity.id), EPSILON);
+        assertEquals(0, world.developmentProgress.get(developmentEntity.id), EPSILON);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private void thenProgressIsPositiveOn(Entity entity) {
-        assertTrue(world.progress.get(entity.id) > 0);
+        assertTrue(world.developmentProgress.get(entity.id) > 0);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         Entity entity = makeFeatureInDevelopmentAndReturnDevelopmentEntity();
         createActiveDeveloper(10);
         advanceOneSecond();
-        assertEquals(amountPerSecond, world.progress.get(entity.id), EPSILON);
+        assertEquals(amountPerSecond, world.developmentProgress.get(entity.id), EPSILON);
     }
 
     private void whenAFeatureIsCompleted() {
