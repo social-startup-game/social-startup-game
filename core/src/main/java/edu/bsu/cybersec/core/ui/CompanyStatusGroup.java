@@ -34,14 +34,14 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
 
         @Override
         protected boolean isInterested(Entity entity) {
-            return entity.has(gameWorld.usersPerSecond);
+            return entity.has(gameWorld.usersPerHour);
         }
 
         @Override
         protected void update(Clock clock, Entities entities) {
             float sum = 0;
             for (int i = 0, limit = entities.size(); i < limit; i++) {
-                sum += gameWorld.usersPerSecond.get(entities.get(i));
+                sum += gameWorld.usersPerHour.get(entities.get(i));
             }
             usersPerSecondLabel.text.update(TEXT + sum);
         }

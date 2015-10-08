@@ -3,7 +3,7 @@ package edu.bsu.cybersec.core;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UserGenerationSystemTest extends AbstractSystemTest {
 
@@ -22,26 +22,26 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testOnePerSecond_GainOneUser() {
-        createEntityGeneratingUsersPerSecond(1);
-        whenOneSecondElapses();
+    public void testOnePerHour_GainOneUser() {
+        createEntityGeneratingUsersPerHour(1);
+        whenOneHourElapses();
         assertNumberOfUsersIs(1);
     }
 
-    private void whenOneSecondElapses() {
+    private void whenOneHourElapses() {
         advanceGameTimeToSimulateAFunctioningGameTimeSystem();
-        advanceOneSecond();
+        advanceOneHour();
     }
 
     private void advanceGameTimeToSimulateAFunctioningGameTimeSystem() {
         world.prevGameTimeMs = world.gameTimeMs;
-        world.gameTimeMs += 1000;
+        world.gameTimeMs += ClockUtils.MS_PER_HOUR;
     }
 
-    private void createEntityGeneratingUsersPerSecond(float usersPerSecond) {
+    private void createEntityGeneratingUsersPerHour(float usersPerHour) {
         Entity entity = world.create(true)
-                .add(world.usersPerSecond, world.companyId);
-        world.usersPerSecond.set(entity.id, usersPerSecond);
+                .add(world.usersPerHour, world.companyId);
+        world.usersPerHour.set(entity.id, usersPerHour);
         world.companyId.set(entity.id, companyId);
     }
 
@@ -51,24 +51,24 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testFivePerSecond_gainFiveUsers() {
-        createEntityGeneratingUsersPerSecond(5);
-        whenOneSecondElapses();
+    public void testFivePerHour_gainFiveUsers() {
+        createEntityGeneratingUsersPerHour(5);
+        whenOneHourElapses();
         assertNumberOfUsersIs(5);
     }
 
     @Test
-    public void testOnePerTwoSeconds_oneSecondsElapse_noUsers() {
-        createEntityGeneratingUsersPerSecond(0.5f);
-        whenOneSecondElapses();
+    public void testOnePerTwoHours_oneSecondsElapse_noUsers() {
+        createEntityGeneratingUsersPerHour(0.5f);
+        whenOneHourElapses();
         assertNumberOfUsersIs(0);
     }
 
     @Test
-    public void testOnePerTwoSeconds_twoSecondsElapse_oneUser() {
-        createEntityGeneratingUsersPerSecond(0.5f);
-        whenOneSecondElapses();
-        whenOneSecondElapses();
+    public void testOnePerTwoHours_twoHoursElapse_oneUser() {
+        createEntityGeneratingUsersPerHour(0.5f);
+        whenOneHourElapses();
+        whenOneHourElapses();
         assertNumberOfUsersIs(1);
     }
 }

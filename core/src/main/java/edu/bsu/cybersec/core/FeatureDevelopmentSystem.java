@@ -109,11 +109,11 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         Entity entity = world.create(true)
                 .add(world.developmentProgress,
                         world.goal,
-                        world.usersPerSecond,
+                        world.usersPerHour,
                         world.vulnerability,
                         world.vulnerabilityState);
         world.developmentProgress.set(entity.id, 0);
-        world.usersPerSecond.set(entity.id, 0);
+        world.usersPerHour.set(entity.id, 0);
         world.vulnerabilityState.set(entity.id, VulnerabilityState.INACTIVE.value);
         return entity;
     }

@@ -36,7 +36,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity makeFeatureInDevelopment() {
         Entity featureEntity = system.makeFeatureEntity();
-        world.usersPerSecond.set(featureEntity.id, 20);
+        world.usersPerHour.set(featureEntity.id, 20);
         world.developmentProgress.set(featureEntity.id, 0);
         world.goal.set(featureEntity.id, 100);
         world.vulnerability.set(featureEntity.id, 10);
