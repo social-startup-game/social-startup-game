@@ -105,33 +105,4 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         developmentBag.removeAll();
         developerBag.removeAll();
     }
-
-    public Entity makeFeatureInDevelopment(int featureNumber) {
-        Entity entity = makeFeature(featureNumber);
-        entity.add(world.developmentProgress,
-                world.goal);
-        world.vulnerabilityState.set(entity.id, VulnerabilityState.INACTIVE.value);
-        world.usersPerHourState.set(entity.id, UsersPerHourState.INACTIVE.value);
-        return entity;
-    }
-
-    private Entity makeFeature(int featureNumber) {
-        Entity entity = world.create(true)
-                .add(world.featureNumber,
-                        world.name,
-                        world.usersPerHour,
-                        world.usersPerHourState,
-                        world.vulnerability,
-                        world.vulnerabilityState);
-        world.featureNumber.set(entity.id, featureNumber);
-        world.name.set(entity.id, "Unnamed feature");
-        return entity;
-    }
-
-    public Entity makeCompletedFeature(int featureNumber) {
-        Entity entity = makeFeature(featureNumber);
-        world.vulnerabilityState.set(entity.id, VulnerabilityState.ACTIVE.value);
-        world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
-        return entity;
-    }
 }

@@ -53,5 +53,6 @@ public class GameWorld extends World {
         public final ExpirySystem expirySystem = new ExpirySystem(this);
         public final EventTriggerSystem eventTriggerSystem = new EventTriggerSystem(this);
         public final VulnerabilitySystem vulnerabilitySystem = new VulnerabilitySystem(this);
+        public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
     }
 }
