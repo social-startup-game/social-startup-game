@@ -64,7 +64,7 @@ public class PlayableWorldFactory {
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.companyId, world.exposure);
+        Entity userGeneratingEntity = world.create(true).add(world.usersPerSecond, world.companyId);
         world.usersPerSecond.set(userGeneratingEntity.id, 1);
         world.companyId.set(userGeneratingEntity.id, company.id);
         world.attackSurface.set(company.id, 0.05f);
@@ -72,10 +72,9 @@ public class PlayableWorldFactory {
 
     private void makeFeatureInDevelopment() {
         Entity feature = world.create(false)
-                .add(world.usersPerSecond, world.companyId, world.exposure);
+                .add(world.usersPerSecond, world.companyId);
         world.usersPerSecond.set(feature.id, 25);
         world.companyId.set(feature.id, company.id);
-        world.exposure.set(feature.id, 0.20f);
 
         Entity development = world.create(true)
                 .add(world.progress, world.goal, world.featureId);

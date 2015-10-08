@@ -9,20 +9,12 @@ import static org.junit.Assert.assertTrue;
 public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity completedDevelopmentEntity;
-    private Entity company;
 
     @Override
     public void setUp() {
         super.setUp();
         new FeatureDevelopmentSystem(world);
         completedDevelopmentEntity = null;
-        createCompany();
-    }
-
-    private void createCompany() {
-        company = world.create(true)
-                .add(world.attackSurface);
-        world.attackSurface.set(company.id, 0);
     }
 
     @Test
@@ -39,10 +31,8 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private Entity createDisabledFeatureEntity() {
         Entity featureEntity = world.create(false)
-                .add(world.usersPerSecond, world.companyId, world.exposure);
+                .add(world.usersPerSecond, world.companyId);
         world.usersPerSecond.set(featureEntity.id, 20);
-        world.companyId.set(featureEntity.id, company.id);
-        world.exposure.set(featureEntity.id, 10);
         return featureEntity;
     }
 
@@ -74,12 +64,6 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private DeveloperBuilder createEntityWithDevelopmentSkill(int devSkill) {
         return new DeveloperBuilder(devSkill);
-    }
-
-    private Entity createTasklessDeveloper(float rate) {
-        Entity developer = world.create(true).add(world.tasked, world.developmentSkill);
-        world.developmentSkill.set(developer.id, (int) rate);
-        return developer;
     }
 
     private Entity createActiveDeveloper(int rate) {
@@ -152,14 +136,5 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
             world.tasked.set(entity.id, task);
             return entity;
         }
-    }
-
-    @Test
-    public void testFeatureCompletion_increasesCompanyAttackSurface() {
-        float before = world.attackSurface.get(company.id);
-        whenAFeatureIsCompleted();
-        float after = world.attackSurface.get(company.id);
-        assertTrue(
-                String.format("After (%.2f) is greater than before (%.2f)", after, before), after > before);
     }
 }
