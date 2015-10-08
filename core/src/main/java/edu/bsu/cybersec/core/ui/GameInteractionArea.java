@@ -21,13 +21,13 @@ public final class GameInteractionArea extends Group {
     private Group shown = new Group(AxisLayout.vertical().offStretch())
             .setConstraint(AxisLayout.stretched())
             .addStyles(Style.BACKGROUND.is(Background.solid(Colors.RED)));
-    private final CompanyStatusGroupSystem companyStatusGroupSystem;
+    private final InteractionAreaGroup statusGroup;
 
     public GameInteractionArea(GameWorld gameWorld, Interface iface) {
         super(AxisLayout.vertical().offStretch());
         this.gameWorld = checkNotNull(gameWorld);
         this.iface = checkNotNull(iface);
-        this.companyStatusGroupSystem = new CompanyStatusGroupSystem(gameWorld);
+        statusGroup = new CompanyStatusGroup(gameWorld);
 
         showDefaultView();
         add(shown);
@@ -36,12 +36,12 @@ public final class GameInteractionArea extends Group {
     }
 
     private void showDefaultView() {
-        shown.add(companyStatusGroupSystem.group);
+        shown.add(statusGroup);
     }
 
     private Element makeButtonArea() {
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton("dollar-sign.png", companyStatusGroupSystem.group),
+                .add(new ChangeViewButton("dollar-sign.png", statusGroup),
                         new ChangeViewButton("star.png", new FeatureGroup()),
                         new ChangeViewButton("wrench.png", new DefectsGroup()),
                         new ChangeViewButton("envelope.png", new EventsGroup(gameWorld)));
