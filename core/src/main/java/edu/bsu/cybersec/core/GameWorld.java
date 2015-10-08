@@ -14,6 +14,7 @@ public class GameWorld extends World {
     public int prevGameTimeMs;
     public int gameTimeMs;
     public float exposure;
+    public float users;
 
     public final Component.IScalar tasked = register("tasked", new Component.IScalar(this));
     public final Component.IScalar developmentSkill = register("developmentSkill", new Component.IScalar(this));
@@ -24,7 +25,6 @@ public class GameWorld extends World {
     public final Component.IScalar goal = register("goal", new Component.IScalar(this));
     public final Component.FScalar usersPerHour = register("usersPerHour", new Component.FScalar(this));
     public final Component.IScalar companyId = register("companyId", new Component.IScalar(this));
-    public final Component.FScalar users = register("users", new Component.FScalar(this));
     public final Component.FScalar attackSurface = register("attackSurface", new Component.FScalar(this));
     public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
     public final Component.Generic<String> imagePath = register("imagePath", new Component.Generic<String>(this));

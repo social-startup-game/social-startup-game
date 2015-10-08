@@ -30,10 +30,8 @@ public class PlayableWorldFactory {
     private void makeCompany() {
         company = world.create(true)
                 .add(world.type,
-                        world.users,
                         world.attackSurface);
         world.type.set(company.id, Type.COMPANY);
-        world.users.set(company.id, 0);
         world.attackSurface.set(company.id, 0);
     }
 

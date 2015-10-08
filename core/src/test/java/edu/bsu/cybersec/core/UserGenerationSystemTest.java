@@ -17,7 +17,7 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     }
 
     private int createCompanyEntity() {
-        Entity e = world.create(true).add(world.users);
+        Entity e = world.create(true).add(world.attackSurface);
         return e.id;
     }
 
@@ -25,7 +25,7 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     public void testOnePerHour_GainOneUser() {
         createEntityGeneratingUsersPerHour(1);
         whenOneHourElapses();
-        assertNumberOfUsersIs(1);
+        assertIntegerNumberOfUsersIs(1);
     }
 
     private void whenOneHourElapses() {
@@ -45,23 +45,22 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
         world.companyId.set(entity.id, companyId);
     }
 
-    private void assertNumberOfUsersIs(int users) {
-        int actualAsInt = (int) world.users.get(companyId);
-        assertEquals(users, actualAsInt);
+    private void assertIntegerNumberOfUsersIs(int users) {
+        assertEquals(users, (int) world.users, EPSILON);
     }
 
     @Test
     public void testFivePerHour_gainFiveUsers() {
         createEntityGeneratingUsersPerHour(5);
         whenOneHourElapses();
-        assertNumberOfUsersIs(5);
+        assertIntegerNumberOfUsersIs(5);
     }
 
     @Test
     public void testOnePerTwoHours_oneSecondsElapse_noUsers() {
         createEntityGeneratingUsersPerHour(0.5f);
         whenOneHourElapses();
-        assertNumberOfUsersIs(0);
+        assertIntegerNumberOfUsersIs(0);
     }
 
     @Test
@@ -69,6 +68,6 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
         createEntityGeneratingUsersPerHour(0.5f);
         whenOneHourElapses();
         whenOneHourElapses();
-        assertNumberOfUsersIs(1);
+        assertIntegerNumberOfUsersIs(1);
     }
 }

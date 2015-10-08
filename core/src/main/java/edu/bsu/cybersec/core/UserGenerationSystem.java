@@ -19,8 +19,7 @@ public class UserGenerationSystem extends tripleplay.entity.System {
             int id = entities.get(i);
             float usersPerHour = world.usersPerHour.get(id);
             float additionalUsers = usersPerHour * delta / ClockUtils.MS_PER_HOUR;
-            int ownerId = world.companyId.get(id);
-            world.users.add(ownerId, additionalUsers);
+            world.users += additionalUsers;
         }
     }
 

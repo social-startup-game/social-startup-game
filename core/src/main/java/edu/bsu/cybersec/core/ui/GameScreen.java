@@ -72,7 +72,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         protected void update(Clock clock, Entities entities) {
             super.update(clock, entities);
             checkArgument(entities.size() == 1);
-            float numberOfUsers = gameWorld.users.get(entities.get(0));
+            float numberOfUsers = gameWorld.users;
             usersLabel.text.update("Users: " + (int) numberOfUsers);
         }
     };
