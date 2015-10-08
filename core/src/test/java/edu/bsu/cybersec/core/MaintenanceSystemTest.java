@@ -8,60 +8,53 @@ import static org.junit.Assert.assertTrue;
 
 public final class MaintenanceSystemTest extends AbstractSystemTest {
 
-    private Entity company;
-    private MaintenanceSystem system;
-
     @Override
     public void setUp() {
         super.setUp();
-        company = world.create(true)
-                .add(world.attackSurface);
-        world.attackSurface.set(company.id, 0f);
-        system = new MaintenanceSystem(world);
+        new MaintenanceSystem(world);
     }
 
     @Test
     public void testNoMaintainers_attackSurfaceUnchanged() {
-        givenACompanyWithAttackSurface(1.0f);
+        givenACompanyWithExposure(1.0f);
         advanceOneDay();
         thenAttackSurfaceIs(1.0f);
     }
 
-    private void givenACompanyWithAttackSurface(float surface) {
-        world.attackSurface.set(company.id, surface);
+    private void givenACompanyWithExposure(float exposure) {
+        world.exposure = exposure;
     }
 
-    private float currentAttackSurface() {
-        return world.attackSurface.get(company.id);
+    private float currentExposure() {
+        return world.exposure;
     }
 
 
     private void thenAttackSurfaceIs(float surface) {
-        assertEquals(surface, currentAttackSurface(), EPSILON);
+        assertEquals(surface, currentExposure(), EPSILON);
     }
 
     @Test
-    public void testActiveMaintainer_reducesAttackSurface() {
+    public void testActiveMaintainer_reducesExposure() {
         final float initialSurface = 1.0f;
-        givenACompanyWithAttackSurface(initialSurface);
+        givenACompanyWithExposure(initialSurface);
         givenAnActiveMaintainer();
         advanceOneDay();
-        assertTrue("Attack surface is reduced", currentAttackSurface() < initialSurface);
+        assertTrue("Attack surface is reduced", currentExposure() < initialSurface);
     }
 
     private Entity givenAnActiveMaintainer() {
         Entity maintainer = world.create(true)
-                .add(world.tasked, world.maintenanceSkill, world.companyId);
+                .add(world.tasked, world.maintenanceSkill);
         world.tasked.set(maintainer.id, Task.MAINTENANCE);
         world.maintenanceSkill.set(maintainer.id, 1.0f);
-        world.companyId.set(maintainer.id, company.id);
         return maintainer;
     }
 
     @Test
     public void testIdleMaintainer_doesNotChangeAttackSurface() {
         final float initialSurface = 1.0f;
-        givenACompanyWithAttackSurface(initialSurface);
+        givenACompanyWithExposure(initialSurface);
         givenAnIdleMaintainer();
         advanceOneDay();
         thenAttackSurfaceIs(initialSurface);

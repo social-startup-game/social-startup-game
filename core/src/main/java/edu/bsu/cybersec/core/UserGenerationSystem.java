@@ -25,6 +25,6 @@ public class UserGenerationSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.usersPerHour) && entity.has(world.companyId);
+        return entity.has(world.usersPerHour);
     }
 }

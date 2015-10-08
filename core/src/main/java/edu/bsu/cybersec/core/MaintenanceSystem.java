@@ -3,7 +3,8 @@ package edu.bsu.cybersec.core;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class MaintenanceSystem extends tripleplay.entity.System {
 
@@ -20,7 +21,6 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
                 && world.tasked.get(entity.id) == Task.MAINTENANCE;
         if (interested) {
             checkState(entity.has(world.maintenanceSkill));
-            checkState(entity.has(world.companyId));
         }
         return interested;
     }
@@ -30,10 +30,9 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
         super.update(clock, entities);
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
-            int companyId = world.companyId.get(id);
-            float currentSurface = world.attackSurface.get(companyId);
+            float currentSurface = world.exposure;
             float change = currentSurface * world.maintenanceSkill.get(id) * clock.dt / 1000;
-            world.attackSurface.add(companyId, -change);
+            world.exposure -= change;
         }
     }
 }

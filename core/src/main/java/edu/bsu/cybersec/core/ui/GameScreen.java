@@ -18,18 +18,17 @@ import tripleplay.util.Colors;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
 
     private final GameWorld.Systematized gameWorld;
-    private final Entity company;
 
     {
         PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory();
         gameWorld = playableWorldFactory.createPlayableGameWorld();
-        company = playableWorldFactory.company;
     }
 
     @SuppressWarnings("unused")
@@ -65,13 +64,12 @@ public class GameScreen extends ScreenStack.UIScreen {
     tripleplay.entity.System hudRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         @Override
         protected boolean isInterested(Entity entity) {
-            return entity.id == company.id;
+            return true;
         }
 
         @Override
         protected void update(Clock clock, Entities entities) {
             super.update(clock, entities);
-            checkArgument(entities.size() == 1);
             float numberOfUsers = gameWorld.users;
             usersLabel.text.update("Users: " + (int) numberOfUsers);
         }
@@ -97,21 +95,17 @@ public class GameScreen extends ScreenStack.UIScreen {
     };
 
     @SuppressWarnings("unused")
-    System attackSurfaceRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
+    System vulnerabilityRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
 
         @Override
         protected boolean isInterested(Entity entity) {
-            return entity.has(gameWorld.attackSurface);
+            return true;
         }
 
         @Override
         protected void update(Clock clock, Entities entities) {
             super.update(clock, entities);
-            checkState(entities.size() == 1, "I expected only one entity to have an attack surface.");
-            checkState(entities.get(0) == company.id, "I expect this to be the company");
-            final int id = entities.get(0);
-            float surface = gameWorld.attackSurface.get(id);
-            attackSurfaceLabel.text.update("Attack surface: " + surface);
+            attackSurfaceLabel.text.update("Vulnerability estimate: " + gameWorld.vulnerability);
         }
     };
 

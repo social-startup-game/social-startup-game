@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class CompanyStatusGroup extends InteractionAreaGroup {
 
-    private static final String TEXT = "Users per second: ";
+    private static final String TEXT = "Users per hour: ";
     private final GameWorld gameWorld;
     private final Label usersPerSecondLabel = new Label(TEXT);
 

@@ -7,18 +7,10 @@ import static org.junit.Assert.assertEquals;
 
 public class UserGenerationSystemTest extends AbstractSystemTest {
 
-    private int companyId;
-
     @Override
     public void setUp() {
         super.setUp();
         new UserGenerationSystem(world);
-        companyId = createCompanyEntity();
-    }
-
-    private int createCompanyEntity() {
-        Entity e = world.create(true).add(world.attackSurface);
-        return e.id;
     }
 
     @Test
@@ -40,9 +32,8 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
 
     private void createEntityGeneratingUsersPerHour(float usersPerHour) {
         Entity entity = world.create(true)
-                .add(world.usersPerHour, world.companyId);
+                .add(world.usersPerHour);
         world.usersPerHour.set(entity.id, usersPerHour);
-        world.companyId.set(entity.id, companyId);
     }
 
     private void assertIntegerNumberOfUsersIs(int users) {

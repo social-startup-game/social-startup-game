@@ -12,7 +12,6 @@ public class PlayableWorldFactory {
     private static final String[] NAMES = {"Esteban", "Nancy", "Jerry"};
     
     private final GameWorld.Systematized world = new GameWorld.Systematized();
-    public Entity company;
 
     public GameWorld.Systematized createPlayableGameWorld() {
         initializeWorld();
@@ -21,18 +20,9 @@ public class PlayableWorldFactory {
 
     private void initializeWorld() {
         world.gameTimeSystem.setScale(SECONDS_PER_HOUR);
-        makeCompany();
         makeExistingFeature();
         makeFeatureInDevelopment();
         makeDevelopers(3);
-    }
-
-    private void makeCompany() {
-        company = world.create(true)
-                .add(world.type,
-                        world.attackSurface);
-        world.type.set(company.id, Type.COMPANY);
-        world.attackSurface.set(company.id, 0);
     }
 
     private void makeDevelopers(int number) {
@@ -48,28 +38,26 @@ public class PlayableWorldFactory {
         Entity developer = world.create(true)
                 .add(world.developmentSkill,
                         world.tasked,
-                        world.companyId,
                         world.maintenanceSkill,
                         world.name,
                         world.imagePath);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 0.02f);
-        world.companyId.set(developer.id, company.id);
         world.name.set(developer.id, name);
         world.imagePath.set(developer.id, IMAGE_PREFIX + name + ".png");
         return developer;
     }
 
     private void makeExistingFeature() {
-        Entity userGeneratingEntity = world.create(true).add(world.usersPerHour, world.companyId);
+        Entity userGeneratingEntity = world.featureDevelopmentSystem.makeCompletedFeature();
         world.usersPerHour.set(userGeneratingEntity.id, 1);
-        world.companyId.set(userGeneratingEntity.id, company.id);
-        world.attackSurface.set(company.id, 0.05f);
+        world.vulnerability.set(userGeneratingEntity.id, 10);
+        world.vulnerabilityState.set(userGeneratingEntity.id, VulnerabilityState.ACTIVE.value);
     }
 
     private void makeFeatureInDevelopment() {
-        Entity e = world.featureDevelopmentSystem.makeFeatureEntity();
+        Entity e = world.featureDevelopmentSystem.makeFeatureInDevelopment();
         world.usersPerHour.set(e.id, 25);
         world.developmentProgress.set(e.id, 0);
         world.goal.set(e.id, 20);
