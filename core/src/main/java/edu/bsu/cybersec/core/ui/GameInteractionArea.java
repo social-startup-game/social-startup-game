@@ -41,10 +41,10 @@ public final class GameInteractionArea extends Group {
 
     private Element makeButtonArea() {
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton("dollar-sign.png", statusGroup),
-                        new ChangeViewButton("star.png", new FeatureGroup(gameWorld)),
-                        new ChangeViewButton("wrench.png", new DefectsGroup()),
-                        new ChangeViewButton("envelope.png", new EventsGroup(gameWorld)));
+                .add(new ChangeViewButton(PreloadedImage.DOLLAR_SIGN.image, statusGroup),
+                        new ChangeViewButton(PreloadedImage.STAR.image, new FeatureGroup(gameWorld)),
+                        new ChangeViewButton(PreloadedImage.WRENCH.image, new DefectsGroup()),
+                        new ChangeViewButton(PreloadedImage.ENVELOPE.image, new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {
@@ -93,9 +93,9 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
 
-        ChangeViewButton(String fileName, final InteractionAreaGroup view) {
+        ChangeViewButton(Image iconImage, final InteractionAreaGroup view) {
             super("");
-            final Icon icon = makeIconFromImage("images/" + fileName);
+            final Icon icon = makeIconFromImage(iconImage);
             super.icon.update(icon);
             view.onAttention().connect(new ValueView.Listener<Boolean>() {
                 @Override
@@ -136,8 +136,7 @@ public final class GameInteractionArea extends Group {
             return group.toAnim();
         }
 
-        private Icon makeIconFromImage(String path) {
-            final Image iconImage = SimGame.game.plat.assets().getImageSync(path);
+        private Icon makeIconFromImage(Image iconImage) {
             final IDimension viewSize = SimGame.game.plat.graphics().viewSize;
             final float desiredHeight = viewSize.height() * PERCENT_OF_VIEW_HEIGHT;
             final float scale = desiredHeight / iconImage.height();

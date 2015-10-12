@@ -1,6 +1,6 @@
 package edu.bsu.cybersec.core;
 
-import edu.bsu.cybersec.core.ui.GameScreen;
+import edu.bsu.cybersec.core.ui.LoadingScreen;
 import playn.core.Platform;
 import playn.scene.SceneGame;
 import tripleplay.game.ScreenStack;
@@ -15,7 +15,7 @@ public class SimGame extends SceneGame {
         super(plat, 33);
         game = this;
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
-        screenStack.push(new GameScreen());
+        screenStack.push(new LoadingScreen(screenStack));
     }
 
 }

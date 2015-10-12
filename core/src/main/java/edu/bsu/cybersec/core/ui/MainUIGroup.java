@@ -48,7 +48,7 @@ public class MainUIGroup extends Group {
                 checkArgument(entities.size() == 3, "Current UI layout assumes three workers.");
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     int id = entities.get(i);
-                    final Image image = SimGame.game.plat.assets().getImageSync(gameWorld.imagePath.get(id));
+                    final Image image = PreloadedImage.values()[i].image;
 
                     final Group group = new Group(AxisLayout.horizontal().offStretch())
                             .addStyles(Style.BACKGROUND.is(
