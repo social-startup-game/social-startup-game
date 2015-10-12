@@ -24,7 +24,7 @@ public class EventsGroup extends InteractionAreaGroup {
 
     private final GameWorld gameWorld;
     private final Label noEventsLabel = new Label("Nothing to see here. Move along.");
-    private final Image eventSpeakerImage = SimGame.game.plat.assets().getImageSync("images/admin.png");
+    private final Image eventSpeakerImage = PreloadedImage.ADMIN.image;
 
     public EventsGroup(GameWorld gameWorld) {
         super(AxisLayout.vertical().offStretch());
