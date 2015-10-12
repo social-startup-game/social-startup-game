@@ -278,11 +278,18 @@ public class GameScreen extends ScreenStack.UIScreen {
     @Override
     protected Root createRoot() {
         Rectangle contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(size());
+        debug("contentBounds " + contentBounds);
+        debug("size " + size());
         Group content = createContentGroup();
         return new Root(iface, new AbsoluteLayout(), makeStyleSheet())
                 .add(AbsoluteLayout.at(content,
                         contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
+                .addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)))
                 .setSize(size());
+    }
+
+    private void debug(String mesg) {
+        game().plat.log().debug(mesg);
     }
 
     private Group createContentGroup() {
@@ -310,7 +317,6 @@ public class GameScreen extends ScreenStack.UIScreen {
             super(AxisLayout.horizontal().stretchByDefault());
             add(timeLabel);
             add(usersLabel);
-            setConstraint(Constraints.fixedHeight(25));
             addStyles(Style.BACKGROUND.is(Background.solid(Colors.DARK_GRAY)));
         }
     }
