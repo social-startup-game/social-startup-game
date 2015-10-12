@@ -24,7 +24,7 @@ public class MainUIGroup extends Group {
     private Group contentGroup;
     private final GameInteractionArea gameInteractionArea;
 
-    private final Image employeeBackground = SimGame.game.plat.assets().getImageSync("images/employee_bg.png");
+    private final Image employeeBackground = PreloadedImage.EMPLOYEE_BG.image;
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface) {
         super(AxisLayout.vertical().offStretch().gap(0));

@@ -7,6 +7,7 @@ public enum PreloadedImage {
     ESTEBAN("Esteban.png"),
     NANCY("Nancy.png"),
     JERRY("Jerry.png"),
+    EMPLOYEE_BG("employee_bg.png"),
     ADMIN("admin.png"),
     DOLLAR_SIGN("dollar-sign.png"),
     ENVELOPE("envelope.png"),
