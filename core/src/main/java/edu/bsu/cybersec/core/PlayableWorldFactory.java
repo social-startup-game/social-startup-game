@@ -19,17 +19,23 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.ImmutableMap;
+import edu.bsu.cybersec.core.ui.PreloadedImage;
 import tripleplay.entity.Entity;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PlayableWorldFactory {
 
     private static final float SECONDS_PER_HOUR = 60 * 60;
-    private static final String IMAGE_PREFIX = "images/";
-    private static final String[] NAMES = {"Esteban", "Nancy", "Jerry"};
-    
+    private static final Map<String, PreloadedImage> DEVELOPERS = ImmutableMap.of(
+            "Esteban", PreloadedImage.ESTEBAN,
+            "Nancy", PreloadedImage.NANCY,
+            "Jerry", PreloadedImage.JERRY);
+
     private final GameWorld.Systematized world = new GameWorld.Systematized();
 
     public GameWorld.Systematized createPlayableGameWorld() {
@@ -46,25 +52,26 @@ public class PlayableWorldFactory {
 
     private void makeDevelopers(int number) {
         checkArgument(number >= 0);
+        Iterator<String> names = DEVELOPERS.keySet().iterator();
         for (int i = 0; i < number; i++) {
-            final String name = NAMES[i];
-            makeDeveloper(name);
+            makeDeveloper(i, names.next());
         }
     }
 
-    private Entity makeDeveloper(String name) {
-        checkNotNull(name);
+    private Entity makeDeveloper(final int number, final String name) {
         Entity developer = world.create(true)
-                .add(world.developmentSkill,
+                .add(world.employeeNumber,
+                        world.developmentSkill,
                         world.tasked,
                         world.maintenanceSkill,
                         world.name,
-                        world.imagePath);
+                        world.image);
+        world.employeeNumber.set(developer.id, number);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 0.02f);
         world.name.set(developer.id, name);
-        world.imagePath.set(developer.id, IMAGE_PREFIX + name + ".png");
+        world.image.set(developer.id, DEVELOPERS.get(name).image);
         return developer;
     }
 

@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.Maps;
+import playn.core.Image;
 import react.Signal;
 import react.Value;
 import tripleplay.entity.Component;
@@ -37,6 +38,7 @@ public class GameWorld extends World {
     public final Value<Float> users = Value.create(0f);
 
     public final Component.IScalar tasked = register("tasked", new Component.IScalar(this));
+    public final Component.IScalar employeeNumber = register("employeeNumber", new Component.IScalar(this));
     public final Component.IScalar developmentSkill = register("developmentSkill", new Component.IScalar(this));
     public final Component.FScalar maintenanceSkill = register("maintenanceSkill", new Component.FScalar(this));
     public final Component.Generic<String> name = register("name", new Component.Generic<String>(this));
@@ -44,7 +46,7 @@ public class GameWorld extends World {
     public final Component.IScalar goal = register("goal", new Component.IScalar(this));
     public final Component.FScalar usersPerHour = register("usersPerHour", new Component.FScalar(this));
     public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
-    public final Component.Generic<String> imagePath = register("imagePath", new Component.Generic<String>(this));
+    public final Component.Generic<Image> image = register("image", new Component.Generic<Image>(this));
     public final Component.Generic<Updatable> onUpdate = register("onUpdate", new Component.Generic<Updatable>(this));
     public final Component.IScalar timeTrigger = register("timeTrigger", new Component.IScalar(this));
     public final Component.Generic<Runnable> event = register("event", new Component.Generic<Runnable>(this));

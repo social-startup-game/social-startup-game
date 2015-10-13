@@ -58,7 +58,7 @@ public class MainUIGroup extends Group {
         new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
             @Override
             protected boolean isInterested(Entity entity) {
-                return entity.has(gameWorld.tasked);
+                return entity.has(gameWorld.employeeNumber);
             }
 
             @Override
@@ -66,8 +66,8 @@ public class MainUIGroup extends Group {
                 super.update(clock, entities);
                 checkArgument(entities.size() == 3, "Current UI layout assumes three workers.");
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    int id = entities.get(i);
-                    final Image image = PreloadedImage.values()[i].image;
+                    final int id = entities.get(i);
+                    final Image image = gameWorld.image.get(id);
 
                     final Group group = new Group(AxisLayout.horizontal().offStretch())
                             .addStyles(Style.BACKGROUND.is(
