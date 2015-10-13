@@ -67,46 +67,14 @@ public class MainUIGroup extends Group {
                 checkArgument(entities.size() == 3, "Current UI layout assumes three workers.");
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     final int id = entities.get(i);
-                    final Image image = gameWorld.image.get(id);
-
-                    final Group group = new Group(AxisLayout.horizontal().offStretch())
-                            .addStyles(Style.BACKGROUND.is(
-                                    ExpandableParallaxBackground.foreground(image).background(employeeBackground.tile())))
-                            .setConstraint(AxisLayout.stretched());
-
-                    Label label = new ClickableLabel("")
-                            .onClick(new Slot<ClickableLabel>() {
-                                @Override
-                                public void onEmit(ClickableLabel event) {
-                                    if (focus.get() != group) {
-                                        focus.update(group);
-                                    } else {
-                                        focus.update(null);
-                                    }
-                                }
-                            })
-                            .addStyles(Style.COLOR.is(Colors.WHITE))
-                            .setConstraint(AxisLayout.stretched(1f));
-                    final String name = gameWorld.name.get(id);
-                    group.add(label,
-                            new Group(AxisLayout.vertical())
-                                    .add(new Shim(0, percentOfViewHeight(0.05f)),
-                                            new Label(name),
-                                            new TaskSelector(root(), gameWorld.entity(id)),
-                                            new Shim(0, 0).setConstraint(AxisLayout.stretched())
-                                    )
-                                    .setConstraint(AxisLayout.stretched(0.5f)));
-                    add(group);
+                    DeveloperView developerView = new DeveloperView(id, root());
+                    add(developerView);
                 }
                 contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
                         .add(gameInteractionArea)
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);
                 setEnabled(false);
-            }
-
-            private float percentOfViewHeight(float v) {
-                return SimGame.game.plat.graphics().viewSize.height() * v;
             }
         };
     }
@@ -161,6 +129,42 @@ public class MainUIGroup extends Group {
                         .from(OPAQUE).to(TRANSPARENT).in(ANIMATION_DURATION / 2);
             }
         });
+    }
+
+    private final class DeveloperView extends Group {
+        private DeveloperView(int id, Root root) {
+            super(AxisLayout.horizontal().offStretch());
+            final Image image = gameWorld.image.get(id);
+            addStyles(Style.BACKGROUND.is(
+                    ExpandableParallaxBackground.foreground(image).background(employeeBackground.tile())))
+                    .setConstraint(AxisLayout.stretched());
+            Label label = new ClickableLabel("")
+                    .onClick(new Slot<ClickableLabel>() {
+                        @Override
+                        public void onEmit(ClickableLabel event) {
+                            if (focus.get() != DeveloperView.this) {
+                                focus.update(DeveloperView.this);
+                            } else {
+                                focus.update(null);
+                            }
+                        }
+                    })
+                    .addStyles(Style.COLOR.is(Colors.WHITE))
+                    .setConstraint(AxisLayout.stretched(1f));
+            final String name = gameWorld.name.get(id);
+            add(label,
+                    new Group(AxisLayout.vertical())
+                            .add(new Shim(0, percentOfViewHeight(0.05f)),
+                                    new Label(name),
+                                    new TaskSelector(root, gameWorld.entity(id)),
+                                    new Shim(0, 0).setConstraint(AxisLayout.stretched())
+                            )
+                            .setConstraint(AxisLayout.stretched(0.5f)));
+        }
+
+        private float percentOfViewHeight(float v) {
+            return SimGame.game.plat.graphics().viewSize.height() * v;
+        }
     }
 
     final class TaskSelector extends Button {
