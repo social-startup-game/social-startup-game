@@ -196,10 +196,10 @@ public class MainUIGroup extends Group {
         }
 
         private Group createControlsAndBioGroup(Root root) {
-            final String name = gameWorld.name.get(id);
+            final Name name = gameWorld.name.get(id);
             final float borderThickness = percentOfViewHeight(0.005f);
             Group employeeDataGroup = new Group(AxisLayout.vertical())
-                    .add(new Label(name),
+                    .add(new Label(name.fullName),
                             createDevelopmentSkillBlock(),
                             createMaintenanceSkillBlock(),
                             wrappingLabel("Degree: Bachelor of Science"),
@@ -211,7 +211,7 @@ public class MainUIGroup extends Group {
             final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.08f);
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
-                            new Label(name),
+                            new Label(name.shortName),
                             new TaskSelector(root, gameWorld.entity(id)),
                             new Shim(0, spaceAroundNameAndTaskArea),
                             new Shim(0, 0).setConstraint(AxisLayout.stretched()),

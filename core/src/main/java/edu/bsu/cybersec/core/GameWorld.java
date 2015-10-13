@@ -41,7 +41,7 @@ public class GameWorld extends World {
     public final Component.IScalar employeeNumber = register("employeeNumber", new Component.IScalar(this));
     public final Component.IScalar developmentSkill = register("developmentSkill", new Component.IScalar(this));
     public final Component.FScalar maintenanceSkill = register("maintenanceSkill", new Component.FScalar(this));
-    public final Component.Generic<String> name = register("name", new Component.Generic<String>(this));
+    public final Component.Generic<Name> name = register("name", new Component.Generic<Name>(this));
     public final Component.FScalar developmentProgress = register("developmentProgress", new Component.FScalar(this));
     public final Component.IScalar goal = register("goal", new Component.IScalar(this));
     public final Component.FScalar usersPerHour = register("usersPerHour", new Component.FScalar(this));

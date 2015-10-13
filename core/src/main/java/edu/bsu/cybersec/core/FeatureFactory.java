@@ -54,7 +54,7 @@ public class FeatureFactory {
                             world.vulnerability,
                             world.vulnerabilityState);
             world.featureNumber.set(entity.id, featureNumber);
-            world.name.set(entity.id, "Unnamed feature");
+            world.name.set(entity.id, Name.simply("Unnamed feature"));
             world.vulnerability.set(entity.id, 10);
             return entity;
         }

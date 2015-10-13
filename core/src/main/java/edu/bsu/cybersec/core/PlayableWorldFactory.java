@@ -31,10 +31,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class PlayableWorldFactory {
 
     private static final float SECONDS_PER_HOUR = 60 * 60;
-    private static final Map<String, PreloadedImage> DEVELOPERS = ImmutableMap.of(
-            "Esteban", PreloadedImage.ESTEBAN,
-            "Nancy", PreloadedImage.NANCY,
-            "Jerry", PreloadedImage.JERRY);
+    private static final Map<Name, PreloadedImage> DEVELOPERS = ImmutableMap.of(
+            Name.first("Esteban").andLast("Cortez"), PreloadedImage.ESTEBAN,
+            Name.first("Nancy").andLast("Stevens"), PreloadedImage.NANCY,
+            Name.first("Jerry").andLast("Chen"), PreloadedImage.JERRY);
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
 
@@ -52,13 +52,13 @@ public class PlayableWorldFactory {
 
     private void makeDevelopers(int number) {
         checkArgument(number >= 0);
-        Iterator<String> names = DEVELOPERS.keySet().iterator();
+        Iterator<Name> names = DEVELOPERS.keySet().iterator();
         for (int i = 0; i < number; i++) {
             makeDeveloper(i, names.next());
         }
     }
 
-    private Entity makeDeveloper(final int number, final String name) {
+    private Entity makeDeveloper(final int number, final Name name) {
         Entity developer = world.create(true)
                 .add(world.employeeNumber,
                         world.developmentSkill,
