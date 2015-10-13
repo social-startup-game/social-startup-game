@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Image;
@@ -31,11 +32,15 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
+import java.util.Map;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainUIGroup extends Group {
     private static final String DOWN_ARROW = "\u25BC";
+    private static final float TRANSPARENT_AREA_WEIGHT = 1.0f;
+    private static final float CONTROLS_AREA_WEIGHT = 1.0f;
 
     private final Interface iface;
     private final GameWorld gameWorld;
@@ -56,6 +61,10 @@ public class MainUIGroup extends Group {
 
     private void setupUIConfigurationSystem() {
         new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
+
+            private boolean configured = false;
+            private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
+
             @Override
             protected boolean isInterested(Entity entity) {
                 return entity.has(gameWorld.employeeNumber);
@@ -65,16 +74,37 @@ public class MainUIGroup extends Group {
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
                 checkArgument(entities.size() == 3, "Current UI layout assumes three workers.");
+                if (!configured) {
+                    configureUI(entities);
+                } else {
+                    updateDeveloperInfoArea(entities);
+                }
+            }
+
+            private void configureUI(Entities entities) {
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
                     final int id = entities.get(i);
                     DeveloperView developerView = new DeveloperView(id, root());
+                    developerViews.put(id, developerView);
                     add(developerView);
                 }
                 contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
                         .add(gameInteractionArea)
                         .setConstraint(AxisLayout.stretched(2));
                 add(contentGroup);
-                setEnabled(false);
+                configured = true;
+            }
+
+            private void updateDeveloperInfoArea(Entities entities) {
+                for (int i = 0, limit = entities.size(); i < limit; i++) {
+                    final int id = entities.get(i);
+                    updateDeveloperInfoArea(id);
+                }
+            }
+
+            private void updateDeveloperInfoArea(int id) {
+                DeveloperView view = checkNotNull(developerViews.get(id), "Missing developer");
+                view.update();
             }
         };
     }
@@ -132,13 +162,26 @@ public class MainUIGroup extends Group {
     }
 
     private final class DeveloperView extends Group {
-        private DeveloperView(int id, Root root) {
+
+        private final int id;
+        private Label developmentSkillLabel;
+        private Label maintenanceSkillLabel;
+
+        DeveloperView(int id, Root root) {
             super(AxisLayout.horizontal().offStretch());
+            this.id = id;
+            checkNotNull(root);
+
             final Image image = gameWorld.image.get(id);
             addStyles(Style.BACKGROUND.is(
                     ExpandableParallaxBackground.foreground(image).background(employeeBackground.tile())))
                     .setConstraint(AxisLayout.stretched());
-            Label label = new ClickableLabel("")
+            add(createTransparentClickableArea(),
+                    createControlsAndBioGroup(root));
+        }
+
+        private Element createTransparentClickableArea() {
+            return new ClickableLabel("")
                     .onClick(new Slot<ClickableLabel>() {
                         @Override
                         public void onEmit(ClickableLabel event) {
@@ -149,21 +192,60 @@ public class MainUIGroup extends Group {
                             }
                         }
                     })
-                    .addStyles(Style.COLOR.is(Colors.WHITE))
-                    .setConstraint(AxisLayout.stretched(1f));
+                    .setConstraint(AxisLayout.stretched(TRANSPARENT_AREA_WEIGHT));
+        }
+
+        private Group createControlsAndBioGroup(Root root) {
             final String name = gameWorld.name.get(id);
-            add(label,
-                    new Group(AxisLayout.vertical())
-                            .add(new Shim(0, percentOfViewHeight(0.05f)),
-                                    new Label(name),
-                                    new TaskSelector(root, gameWorld.entity(id)),
-                                    new Shim(0, 0).setConstraint(AxisLayout.stretched())
-                            )
-                            .setConstraint(AxisLayout.stretched(0.5f)));
+            final float borderThickness = percentOfViewHeight(0.005f);
+            Group employeeDataGroup = new Group(AxisLayout.vertical())
+                    .add(new Label(name),
+                            createDevelopmentSkillBlock(),
+                            createMaintenanceSkillBlock(),
+                            wrappingLabel("Degree: Bachelor of Science"),
+                            wrappingLabel("Discipline: Computer Science"),
+                            wrappingLabel("University: Ball State"))
+                    .addStyles(Style.BACKGROUND.is(
+                            Background.bordered(Colors.BLACK, Colors.WHITE, borderThickness)
+                                    .inset(borderThickness)));
+            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.08f);
+            return new Group(AxisLayout.vertical())
+                    .add(new Shim(0, spaceAroundNameAndTaskArea),
+                            new Label(name),
+                            new TaskSelector(root, gameWorld.entity(id)),
+                            new Shim(0, spaceAroundNameAndTaskArea),
+                            new Shim(0, 0).setConstraint(AxisLayout.stretched()),
+                            employeeDataGroup,
+                            new Shim(0, 0).setConstraint(AxisLayout.stretched()))
+                    .setConstraint(AxisLayout.stretched(CONTROLS_AREA_WEIGHT));
+        }
+
+        private Element<?> wrappingLabel(String s) {
+            return new Label(s)
+                    .addStyles(Style.TEXT_WRAP.on);
+        }
+
+        private Element<?> createDevelopmentSkillBlock() {
+            return new Group(AxisLayout.horizontal())
+                    .add(new Label("Development: "),
+                            developmentSkillLabel = new Label("0"));
+        }
+
+        private Element<?> createMaintenanceSkillBlock() {
+            return new Group(AxisLayout.horizontal())
+                    .add(new Label("Maintenance: "),
+                            maintenanceSkillLabel = new Label("0"));
         }
 
         private float percentOfViewHeight(float v) {
             return SimGame.game.plat.graphics().viewSize.height() * v;
+        }
+
+        void update() {
+            final int developmentSkill = gameWorld.developmentSkill.get(id);
+            developmentSkillLabel.text.update(String.valueOf(developmentSkill));
+            final float maintenanceSkill = gameWorld.maintenanceSkill.get(id);
+            maintenanceSkillLabel.text.update(String.valueOf((int) maintenanceSkill));
         }
     }
 
