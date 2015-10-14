@@ -30,8 +30,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LearningSystem extends tripleplay.entity.System {
 
+    private static final float SKILL_PER_GAME_HOUR = 0.1f;
+
     private final GameWorld world;
     private final Map<Integer, Component.FScalar> taskSkillMap;
+    private float elapsedHours;
 
     public LearningSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
@@ -49,18 +52,20 @@ public class LearningSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
+        this.elapsedHours = (float) (world.gameTimeMs - world.prevGameTimeMs) / ClockUtils.MS_PER_HOUR;
+
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
-            updateSkills(clock, id);
+            updateSkills(id);
         }
     }
 
-    private void updateSkills(Clock clock, final int id) {
+    private void updateSkills(final int id) {
         final int task = world.tasked.get(id);
         Component.FScalar c = taskSkillMap.get(task);
         if (c != null) {
             float start = c.get(id);
-            float updated = start + clock.dt;
+            float updated = start + elapsedHours * SKILL_PER_GAME_HOUR;
             c.set(id, updated);
         }
     }
