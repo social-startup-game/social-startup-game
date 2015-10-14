@@ -36,7 +36,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     @Test
     public void testNoMaintainers_attackSurfaceUnchanged() {
         givenACompanyWithExposure(1.0f);
-        advanceOneDay();
+        advancePlayNClockOneDay();
         thenAttackSurfaceIs(1.0f);
     }
 
@@ -58,7 +58,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
         final float initialSurface = 1.0f;
         givenACompanyWithExposure(initialSurface);
         givenAnActiveMaintainer();
-        advanceOneDay();
+        advancePlayNClockOneDay();
         assertTrue("Attack surface is reduced", currentExposure() < initialSurface);
     }
 
@@ -75,7 +75,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
         final float initialSurface = 1.0f;
         givenACompanyWithExposure(initialSurface);
         givenAnIdleMaintainer();
-        advanceOneDay();
+        advancePlayNClockOneDay();
         thenAttackSurfaceIs(initialSurface);
     }
 

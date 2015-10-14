@@ -44,7 +44,7 @@ public final class LearningSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdate_development_developmentSkillIncreases() {
         givenAnActiveDeveloper();
-        advanceOneDay();
+        advancePlayNClockOneDay();
         assertTrue(world.developmentSkill.get(e.id) > 0);
     }
 
@@ -61,7 +61,7 @@ public final class LearningSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdate_notDevelopment_developmentSkillUnchanged() {
         givenANonDevelopingWorker();
-        advanceOneDay();
+        advancePlayNClockOneDay();
         assertEquals(0, world.developmentSkill.get(e.id), EPSILON);
     }
 
@@ -72,14 +72,14 @@ public final class LearningSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdate_notMaintenance_maintenanceSkillUnchanged() {
         givenAnActiveDeveloper();
-        advanceOneDay();
+        advancePlayNClockOneDay();
         assertEquals(0, world.maintenanceSkill.get(e.id), EPSILON);
     }
 
     @Test
     public void testUpdate_maintenance_maintenanceSkillIncreased() {
         givenAnActiveMaintainer();
-        advanceOneDay();
+        advancePlayNClockOneDay();
         assertTrue(world.maintenanceSkill.get(e.id) > 0);
     }
 

@@ -35,21 +35,30 @@ public abstract class AbstractSystemTest {
         clockUtil = new PlayNClockUtil();
     }
 
-
-    protected void advanceOneMillisecond() {
+    protected void advancePlayNClockOneMillisecond() {
         clockUtil.advance(1);
     }
 
-    protected void advanceOneSecond() {
+    protected void advancePlayNClockOneSecond() {
         clockUtil.advance(1000);
     }
 
-    protected void advanceOneHour() {
+    protected void advancePlayNClockOneHour() {
         clockUtil.advance(ClockUtils.MS_PER_HOUR);
     }
 
-    protected void advanceOneDay() {
+    protected void advancePlayNClockOneDay() {
         clockUtil.advance(ClockUtils.MS_PER_DAY);
+    }
+
+    protected void whenOneHourOfGameTimeElapses() {
+        world.advanceGameTime(ClockUtils.MS_PER_HOUR);
+        advancePlayNClockOneHour();
+    }
+
+    protected void whenOneDayOfGameTimeElapses() {
+        world.advanceGameTime(ClockUtils.MS_PER_DAY);
+        advancePlayNClockOneDay();
     }
 
     private final class PlayNClockUtil {

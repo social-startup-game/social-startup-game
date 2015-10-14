@@ -38,7 +38,7 @@ public final class ExpirySystemTest extends AbstractSystemTest {
     @Test
     public void testExpiredItemIsRemoved() {
         Entity item = makeItemExpiringIn(0);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertTrue(item.isDisposed());
     }
 
@@ -52,7 +52,7 @@ public final class ExpirySystemTest extends AbstractSystemTest {
     @Test
     public void testUnexpiredItemIsNotRemoved() {
         Entity item = makeItemExpiringIn(ClockUtils.MS_PER_DAY);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertFalse(item.isDisposed());
     }
 

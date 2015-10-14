@@ -41,7 +41,7 @@ public final class UpdatingSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdatableThingIsUpdated() {
         givenOneUpdatableEntity();
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         verify(mockUpdatable).update(Matchers.any(Clock.class));
     }
 

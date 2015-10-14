@@ -38,36 +38,36 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
     @Test
     public void testScale_oneMs() {
         system.setScale(10);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertEquals(10, world.gameTimeMs);
     }
 
     @Test
     public void testPreviousTimeIsAdvanced() {
-        advanceOneMillisecond();
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertTrue(world.prevGameTimeMs > 0);
     }
 
     @Test
     public void testSystemDisable_timeStopsMoving() {
         system.setEnabled(false);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertEquals(0, world.gameTimeMs);
     }
 
     @Test
     public void testSystemDisable_noElapsedTime() {
         system.setEnabled(false);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertTrue(world.gameTimeMs == world.prevGameTimeMs);
     }
 
     @Test
     public void testSystemDisableAfterHavingRun_noElapsedTime() {
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         system.setEnabled(false);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertTrue(world.gameTimeMs == world.prevGameTimeMs);
     }
 

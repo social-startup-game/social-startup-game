@@ -44,7 +44,7 @@ public class FeatureGenerationSystemTest extends AbstractSystemTest {
     @Test
     public void testInDevelopmentFeatureCountingSystem() {
         world.create(true).add(world.developmentProgress);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
         assertEquals(1, countingSystem.lastCount);
     }
 
@@ -55,8 +55,8 @@ public class FeatureGenerationSystemTest extends AbstractSystemTest {
     }
 
     private void advanceTimeTwiceSinceWeCannotGuaranteeTheOrderOfUpdates() {
-        advanceOneMillisecond();
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
+        advancePlayNClockOneMillisecond();
     }
 
     private class InDevelopmentFeatureCountingSystem extends System {

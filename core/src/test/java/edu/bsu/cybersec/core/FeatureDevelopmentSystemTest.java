@@ -42,16 +42,6 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         thenThereIsNoProgressOn(developmentEntity);
     }
 
-    private void whenOneDayOfGameTimeElapses() {
-        world.advanceGameTime(ClockUtils.MS_PER_DAY);
-        advanceOneDay();
-    }
-
-    private void whenOneHourOfGameTimeElapses() {
-        world.advanceGameTime(ClockUtils.MS_PER_HOUR);
-        advanceOneHour();
-    }
-
     private Entity makeFeatureInDevelopment() {
         Entity featureEntity = FeatureFactory.in(world).makeFeatureInDevelopment(0);
         world.usersPerHour.set(featureEntity.id, 20);
@@ -148,7 +138,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     public void testUpdate_clockAdvanceWithoutGameTimeAdvance_noProgress() {
         Entity e = makeFeatureInDevelopment();
         createActiveDeveloper(1000);
-        advanceOneDay(); // NOT advancing game time
+        advancePlayNClockOneDay(); // NOT advancing game time
         world.gameTimeMs = world.prevGameTimeMs = 0;
         thenThereIsNoProgressOn(e);
     }

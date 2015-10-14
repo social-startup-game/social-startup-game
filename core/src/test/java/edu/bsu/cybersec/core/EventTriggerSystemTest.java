@@ -45,7 +45,7 @@ public final class EventTriggerSystemTest extends AbstractSystemTest {
     private void whenOneMsAdvances() {
         // We manually fiddle with the gameTimeMs here since the unit test runs independently of any GameTimeSystem.
         world.advanceGameTime(1);
-        advanceOneMillisecond();
+        advancePlayNClockOneMillisecond();
     }
 
     private void givenAnEventThatTriggersInMilliseconds(int ms) {

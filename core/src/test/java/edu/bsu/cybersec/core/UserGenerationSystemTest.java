@@ -41,7 +41,7 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
 
     private void whenOneHourElapses() {
         advanceGameTimeToSimulateAFunctioningGameTimeSystem();
-        advanceOneHour();
+        advancePlayNClockOneHour();
     }
 
     private void advanceGameTimeToSimulateAFunctioningGameTimeSystem() {
