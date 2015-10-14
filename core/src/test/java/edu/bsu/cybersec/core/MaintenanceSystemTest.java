@@ -36,8 +36,8 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     @Test
     public void testNoMaintainers_attackSurfaceUnchanged() {
         givenACompanyWithExposure(1.0f);
-        advancePlayNClockOneDay();
-        thenAttackSurfaceIs(1.0f);
+        whenOneDayOfGameTimeElapses();
+        thenExposureIs(1.0f);
     }
 
     private void givenACompanyWithExposure(float exposure) {
@@ -49,7 +49,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     }
 
 
-    private void thenAttackSurfaceIs(float surface) {
+    private void thenExposureIs(float surface) {
         assertEquals(surface, currentExposure(), EPSILON);
     }
 
@@ -58,8 +58,8 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
         final float initialSurface = 1.0f;
         givenACompanyWithExposure(initialSurface);
         givenAnActiveMaintainer();
-        advancePlayNClockOneDay();
-        assertTrue("Attack surface is reduced", currentExposure() < initialSurface);
+        whenOneDayOfGameTimeElapses();
+        assertTrue(currentExposure() < initialSurface);
     }
 
     private Entity givenAnActiveMaintainer() {
@@ -71,18 +71,27 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testIdleMaintainer_doesNotChangeAttackSurface() {
+    public void testIdleMaintainer_doesNotChangeExposure() {
         final float initialSurface = 1.0f;
         givenACompanyWithExposure(initialSurface);
         givenAnIdleMaintainer();
-        advancePlayNClockOneDay();
-        thenAttackSurfaceIs(initialSurface);
+        whenOneDayOfGameTimeElapses();
+        thenExposureIs(initialSurface);
     }
 
     private void givenAnIdleMaintainer() {
         Entity e = givenAnActiveMaintainer();
         world.tasked.set(e.id, Task.IDLE);
         e.didChange();
+    }
+
+    @Test
+    public void testUpdate_noGameTimeAdvance_noChangeInExposure() {
+        final float initialSurface = 1.0f;
+        givenACompanyWithExposure(initialSurface);
+        givenAnActiveMaintainer();
+        advancePlayNClockOneDay();
+        assertTrue(currentExposure() == initialSurface);
     }
 
 }
