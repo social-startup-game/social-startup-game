@@ -242,10 +242,10 @@ public class MainUIGroup extends Group {
         }
 
         void update() {
-            final int developmentSkill = gameWorld.developmentSkill.get(id);
-            developmentSkillLabel.text.update(String.valueOf(developmentSkill));
-            final float maintenanceSkill = gameWorld.maintenanceSkill.get(id);
-            maintenanceSkillLabel.text.update(String.valueOf((int) maintenanceSkill));
+            final int displayedDevelopmentSkill = (int) gameWorld.developmentSkill.get(id);
+            developmentSkillLabel.text.update(String.valueOf(displayedDevelopmentSkill));
+            final int displayedMaintenanceSkill = (int) gameWorld.maintenanceSkill.get(id);
+            maintenanceSkillLabel.text.update(String.valueOf(displayedMaintenanceSkill));
         }
     }
 

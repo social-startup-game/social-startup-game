@@ -39,7 +39,7 @@ public class GameWorld extends World {
 
     public final Component.IScalar tasked = register("tasked", new Component.IScalar(this));
     public final Component.IScalar employeeNumber = register("employeeNumber", new Component.IScalar(this));
-    public final Component.IScalar developmentSkill = register("developmentSkill", new Component.IScalar(this));
+    public final Component.FScalar developmentSkill = register("developmentSkill", new Component.FScalar(this));
     public final Component.FScalar maintenanceSkill = register("maintenanceSkill", new Component.FScalar(this));
     public final Component.Generic<Name> name = register("name", new Component.Generic<Name>(this));
     public final Component.FScalar developmentProgress = register("developmentProgress", new Component.FScalar(this));
@@ -75,5 +75,6 @@ public class GameWorld extends World {
         public final EventTriggerSystem eventTriggerSystem = new EventTriggerSystem(this);
         public final VulnerabilitySystem vulnerabilitySystem = new VulnerabilitySystem(this);
         public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
+        public final LearningSystem learningSystem = new LearningSystem(this);
     }
 }
