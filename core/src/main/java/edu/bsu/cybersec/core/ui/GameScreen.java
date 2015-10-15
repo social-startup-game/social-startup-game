@@ -278,7 +278,12 @@ public class GameScreen extends ScreenStack.UIScreen {
             private void makeArtificialEvent() {
                 Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
                 gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1);
-                gameWorld.event.set(e.id, new NarrativeEvent(gameWorld, "Your workers don't know what they are doing. Train them?",
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < 10; i++) {
+                    sb.append("This is really long expository text. It should be long enough to trigger the need for scrollbars. It goes on and on and on. It's really long! There are so many words here I can hardly contain myself. ");
+                }
+                gameWorld.event.set(e.id, new NarrativeEvent(gameWorld,
+                        sb.toString() + "Your workers don't know what they are doing. Train them?",
                         new NarrativeEvent.Option("Yes", new Runnable() {
                             @Override
                             public void run() {
