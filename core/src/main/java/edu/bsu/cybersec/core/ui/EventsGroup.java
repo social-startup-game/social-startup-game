@@ -29,26 +29,27 @@ import tripleplay.ui.*;
 import tripleplay.ui.bgs.RoundRectBackground;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
 public class EventsGroup extends InteractionAreaGroup {
     private static final Graphics graphics = SimGame.game.plat.graphics();
     private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(graphics,
-            Colors.WHITE, percentOfScreenWidth(0.05f), Colors.LIGHT_GRAY, percentOfScreenWidth(0.01f));
+            Colors.WHITE, percentOfScreenHeight(0.05f), Colors.LIGHT_GRAY, percentOfScreenHeight(0.01f));
 
-    private static float percentOfScreenWidth(float percent) {
-        return graphics.viewSize.width() * percent;
+    private static float percentOfScreenHeight(float percent) {
+        return graphics.viewSize.height() * percent;
     }
 
 
     private final GameWorld gameWorld;
-    private final Label noEventsLabel = new Label("Nothing to see here. Move along.");
+    private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Colors.BLACK));
     private final Image eventSpeakerImage = PreloadedImage.ADMIN.image;
 
     public EventsGroup(GameWorld gameWorld) {
-        super(AxisLayout.vertical().offStretch());
+        super(new AbsoluteLayout());
         addStyles(Style.BACKGROUND.is(Background.solid(Colors.CYAN)));
-        add(noEventsLabel);
+        add(noEventsLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.CENTER)));
         this.gameWorld = gameWorld;
         gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
             @Override
@@ -62,12 +63,33 @@ public class EventsGroup extends InteractionAreaGroup {
         needsAttention.update(true);
         ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
         removeAll();
-        Group callout = new Group(AxisLayout.vertical()).add(new Shim(0, 5))
-                .add(new Label(narrativeEvent.text)
-                        .addStyles(Style.TEXT_WRAP.is(true),
-                                Style.COLOR.is(Colors.BLACK)))
-                .addStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND))
-                .setConstraint(AxisLayout.stretched());
+        Group callout = makeCallout(narrativeEvent);
+        add(AbsoluteLayout.at(callout, 0, 0, size().width(), size().height()),
+                new Label(Icons.image(eventSpeakerImage))
+                        .setConstraint(AbsoluteLayout.uniform(BoxPoint.BR)));
+    }
+
+    private Group makeCallout(NarrativeEvent narrativeEvent) {
+        final float shimSize = percentOfScreenHeight(0.01f);
+        final float inset = percentOfScreenHeight(0.02f);
+        Label label = new Label(narrativeEvent.text)
+                .addStyles(Style.TEXT_WRAP.on,
+                        Style.COLOR.is(Colors.BLACK),
+                        Style.BACKGROUND.is(Background.blank().inset(inset, inset)));
+        Group buttonGroup = makeButtonGroup(narrativeEvent);
+        Group content = new Group(AxisLayout.vertical().offStretch())
+                .add(new Shim(0, shimSize),
+                        label,
+                        buttonGroup,
+                        new Shim(0, shimSize));
+        Scroller scroller = new Scroller(content).setBehavior(Scroller.Behavior.VERTICAL)
+                .setConstraint(Constraints.fixedSize(size().width(), _size.height()));
+        return new SizableGroup(AxisLayout.vertical().offStretch(), size().width(), size().height())
+                .add(scroller)
+                .addStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
+    }
+
+    private Group makeButtonGroup(NarrativeEvent narrativeEvent) {
         Group buttonGroup = new Group(AxisLayout.horizontal());
         for (final NarrativeEvent.Option option : narrativeEvent.options) {
             buttonGroup.add(new Button(option.text).onClick(new Slot<Button>() {
@@ -81,15 +103,6 @@ public class EventsGroup extends InteractionAreaGroup {
                 }
             }));
         }
-        callout.add(buttonGroup.setConstraint(AxisLayout.fixed()));
-        callout.add(new Shim(0, 70));
-        addAbsoluteLayout(callout);
-    }
-
-    private void addAbsoluteLayout(Group callout) {
-        Group group = new Group(new AbsoluteLayout());
-        group.add(AbsoluteLayout.at(callout, 10, 10))
-                .add(AbsoluteLayout.at(new Label(Icons.image(eventSpeakerImage)), 340, 150));
-        add(group);
+        return buttonGroup;
     }
 }
