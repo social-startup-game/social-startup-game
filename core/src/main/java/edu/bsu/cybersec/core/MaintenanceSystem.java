@@ -49,9 +49,11 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
         super.update(clock, entities);
         final int elapsedTimeMS = world.gameTimeMs - world.prevGameTimeMs;
         for (int i = 0, limit = entities.size(); i < limit; i++) {
-            int id = entities.get(i);
-            float currentExposure = world.exposure.get();
-            float change = currentExposure * world.maintenanceSkill.get(id) * elapsedTimeMS / 1000;
+            final int id = entities.get(i);
+            final float currentExposure = world.exposure.get();
+            final float percentChangePerHour = (int) world.maintenanceSkill.get(id) / 1000f; // 5 skill = 0.05%
+            final float changePerHour = currentExposure * percentChangePerHour;
+            final float change = changePerHour * elapsedTimeMS / ClockUtils.MS_PER_HOUR;
             world.exposure.update(currentExposure - change);
         }
     }

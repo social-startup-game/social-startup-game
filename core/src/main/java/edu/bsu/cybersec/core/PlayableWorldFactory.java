@@ -69,7 +69,7 @@ public class PlayableWorldFactory {
         world.employeeNumber.set(developer.id, number);
         world.tasked.set(developer.id, Task.IDLE);
         world.developmentSkill.set(developer.id, 5);
-        world.maintenanceSkill.set(developer.id, 0.02f);
+        world.maintenanceSkill.set(developer.id, 5);
         world.name.set(developer.id, name);
         world.image.set(developer.id, DEVELOPERS.get(name).image);
         return developer;

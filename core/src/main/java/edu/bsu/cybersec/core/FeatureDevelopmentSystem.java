@@ -88,10 +88,14 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         for (int i = 0, limit = developerBag.size(); i < limit; i++) {
             int entityId = developerBag.get(i);
             if (isDeveloping(entityId)) {
-                effort += world.developmentSkill.get(entityId);
+                effort += roundDownSkillOfEntity(entityId);
             }
         }
         return effort;
+    }
+
+    private int roundDownSkillOfEntity(int entityId) {
+        return (int) world.developmentSkill.get(entityId);
     }
 
     private boolean isDeveloping(int entityId) {

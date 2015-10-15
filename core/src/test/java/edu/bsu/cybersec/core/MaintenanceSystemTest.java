@@ -27,6 +27,8 @@ import static org.junit.Assert.assertTrue;
 
 public final class MaintenanceSystemTest extends AbstractSystemTest {
 
+    private static final float ARBITRARY_SKILL = 1f;
+
     @Override
     public void setUp() {
         super.setUp();
@@ -57,16 +59,16 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     public void testActiveMaintainer_reducesExposure() {
         final float initialSurface = 1.0f;
         givenACompanyWithExposure(initialSurface);
-        givenAnActiveMaintainer();
+        givenAnActiveMaintainer(ARBITRARY_SKILL);
         whenOneDayOfGameTimeElapses();
         assertTrue(currentExposure() < initialSurface);
     }
 
-    private Entity givenAnActiveMaintainer() {
+    private Entity givenAnActiveMaintainer(float skill) {
         Entity maintainer = world.create(true)
                 .add(world.tasked, world.maintenanceSkill);
         world.tasked.set(maintainer.id, Task.MAINTENANCE);
-        world.maintenanceSkill.set(maintainer.id, 1.0f);
+        world.maintenanceSkill.set(maintainer.id, skill);
         return maintainer;
     }
 
@@ -80,7 +82,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     }
 
     private void givenAnIdleMaintainer() {
-        Entity e = givenAnActiveMaintainer();
+        Entity e = givenAnActiveMaintainer(ARBITRARY_SKILL);
         world.tasked.set(e.id, Task.IDLE);
         e.didChange();
     }
@@ -89,9 +91,30 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     public void testUpdate_noGameTimeAdvance_noChangeInExposure() {
         final float initialSurface = 1.0f;
         givenACompanyWithExposure(initialSurface);
-        givenAnActiveMaintainer();
+        givenAnActiveMaintainer(ARBITRARY_SKILL);
         advancePlayNClockOneDay();
         assertTrue(currentExposure() == initialSurface);
+    }
+
+    @Test
+    public void testUpdate_maintenanceIsTenthsOfPercentPerHour() {
+        final float initialSurface = 100.0f;
+        final float skill = 5;
+        givenACompanyWithExposure(initialSurface);
+        givenAnActiveMaintainer(skill);
+        whenOneHourOfGameTimeElapses();
+        assertEquals(initialSurface - skill / 10f, currentExposure(), EPSILON);
+    }
+
+    @Test
+    public void testUpdate_maintenanceIsTenthsOfPercentPerHour_integerSkillOnly() {
+        final float initialSurface = 100.0f;
+        final float skill = 5.9f;
+        final float integerSkill = 5;
+        givenACompanyWithExposure(initialSurface);
+        givenAnActiveMaintainer(skill);
+        whenOneHourOfGameTimeElapses();
+        assertEquals(initialSurface - integerSkill / 10f, currentExposure(), EPSILON);
     }
 
 }

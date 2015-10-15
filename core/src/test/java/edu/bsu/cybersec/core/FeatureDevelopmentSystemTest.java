@@ -69,12 +69,12 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         world.tasked.set(developer.id, Task.IDLE);
     }
 
-    private DeveloperBuilder createEntityWithDevelopmentSkill(int devSkill) {
+    private DeveloperBuilder createEntityWithDevelopmentSkill(float devSkill) {
         return new DeveloperBuilder(devSkill);
     }
 
-    private Entity createActiveDeveloper(int rate) {
-        return createEntityWithDevelopmentSkill(rate).taskedWith(Task.DEVELOPMENT);
+    private Entity createActiveDeveloper(float developmentSkill) {
+        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(Task.DEVELOPMENT);
     }
 
     @Test
@@ -93,6 +93,14 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     public void testUpdate_defaultProgressUnitsArePerHour() {
         Entity entity = makeFeatureInDevelopment();
         createActiveDeveloper(10);
+        whenOneHourOfGameTimeElapses();
+        assertEquals(10, world.developmentProgress.get(entity.id), EPSILON);
+    }
+
+    @Test
+    public void testUpdate_defaultProgressUnitsArePerHour_roundedDownToWholeNumber() {
+        Entity entity = makeFeatureInDevelopment();
+        createActiveDeveloper(10.9f);
         whenOneHourOfGameTimeElapses();
         assertEquals(10, world.developmentProgress.get(entity.id), EPSILON);
     }
@@ -148,7 +156,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
                 .add(world.developmentSkill,
                         world.tasked);
 
-        public DeveloperBuilder(int devSkill) {
+        public DeveloperBuilder(float devSkill) {
             world.developmentSkill.set(entity.id, devSkill);
         }
 
