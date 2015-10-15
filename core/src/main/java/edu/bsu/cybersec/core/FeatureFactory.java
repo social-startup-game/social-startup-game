@@ -25,6 +25,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
+    private static final float DEFAULT_FEATURE_VULNERABILITY = 10f;
+    private static final int DEFAULT_FEATURE_USERS_PER_HOUR = 50;
+
     public static FeatureBuilder in(GameWorld world) {
         return new FeatureBuilder(world);
     }
@@ -55,7 +58,8 @@ public class FeatureFactory {
                             world.vulnerabilityState);
             world.featureNumber.set(entity.id, featureNumber);
             world.name.set(entity.id, Name.simply("Unnamed feature"));
-            world.vulnerability.set(entity.id, 10);
+            world.vulnerability.set(entity.id, DEFAULT_FEATURE_VULNERABILITY);
+            world.usersPerHour.set(entity.id, DEFAULT_FEATURE_USERS_PER_HOUR);
             return entity;
         }
 
