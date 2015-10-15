@@ -203,7 +203,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     public GameScreen() {
         new Pointer(game().plat, layer, true);
-        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, false));
+        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
         gameWorld.connect(update, paint);
         configurePauseButton();
         enterState(playingState);
