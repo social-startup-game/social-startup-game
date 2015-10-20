@@ -74,7 +74,7 @@ public class PlayableWorldFactory {
                         world.name,
                         world.image);
         world.employeeNumber.set(developer.id, number);
-        world.tasked.set(developer.id, CoreTask.MAINTENANCE);
+        world.tasked.set(developer.id, Task.MAINTENANCE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 5);
         world.name.set(developer.id, name);

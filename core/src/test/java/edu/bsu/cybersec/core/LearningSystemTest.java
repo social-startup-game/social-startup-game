@@ -50,7 +50,7 @@ public final class LearningSystemTest extends AbstractSystemTest {
 
     private void givenAnActiveDeveloper() {
         e = makeWorker();
-        world.tasked.set(e.id, CoreTask.DEVELOPMENT);
+        world.tasked.set(e.id, Task.DEVELOPMENT);
     }
 
     private Entity makeWorker() {
@@ -85,6 +85,6 @@ public final class LearningSystemTest extends AbstractSystemTest {
 
     private void givenAnActiveMaintainer() {
         e = makeWorker();
-        world.tasked.set(e.id, CoreTask.MAINTENANCE);
+        world.tasked.set(e.id, Task.MAINTENANCE);
     }
 }

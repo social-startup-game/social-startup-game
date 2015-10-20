@@ -19,9 +19,33 @@
 
 package edu.bsu.cybersec.core;
 
-public interface Task {
+import com.google.common.collect.ImmutableList;
+import react.Value;
 
-    boolean isReassignable();
+public class Task {
 
-    String name();
+    public static final Task MAINTENANCE = new ReassignableTask("Maintenance");
+    public static final Task DEVELOPMENT = new ReassignableTask("Development");
+    public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(MAINTENANCE, DEVELOPMENT);
+
+    public final Value<String> name;
+
+    public Task(String name) {
+        this.name = Value.create(name);
+    }
+
+    public boolean isReassignable() {
+        return false;
+    }
+
+    private static final class ReassignableTask extends Task {
+        private ReassignableTask(String name) {
+            super(name);
+        }
+
+        @Override
+        public boolean isReassignable() {
+            return true;
+        }
+    }
 }

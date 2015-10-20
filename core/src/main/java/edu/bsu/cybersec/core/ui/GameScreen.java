@@ -286,24 +286,14 @@ public class GameScreen extends ScreenStack.UIScreen {
                             @Override
                             public void run() {
                                 final Entity worker = gameWorld.workers.get(0);
-                                gameWorld.tasked.set(worker.id, new Task() {
-                                    @Override
-                                    public boolean isReassignable() {
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public String name() {
-                                        return "Taking a nap";
-                                    }
-                                });
+                                gameWorld.tasked.set(worker.id, new Task("Napping"));
                                 final Entity wakingUp = gameWorld.create(true)
                                         .add(gameWorld.timeTrigger, gameWorld.event);
                                 gameWorld.timeTrigger.set(wakingUp.id, gameWorld.gameTimeMs + ClockUtils.MS_PER_HOUR * hours);
                                 gameWorld.event.set(wakingUp.id, new Runnable() {
                                     @Override
                                     public void run() {
-                                        gameWorld.tasked.set(worker.id, CoreTask.MAINTENANCE);
+                                        gameWorld.tasked.set(worker.id, Task.MAINTENANCE);
                                         wakingUp.close();
                                     }
                                 });

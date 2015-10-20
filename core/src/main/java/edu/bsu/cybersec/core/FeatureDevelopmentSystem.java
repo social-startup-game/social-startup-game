@@ -49,7 +49,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     private boolean isDeveloper(Entity entity) {
         return entity.has(world.developmentSkill)
                 && entity.has(world.tasked)
-                && world.tasked.get(entity.id) == CoreTask.DEVELOPMENT;
+                && world.tasked.get(entity.id) == Task.DEVELOPMENT;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private boolean isDeveloping(int entityId) {
-        return world.tasked.get(entityId) == CoreTask.DEVELOPMENT;
+        return world.tasked.get(entityId) == Task.DEVELOPMENT;
     }
 
     private void processCompletedFeatures() {

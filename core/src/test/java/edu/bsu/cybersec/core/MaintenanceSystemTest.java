@@ -67,7 +67,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     private Entity givenAnActiveMaintainer(float skill) {
         Entity maintainer = world.create(true)
                 .add(world.tasked, world.maintenanceSkill);
-        world.tasked.set(maintainer.id, CoreTask.MAINTENANCE);
+        world.tasked.set(maintainer.id, Task.MAINTENANCE);
         world.maintenanceSkill.set(maintainer.id, skill);
         return maintainer;
     }

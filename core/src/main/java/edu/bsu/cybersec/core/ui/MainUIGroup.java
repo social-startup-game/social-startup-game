@@ -250,7 +250,7 @@ public class MainUIGroup extends Group {
 
                 private Menu createMenu() {
                     Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
-                    for (Task task : CoreTask.VALUES) {
+                    for (Task task : Task.CORE_TASKS) {
                         menu.add(new TaskItem(task));
                     }
                     return menu;
@@ -262,7 +262,7 @@ public class MainUIGroup extends Group {
         public void select(Task task) {
             if (selected != task) {
                 selected = checkNotNull(task);
-                text.update(task.name() + " " + DOWN_ARROW);
+                text.update(task.name.get() + " " + DOWN_ARROW);
                 setEnabled(task.isReassignable());
             }
         }
@@ -273,7 +273,7 @@ public class MainUIGroup extends Group {
         public final Task task;
 
         public TaskItem(Task task) {
-            super(task.name());
+            super(task.name.get());
             this.task = checkNotNull(task);
         }
     }

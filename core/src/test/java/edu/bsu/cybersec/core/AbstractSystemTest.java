@@ -25,17 +25,7 @@ import playn.core.Clock;
 public abstract class AbstractSystemTest {
 
     protected static final float EPSILON = 0.00001f;
-    protected static final Task IDLE = new Task() {
-        @Override
-        public boolean isReassignable() {
-            return true;
-        }
-
-        @Override
-        public String name() {
-            return "Idle";
-        }
-    };
+    protected static final Task IDLE = new Task("Idle");
 
     protected GameWorld world;
     private PlayNClockUtil clockUtil;

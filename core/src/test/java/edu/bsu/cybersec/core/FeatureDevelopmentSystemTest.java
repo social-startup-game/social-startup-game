@@ -74,7 +74,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private Entity createActiveDeveloper(float developmentSkill) {
-        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(CoreTask.DEVELOPMENT);
+        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(Task.DEVELOPMENT);
     }
 
     @Test

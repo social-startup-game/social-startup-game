@@ -21,21 +21,14 @@ package edu.bsu.cybersec.core;
 
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public final class CoreTaskTest {
 
     @Test
     public void testIsReassignable_maintenance_true() {
-        Task task = CoreTask.MAINTENANCE;
+        Task task = Task.MAINTENANCE;
         assertTrue(task.isReassignable());
     }
 
-    @Test
-    public void testForName_maintenance() {
-        CoreTask actual = CoreTask.forName(CoreTask.MAINTENANCE.name());
-        assertThat(actual, is(CoreTask.MAINTENANCE));
-    }
 }

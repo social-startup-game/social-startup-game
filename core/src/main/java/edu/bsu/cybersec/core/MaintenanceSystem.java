@@ -37,7 +37,7 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
     @Override
     protected boolean isInterested(Entity entity) {
         boolean interested = entity.has(world.tasked)
-                && world.tasked.get(entity.id) == CoreTask.MAINTENANCE;
+                && world.tasked.get(entity.id) == Task.MAINTENANCE;
         if (interested) {
             checkState(entity.has(world.maintenanceSkill));
         }

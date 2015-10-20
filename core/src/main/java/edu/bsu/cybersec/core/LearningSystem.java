@@ -40,8 +40,8 @@ public class LearningSystem extends tripleplay.entity.System {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
         taskSkillMap = ImmutableMap.of(
-                CoreTask.DEVELOPMENT, world.developmentSkill,
-                CoreTask.MAINTENANCE, world.maintenanceSkill);
+                Task.DEVELOPMENT, world.developmentSkill,
+                Task.MAINTENANCE, world.maintenanceSkill);
     }
 
     @Override
