@@ -46,7 +46,8 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final GameWorld.Systematized gameWorld;
 
     {
-        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory();
+        ImageCache imageCache = ImageCache.initialize(SimGame.game.plat.assets());
+        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(imageCache);
         gameWorld = playableWorldFactory.createPlayableGameWorld();
     }
 

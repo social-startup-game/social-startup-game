@@ -59,11 +59,12 @@ public final class GameInteractionArea extends Group {
     }
 
     private Element makeButtonArea() {
+        ImageCache images = ImageCache.instance();
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(PreloadedImage.DOLLAR_SIGN.image, statusGroup),
-                        new ChangeViewButton(PreloadedImage.STAR.image, new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(PreloadedImage.WRENCH.image, new DefectsGroup()),
-                        new ChangeViewButton(PreloadedImage.ENVELOPE.image, new EventsGroup(gameWorld)));
+                .add(new ChangeViewButton(images.DOLLAR_SIGN, statusGroup),
+                        new ChangeViewButton(images.STAR, new FeatureGroup(gameWorld)),
+                        new ChangeViewButton(images.WRENCH, new DefectsGroup()),
+                        new ChangeViewButton(images.ENVELOPE, new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {

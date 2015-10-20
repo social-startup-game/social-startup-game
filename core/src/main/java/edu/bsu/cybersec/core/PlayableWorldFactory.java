@@ -20,7 +20,8 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableMap;
-import edu.bsu.cybersec.core.ui.PreloadedImage;
+import edu.bsu.cybersec.core.ui.ImageCache;
+import playn.core.Image;
 import tripleplay.entity.Entity;
 
 import java.util.Iterator;
@@ -31,12 +32,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class PlayableWorldFactory {
 
     private static final float SECONDS_PER_HOUR = 60 * 60;
-    private static final Map<Name, PreloadedImage> DEVELOPERS = ImmutableMap.of(
-            Name.first("Esteban").andLast("Cortez"), PreloadedImage.ESTEBAN,
-            Name.first("Nancy").andLast("Stevens"), PreloadedImage.NANCY,
-            Name.first("Jerry").andLast("Chen"), PreloadedImage.JERRY);
+    private final Map<Name, Image> DEVELOPERS;
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
+
+    public PlayableWorldFactory(ImageCache imageCache) {
+        DEVELOPERS =
+                ImmutableMap.of(
+                        Name.first("Esteban").andLast("Cortez"), imageCache.ESTEBAN,
+                        Name.first("Nancy").andLast("Stevens"), imageCache.NANCY,
+                        Name.first("Jerry").andLast("Chen"), imageCache.JERRY);
+    }
 
     public GameWorld.Systematized createPlayableGameWorld() {
         initializeWorld();
@@ -71,7 +77,7 @@ public class PlayableWorldFactory {
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 5);
         world.name.set(developer.id, name);
-        world.image.set(developer.id, DEVELOPERS.get(name).image);
+        world.image.set(developer.id, DEVELOPERS.get(name));
         return developer;
     }
 

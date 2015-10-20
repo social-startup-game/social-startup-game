@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
+import edu.bsu.cybersec.core.ui.ImageCache;
 import edu.bsu.cybersec.core.ui.LoadingScreen;
 import playn.core.Platform;
 import playn.scene.SceneGame;
@@ -33,6 +34,7 @@ public class SimGame extends SceneGame {
     public SimGame(Platform plat) {
         super(plat, 33);
         game = this;
+        ImageCache.initialize(plat.assets());
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
         screenStack.push(new LoadingScreen(screenStack));
     }

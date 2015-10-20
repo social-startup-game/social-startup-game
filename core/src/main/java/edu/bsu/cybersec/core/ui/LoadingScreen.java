@@ -51,8 +51,8 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     public void wasShown() {
         super.wasShown();
         List<RFuture<Image>> futures = Lists.newArrayList();
-        for (PreloadedImage preloadedImage : PreloadedImage.values()) {
-            futures.add(preloadedImage.image.state);
+        for (Image image : ImageCache.instance().all()) {
+            futures.add(image.state);
         }
         RFuture.collect(futures).onComplete(new Slot<Try<Collection<Image>>>() {
             @Override

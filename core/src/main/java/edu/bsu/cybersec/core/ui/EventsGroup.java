@@ -44,7 +44,7 @@ public class EventsGroup extends InteractionAreaGroup {
 
     private final GameWorld gameWorld;
     private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Colors.BLACK));
-    private final Image eventSpeakerImage = PreloadedImage.ADMIN.image;
+    private final Image eventSpeakerImage = ImageCache.instance().ADMIN;
 
     public EventsGroup(GameWorld gameWorld) {
         super(new AbsoluteLayout());
