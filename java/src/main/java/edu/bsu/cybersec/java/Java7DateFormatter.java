@@ -27,7 +27,7 @@ import java.util.GregorianCalendar;
 
 public class Java7DateFormatter implements PlatformSpecificDateFormatter {
 
-    private final SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
+    private final SimpleDateFormat format = new SimpleDateFormat(FORMAT_STRING);
 
     public Java7DateFormatter() {
         final GregorianCalendar now = new GregorianCalendar();

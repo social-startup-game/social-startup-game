@@ -23,7 +23,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 
 public class GWTDateFormatter implements PlatformSpecificDateFormatter {
-    private final DateTimeFormat format = DateTimeFormat.getFormat("EEE, d MMM yyyy hh:mm:ss aaa");
+    private final DateTimeFormat format = DateTimeFormat.getFormat(FORMAT_STRING);
 
     @Override
     public String format(long ms) {

@@ -20,5 +20,6 @@
 package edu.bsu.cybersec.core.ui;
 
 public interface PlatformSpecificDateFormatter {
+    String FORMAT_STRING = "EEE, MMM d hh:mm aaa";
     String format(long ms);
 }
