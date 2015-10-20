@@ -20,30 +20,29 @@
 package edu.bsu.cybersec.core;
 
 import edu.bsu.cybersec.core.ui.ImageCache;
-import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.mockito.Matchers;
 import playn.core.Assets;
+import playn.core.Image;
 
-import java.lang.reflect.Field;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class ImageCacheTest extends AbstractMockedAssetsTest {
+public abstract class AbstractMockedAssetsTest {
 
-    @Test
-    public void testValues_containsAllConstants() {
-        Field[] fields = ImageCache.class.getFields();
-        int count = 0;
-        for (Field f : fields) {
-            if (f.getType().getSimpleName().equals("Image")) {
-                count++;
-            }
-        }
-        assertEquals(count, imageCache.all().size());
+    protected ImageCache imageCache;
+
+    @Before
+    public void setUp() {
+        Assets assets = mock(Assets.class);
+        when(assets.getImage(Matchers.anyString())).thenReturn(mock(Image.class));
+        imageCache = ImageCache.initialize(assets);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testInitialize_throwExceptionIfReinitialized() {
-        ImageCache.initialize(mock(Assets.class));
+    @After
+    public void tearDown() {
+        ImageCache.deinitialize();
+        imageCache = null;
     }
 }

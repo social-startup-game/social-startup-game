@@ -47,66 +47,33 @@ public class MainUIGroup extends Group {
     private final Value<Group> focus = Value.create(null);
     private Group contentGroup;
     private final GameInteractionArea gameInteractionArea;
+    private final EmployeeViewUpdateSystem employeeViewUpdateSystem;
 
     private final Image employeeBackground = ImageCache.instance().EMPLOYEE_BG;
 
-    public MainUIGroup(final GameWorld gameWorld, final Interface iface) {
+    public MainUIGroup(final GameWorld gameWorld, final Interface iface, Root root) {
         super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
+        employeeViewUpdateSystem = new EmployeeViewUpdateSystem(gameWorld);
         gameInteractionArea = new GameInteractionArea(gameWorld, iface);
-        setupUIConfigurationSystem();
+        configureUI(root);
         animateFocusChanges();
     }
 
-    private void setupUIConfigurationSystem() {
-        new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
+    private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
 
-            private boolean configured = false;
-            private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
-
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.has(gameWorld.employeeNumber);
-            }
-
-            @Override
-            protected void update(Clock clock, Entities entities) {
-                super.update(clock, entities);
-                checkArgument(entities.size() == 3, "Current UI layout assumes three workers.");
-                if (!configured) {
-                    configureUI(entities);
-                } else {
-                    updateDeveloperInfoArea(entities);
-                }
-            }
-
-            private void configureUI(Entities entities) {
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    final int id = entities.get(i);
-                    DeveloperView developerView = new DeveloperView(id, root());
-                    developerViews.put(id, developerView);
-                    add(developerView);
-                }
-                contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
-                        .add(gameInteractionArea)
-                        .setConstraint(AxisLayout.stretched(2));
-                add(contentGroup);
-                configured = true;
-            }
-
-            private void updateDeveloperInfoArea(Entities entities) {
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    final int id = entities.get(i);
-                    updateDeveloperInfoArea(id);
-                }
-            }
-
-            private void updateDeveloperInfoArea(int id) {
-                DeveloperView view = checkNotNull(developerViews.get(id), "Missing developer");
-                view.update();
-            }
-        };
+    private void configureUI(Root root) {
+        for (Entity e : gameWorld.workers) {
+            final int id = e.id;
+            DeveloperView developerView = new DeveloperView(id, root);
+            developerViews.put(id, developerView);
+            add(developerView);
+        }
+        contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
+                .add(gameInteractionArea)
+                .setConstraint(AxisLayout.stretched(2));
+        add(contentGroup);
     }
 
     private void animateFocusChanges() {
@@ -249,10 +216,14 @@ public class MainUIGroup extends Group {
         }
     }
 
-    final class TaskSelector extends Button {
+    private final class TaskSelector extends Button {
+
+        Task selected;
+
         TaskSelector(Root root, final Entity worker) {
             super();
-            setTextBasedOnCurrentTaskOf(worker);
+            Task currentTask = gameWorld.tasked.get(worker.id);
+            select(currentTask);
             final MenuHost menuHost = new MenuHost(iface, root);
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
@@ -285,12 +256,15 @@ public class MainUIGroup extends Group {
                     return menu;
                 }
             });
+            employeeViewUpdateSystem.track(worker.id, this);
         }
 
-        private void setTextBasedOnCurrentTaskOf(Entity worker) {
-            final Task currentTask = gameWorld.tasked.get(worker.id);
-            String taskName = currentTask.name();
-            text.update(taskName + " " + DOWN_ARROW);
+        public void select(Task task) {
+            if (selected != task) {
+                selected = checkNotNull(task);
+                text.update(task.name() + " " + DOWN_ARROW);
+                setEnabled(task.isReassignable());
+            }
         }
     }
 
@@ -304,4 +278,56 @@ public class MainUIGroup extends Group {
         }
     }
 
+    private class EmployeeViewUpdateSystem extends tripleplay.entity.System {
+
+        private final GameWorld world;
+
+        private final Map<Integer, TaskSelector> map = Maps.newHashMap();
+
+        public EmployeeViewUpdateSystem(GameWorld world) {
+            super(world, SystemPriority.UI_LEVEL.value);
+            this.world = checkNotNull(world);
+        }
+
+        public void track(int id, TaskSelector selector) {
+            checkArgument(!map.containsKey(id));
+            checkArgument(!map.containsValue(selector));
+            map.put(id, selector);
+        }
+
+        @Override
+        protected boolean isInterested(Entity entity) {
+            return map.containsKey(entity.id);
+        }
+
+        @Override
+        protected void update(Clock clock, Entities entities) {
+            super.update(clock, entities);
+            for (int i = 0, limit = entities.size(); i < limit; i++) {
+                final int id = entities.get(i);
+                update(id);
+            }
+            updateDeveloperInfoArea(entities);
+        }
+
+        private void update(int id) {
+            TaskSelector sel = map.get(id);
+            Task task = world.tasked.get(id);
+            if (sel.selected != task) {
+                sel.select(task);
+            }
+        }
+
+        private void updateDeveloperInfoArea(tripleplay.entity.System.Entities entities) {
+            for (int i = 0, limit = entities.size(); i < limit; i++) {
+                final int id = entities.get(i);
+                updateDeveloperInfoArea(id);
+            }
+        }
+
+        private void updateDeveloperInfoArea(int id) {
+            DeveloperView view = checkNotNull(developerViews.get(id), "Missing developer");
+            view.update();
+        }
+    }
 }

@@ -19,31 +19,16 @@
 
 package edu.bsu.cybersec.core;
 
-import edu.bsu.cybersec.core.ui.ImageCache;
 import org.junit.Test;
-import playn.core.Assets;
-
-import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
-public class ImageCacheTest extends AbstractMockedAssetsTest {
+public class PlayableWorldFactoryTest extends AbstractMockedAssetsTest {
 
     @Test
-    public void testValues_containsAllConstants() {
-        Field[] fields = ImageCache.class.getFields();
-        int count = 0;
-        for (Field f : fields) {
-            if (f.getType().getSimpleName().equals("Image")) {
-                count++;
-            }
-        }
-        assertEquals(count, imageCache.all().size());
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testInitialize_throwExceptionIfReinitialized() {
-        ImageCache.initialize(mock(Assets.class));
+    public void testCreate_workerListHasThreeWorkers() {
+        PlayableWorldFactory factory = new PlayableWorldFactory(imageCache);
+        GameWorld.Systematized world = factory.createPlayableGameWorld();
+        assertEquals(3, world.workers.size());
     }
 }

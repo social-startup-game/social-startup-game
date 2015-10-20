@@ -32,6 +32,7 @@ public final class ImageCache {
     private static Assets assets;
 
     public static ImageCache initialize(Assets assets) {
+        checkState(INSTANCE == null, "Already initialized");
         ImageCache.assets = assets;
         INSTANCE = new ImageCache();
         ImageCache.assets = null;

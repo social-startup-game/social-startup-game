@@ -60,7 +60,8 @@ public class PlayableWorldFactory {
         checkArgument(number >= 0);
         Iterator<Name> names = DEVELOPERS.keySet().iterator();
         for (int i = 0; i < number; i++) {
-            makeDeveloper(i, names.next());
+            Entity e = makeDeveloper(i, names.next());
+            world.workers.add(e);
         }
     }
 

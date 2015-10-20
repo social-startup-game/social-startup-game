@@ -46,7 +46,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final GameWorld.Systematized gameWorld;
 
     {
-        ImageCache imageCache = ImageCache.initialize(SimGame.game.plat.assets());
+        ImageCache imageCache = ImageCache.instance();
         PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(imageCache);
         gameWorld = playableWorldFactory.createPlayableGameWorld();
     }
@@ -277,24 +277,42 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
 
             private void makeArtificialEvent() {
+                final int hours = 4;
                 Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
                 gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1);
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < 10; i++) {
-                    sb.append("This is really long expository text. It should be long enough to trigger the need for scrollbars. It goes on and on and on. It's really long! There are so many words here I can hardly contain myself. ");
-                }
                 gameWorld.event.set(e.id, new NarrativeEvent(gameWorld,
-                        sb.toString() + "Your workers don't know what they are doing. Train them?",
+                        "Your first worker wants to take a " + hours + "-hour nap. Is that allowed?",
                         new NarrativeEvent.Option("Yes", new Runnable() {
                             @Override
                             public void run() {
-                                SimGame.game.plat.log().debug("Clicked yes");
+                                final Entity worker = gameWorld.workers.get(0);
+                                gameWorld.tasked.set(worker.id, new Task() {
+                                    @Override
+                                    public boolean isReassignable() {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public String name() {
+                                        return "Taking a nap";
+                                    }
+                                });
+                                final Entity wakingUp = gameWorld.create(true)
+                                        .add(gameWorld.timeTrigger, gameWorld.event);
+                                gameWorld.timeTrigger.set(wakingUp.id, gameWorld.gameTimeMs + ClockUtils.MS_PER_HOUR * hours);
+                                gameWorld.event.set(wakingUp.id, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        gameWorld.tasked.set(worker.id, CoreTask.MAINTENANCE);
+                                        wakingUp.close();
+                                    }
+                                });
                             }
                         }),
                         new NarrativeEvent.Option("No", new Runnable() {
                             @Override
                             public void run() {
-                                SimGame.game.plat.log().debug("Clicked no");
+                                // Do nothing.
                             }
                         })));
             }
@@ -306,8 +324,9 @@ public class GameScreen extends ScreenStack.UIScreen {
         Rectangle contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(size());
         debug("contentBounds " + contentBounds);
         debug("size " + size());
-        Group content = createContentGroup();
-        return new Root(iface, new AbsoluteLayout(), makeStyleSheet())
+        Root root = new Root(iface, new AbsoluteLayout(), makeStyleSheet());
+        Group content = createContentGroup(root);
+        return root
                 .add(AbsoluteLayout.at(content,
                         contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)))
@@ -318,11 +337,11 @@ public class GameScreen extends ScreenStack.UIScreen {
         game().plat.log().debug(mesg);
     }
 
-    private Group createContentGroup() {
+    private Group createContentGroup(Root root) {
         final Group content = new Group(AxisLayout.vertical().gap(0).offStretch());
         content.add(new TopStatusBar()
                 .setConstraint(Constraints.fixedHeight(30)));
-        content.add(new MainUIGroup(gameWorld, iface)
+        content.add(new MainUIGroup(gameWorld, iface, root)
                 .setConstraint(AxisLayout.stretched()));
         return content;
     }
