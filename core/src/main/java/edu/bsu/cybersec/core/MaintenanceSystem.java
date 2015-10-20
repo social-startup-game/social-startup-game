@@ -47,7 +47,7 @@ public final class MaintenanceSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        final int elapsedTimeMS = world.gameTimeMs - world.prevGameTimeMs;
+        final int elapsedTimeMS = world.gameTime.get().delta();
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
             final float currentExposure = world.exposure.get();

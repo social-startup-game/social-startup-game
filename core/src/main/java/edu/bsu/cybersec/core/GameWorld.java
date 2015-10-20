@@ -35,8 +35,7 @@ public class GameWorld extends World {
     public final Map<String, Component> components = Maps.newHashMap();
 
     public final Signal<NarrativeEvent> onNarrativeEvent = Signal.create();
-    public int prevGameTimeMs;
-    public int gameTimeMs;
+    public final Value<GameTime> gameTime = Value.create(new GameTime(0, 0));
     public final Value<Float> exposure = Value.create(0f);
     public final Value<Float> users = Value.create(0f);
     public final List<Entity> workers = Lists.newArrayListWithCapacity(3);
@@ -66,8 +65,8 @@ public class GameWorld extends World {
     }
 
     public void advanceGameTime(int ms) {
-        this.prevGameTimeMs = gameTimeMs;
-        this.gameTimeMs += ms;
+        GameTime newTime = new GameTime(gameTime.get(), ms);
+        gameTime.update(newTime);
     }
 
     public static class Systematized extends GameWorld {

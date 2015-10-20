@@ -52,7 +52,7 @@ public class LearningSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        this.elapsedHours = (float) (world.gameTimeMs - world.prevGameTimeMs) / ClockUtils.MS_PER_HOUR;
+        this.elapsedHours = (float) (world.gameTime.get().delta()) / ClockUtils.MS_PER_HOUR;
 
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);

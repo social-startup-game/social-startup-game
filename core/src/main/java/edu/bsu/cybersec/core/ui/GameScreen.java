@@ -60,7 +60,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             gameWorld.onUpdate.set(updater.id, new Updatable() {
                 @Override
                 public void update(Clock clock) {
-                    final long tick = gameWorld.gameTimeMs;
+                    final long tick = gameWorld.gameTime.get().now;
                     now = startTime + tick;
                     final String formatted = formatter.format(now);
                     timeLabel.text.update(formatted);
@@ -279,7 +279,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             private void makeArtificialEvent() {
                 final int hours = 4;
                 Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
-                gameWorld.timeTrigger.set(e.id, gameWorld.gameTimeMs + 1);
+                gameWorld.timeTrigger.set(e.id, gameWorld.gameTime.get().now + 1);
                 gameWorld.event.set(e.id, new NarrativeEvent(gameWorld,
                         "Your first worker wants to take a " + hours + "-hour nap. Is that allowed?",
                         new NarrativeEvent.Option("Yes", new Runnable() {
@@ -289,7 +289,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                                 gameWorld.tasked.set(worker.id, new Task("Napping"));
                                 final Entity wakingUp = gameWorld.create(true)
                                         .add(gameWorld.timeTrigger, gameWorld.event);
-                                gameWorld.timeTrigger.set(wakingUp.id, gameWorld.gameTimeMs + ClockUtils.MS_PER_HOUR * hours);
+                                gameWorld.timeTrigger.set(wakingUp.id, gameWorld.gameTime.get().now + ClockUtils.MS_PER_HOUR * hours);
                                 gameWorld.event.set(wakingUp.id, new Runnable() {
                                     @Override
                                     public void run() {

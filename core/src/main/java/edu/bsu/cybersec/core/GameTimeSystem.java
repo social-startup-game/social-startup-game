@@ -61,6 +61,9 @@ public final class GameTimeSystem extends tripleplay.entity.System {
     }
 
     private void forceElapsedTimeToBeZeroWhileDisabled() {
-        gameWorld.prevGameTimeMs = gameWorld.gameTimeMs;
+        GameTime t = gameWorld.gameTime.get();
+        if (t.previous != t.now) {
+            gameWorld.gameTime.update(new GameTime(t.now, t.now));
+        }
     }
 }

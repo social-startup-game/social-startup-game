@@ -33,7 +33,7 @@ public class UserGenerationSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        float delta = world.gameTimeMs - world.prevGameTimeMs;
+        final float delta = world.gameTime.get().delta();
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
             float usersPerHour = world.usersPerHour.get(id);

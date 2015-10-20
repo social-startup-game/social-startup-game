@@ -74,8 +74,8 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private void distributeEffortEvenlyAcrossFeaturesInDevelopment() {
-        float dt = world.gameTimeMs - world.prevGameTimeMs;
-        float effortPerFeature = computeTotalDevelopmentEffort() / developmentBag.size();
+        final float dt = world.gameTime.get().delta();
+        final float effortPerFeature = computeTotalDevelopmentEffort() / developmentBag.size();
         for (int i = 0, limit = developmentBag.size(); i < limit; i++) {
             int id = developmentBag.get(i);
             float delta = effortPerFeature * dt / ClockUtils.MS_PER_HOUR;

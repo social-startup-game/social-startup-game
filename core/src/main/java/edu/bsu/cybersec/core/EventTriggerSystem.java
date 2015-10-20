@@ -48,9 +48,17 @@ public final class EventTriggerSystem extends tripleplay.entity.System {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
             final int time = gameWorld.timeTrigger.get(id);
-            if (time > gameWorld.prevGameTimeMs && time <= gameWorld.gameTimeMs) {
-                gameWorld.event.get(id).run();
+            if (gameWorld.gameTime.get().contains(time)) {
+                runIfPossible(id);
             }
+        }
+    }
+
+    private void runIfPossible(int id) {
+        Runnable runnable = gameWorld.event.get(id);
+        if (runnable != null) {
+            gameWorld.event.get(id).run();
+            gameWorld.event.set(id, null);
         }
     }
 }

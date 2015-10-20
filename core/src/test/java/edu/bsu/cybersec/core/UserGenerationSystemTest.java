@@ -35,18 +35,8 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     @Test
     public void testOnePerHour_GainOneUser() {
         createEntityGeneratingUsersPerHour(1);
-        whenOneHourElapses();
+        whenOneHourOfGameTimeElapses();
         assertIntegerNumberOfUsersIs(1);
-    }
-
-    private void whenOneHourElapses() {
-        advanceGameTimeToSimulateAFunctioningGameTimeSystem();
-        advancePlayNClockOneHour();
-    }
-
-    private void advanceGameTimeToSimulateAFunctioningGameTimeSystem() {
-        world.prevGameTimeMs = world.gameTimeMs;
-        world.gameTimeMs += ClockUtils.MS_PER_HOUR;
     }
 
     private Entity createEntityGeneratingUsersPerHour(float usersPerHour) {
@@ -64,22 +54,22 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     @Test
     public void testFivePerHour_gainFiveUsers() {
         createEntityGeneratingUsersPerHour(5);
-        whenOneHourElapses();
+        whenOneHourOfGameTimeElapses();
         assertIntegerNumberOfUsersIs(5);
     }
 
     @Test
     public void testOnePerTwoHours_oneSecondsElapse_noUsers() {
         createEntityGeneratingUsersPerHour(0.5f);
-        whenOneHourElapses();
+        whenOneHourOfGameTimeElapses();
         assertIntegerNumberOfUsersIs(0);
     }
 
     @Test
     public void testOnePerTwoHours_twoHoursElapse_oneUser() {
         createEntityGeneratingUsersPerHour(0.5f);
-        whenOneHourElapses();
-        whenOneHourElapses();
+        whenOneHourOfGameTimeElapses();
+        whenOneHourOfGameTimeElapses();
         assertIntegerNumberOfUsersIs(1);
     }
 
@@ -87,7 +77,7 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     public void testUpdate_usersPerHourInactive_noChange() {
         Entity e = createEntityGeneratingUsersPerHour(5);
         world.usersPerHourState.set(e.id, UsersPerHourState.INACTIVE.value);
-        whenOneHourElapses();
+        whenOneHourOfGameTimeElapses();
         assertIntegerNumberOfUsersIs(0);
     }
 }

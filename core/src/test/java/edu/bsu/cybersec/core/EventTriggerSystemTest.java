@@ -51,7 +51,7 @@ public final class EventTriggerSystemTest extends AbstractSystemTest {
     private void givenAnEventThatTriggersInMilliseconds(int ms) {
         Entity e = world.create(true)
                 .add(world.timeTrigger, world.event);
-        world.timeTrigger.set(e.id, world.gameTimeMs + ms);
+        world.timeTrigger.set(e.id, world.gameTime.get().now + ms);
         world.event.set(e.id, runnable = mock(Runnable.class));
     }
 
