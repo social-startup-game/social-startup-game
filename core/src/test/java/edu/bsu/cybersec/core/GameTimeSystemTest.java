@@ -39,28 +39,36 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
     public void testScale_oneMs() {
         system.setScale(10);
         advancePlayNClockOneMillisecond();
-        assertEquals(10, world.gameTimeMs);
+        assertEquals(10, now());
+    }
+
+    private int now() {
+        return world.gameTime.get().now;
     }
 
     @Test
     public void testPreviousTimeIsAdvanced() {
         advancePlayNClockOneMillisecond();
         advancePlayNClockOneMillisecond();
-        assertTrue(world.prevGameTimeMs > 0);
+        assertTrue(previous() > 0);
+    }
+
+    private int previous() {
+        return world.gameTime.get().previous;
     }
 
     @Test
     public void testSystemDisable_timeStopsMoving() {
         system.setEnabled(false);
         advancePlayNClockOneMillisecond();
-        assertEquals(0, world.gameTimeMs);
+        assertEquals(0, now());
     }
 
     @Test
     public void testSystemDisable_noElapsedTime() {
         system.setEnabled(false);
         advancePlayNClockOneMillisecond();
-        assertTrue(world.gameTimeMs == world.prevGameTimeMs);
+        assertTrue(now() == previous());
     }
 
     @Test
@@ -68,7 +76,7 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
         advancePlayNClockOneMillisecond();
         system.setEnabled(false);
         advancePlayNClockOneMillisecond();
-        assertTrue(world.gameTimeMs == world.prevGameTimeMs);
+        assertTrue(now() == previous());
     }
 
 }

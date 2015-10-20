@@ -147,7 +147,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         Entity e = makeFeatureInDevelopment();
         createActiveDeveloper(1000);
         advancePlayNClockOneDay(); // NOT advancing game time
-        world.gameTimeMs = world.prevGameTimeMs = 0;
+        world.gameTime.update(new GameTime(0, 0));
         thenThereIsNoProgressOn(e);
     }
 
