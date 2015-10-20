@@ -65,8 +65,8 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private void createIdleDeveloper() {
-        Entity developer = createEntityWithDevelopmentSkill(1).taskedWith(Task.IDLE);
-        world.tasked.set(developer.id, Task.IDLE);
+        Entity developer = createEntityWithDevelopmentSkill(1).taskedWith(IDLE);
+        world.tasked.set(developer.id, IDLE);
     }
 
     private DeveloperBuilder createEntityWithDevelopmentSkill(float devSkill) {
@@ -74,7 +74,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private Entity createActiveDeveloper(float developmentSkill) {
-        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(Task.DEVELOPMENT);
+        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(CoreTask.DEVELOPMENT);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
             world.developmentSkill.set(entity.id, devSkill);
         }
 
-        public Entity taskedWith(int task) {
+        public Entity taskedWith(Task task) {
             world.tasked.set(entity.id, task);
             return entity;
         }

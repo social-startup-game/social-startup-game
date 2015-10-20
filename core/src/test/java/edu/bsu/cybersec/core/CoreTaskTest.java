@@ -19,25 +19,23 @@
 
 package edu.bsu.cybersec.core;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
+import org.junit.Test;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
-public final class TaskFormatter {
+public final class CoreTaskTest {
 
-    private static final BiMap<Integer, String> MAP = ImmutableBiMap.of(
-            Task.IDLE, "Idle",
-            Task.DEVELOPMENT, "Development",
-            Task.MAINTENANCE, "Maintenance");
-
-    public String format(int task) {
-        checkArgument(MAP.containsKey(task));
-        return MAP.get(task);
+    @Test
+    public void testIsReassignable_maintenance_true() {
+        Task task = CoreTask.MAINTENANCE;
+        assertTrue(task.isReassignable());
     }
 
-    public int asTask(String string) {
-        checkArgument(MAP.containsValue(string));
-        return MAP.inverse().get(string);
+    @Test
+    public void testForName_maintenance() {
+        CoreTask actual = CoreTask.forName(CoreTask.MAINTENANCE.name());
+        assertThat(actual, is(CoreTask.MAINTENANCE));
     }
 }

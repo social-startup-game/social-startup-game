@@ -250,8 +250,6 @@ public class MainUIGroup extends Group {
     }
 
     final class TaskSelector extends Button {
-        private final TaskFormatter formatter = new TaskFormatter();
-
         TaskSelector(Root root, final Entity worker) {
             super();
             setTextBasedOnCurrentTaskOf(worker);
@@ -272,7 +270,7 @@ public class MainUIGroup extends Group {
                         @Override
                         public void onEmit(MenuItem menuItem) {
                             button.text.update(menuItem.text.get() + " " + DOWN_ARROW);
-                            int assignedTask = formatter.asTask(menuItem.text.get());
+                            Task assignedTask = ((TaskItem) menuItem).task;
                             gameWorld.tasked.set(worker.id, assignedTask);
                             worker.didChange();
                         }
@@ -281,8 +279,8 @@ public class MainUIGroup extends Group {
 
                 private Menu createMenu() {
                     Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
-                    for (int task : Task.VALUES) {
-                        menu.add(new MenuItem(formatter.format(task)));
+                    for (Task task : CoreTask.VALUES) {
+                        menu.add(new TaskItem(task));
                     }
                     return menu;
                 }
@@ -290,9 +288,19 @@ public class MainUIGroup extends Group {
         }
 
         private void setTextBasedOnCurrentTaskOf(Entity worker) {
-            final int currentTask = gameWorld.tasked.get(worker.id);
-            String taskName = formatter.format(currentTask);
+            final Task currentTask = gameWorld.tasked.get(worker.id);
+            String taskName = currentTask.name();
             text.update(taskName + " " + DOWN_ARROW);
+        }
+    }
+
+    private static final class TaskItem extends MenuItem {
+
+        public final Task task;
+
+        public TaskItem(Task task) {
+            super(task.name());
+            this.task = checkNotNull(task);
         }
     }
 

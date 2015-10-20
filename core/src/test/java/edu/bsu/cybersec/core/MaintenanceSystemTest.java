@@ -67,7 +67,7 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
     private Entity givenAnActiveMaintainer(float skill) {
         Entity maintainer = world.create(true)
                 .add(world.tasked, world.maintenanceSkill);
-        world.tasked.set(maintainer.id, Task.MAINTENANCE);
+        world.tasked.set(maintainer.id, CoreTask.MAINTENANCE);
         world.maintenanceSkill.set(maintainer.id, skill);
         return maintainer;
     }
@@ -83,9 +83,10 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
 
     private void givenAnIdleMaintainer() {
         Entity e = givenAnActiveMaintainer(ARBITRARY_SKILL);
-        world.tasked.set(e.id, Task.IDLE);
+        world.tasked.set(e.id, IDLE);
         e.didChange();
     }
+
 
     @Test
     public void testUpdate_noGameTimeAdvance_noChangeInExposure() {

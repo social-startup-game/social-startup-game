@@ -33,15 +33,15 @@ public class LearningSystem extends tripleplay.entity.System {
     private static final float SKILL_PER_GAME_HOUR = 0.1f;
 
     private final GameWorld world;
-    private final Map<Integer, Component.FScalar> taskSkillMap;
+    private final Map<? extends Task, Component.FScalar> taskSkillMap;
     private float elapsedHours;
 
     public LearningSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
         taskSkillMap = ImmutableMap.of(
-                Task.DEVELOPMENT, world.developmentSkill,
-                Task.MAINTENANCE, world.maintenanceSkill);
+                CoreTask.DEVELOPMENT, world.developmentSkill,
+                CoreTask.MAINTENANCE, world.maintenanceSkill);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class LearningSystem extends tripleplay.entity.System {
     }
 
     private void updateSkills(final int id) {
-        final int task = world.tasked.get(id);
+        final Task task = world.tasked.get(id);
         Component.FScalar c = taskSkillMap.get(task);
         if (c != null) {
             float start = c.get(id);
