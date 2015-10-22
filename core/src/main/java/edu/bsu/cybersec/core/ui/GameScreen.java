@@ -139,7 +139,8 @@ public class GameScreen extends ScreenStack.UIScreen {
             gameWorld.eventTriggerSystem,
             gameWorld.vulnerabilitySystem,
             gameWorld.featureGenerationSystem,
-            gameWorld.learningSystem);
+            gameWorld.learningSystem,
+            gameWorld.exploitSystem);
     private final List<Element<?>> interactiveElements = Lists.newArrayList();
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");

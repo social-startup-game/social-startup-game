@@ -80,5 +80,6 @@ public class GameWorld extends World {
         public final VulnerabilitySystem vulnerabilitySystem = new VulnerabilitySystem(this);
         public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
         public final LearningSystem learningSystem = new LearningSystem(this);
+        public final ExploitSystem exploitSystem = new ExploitSystem(this);
     }
 }

@@ -63,7 +63,7 @@ public final class GameInteractionArea extends Group {
         return new Group(AxisLayout.horizontal())
                 .add(new ChangeViewButton(images.DOLLAR_SIGN, statusGroup),
                         new ChangeViewButton(images.STAR, new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(images.WRENCH, new DefectsGroup()),
+                        new ChangeViewButton(images.WRENCH, new ExploitsGroup(gameWorld)),
                         new ChangeViewButton(images.ENVELOPE, new EventsGroup(gameWorld)));
     }
 
@@ -163,13 +163,6 @@ public final class GameInteractionArea extends Group {
             return Icons.scaled(Icons.image(iconImage), scale);
         }
 
-    }
-
-    final class DefectsGroup extends InteractionAreaGroup {
-        public DefectsGroup() {
-            super(AxisLayout.horizontal());
-            add(new Label("Defects"));
-        }
     }
 }
 
