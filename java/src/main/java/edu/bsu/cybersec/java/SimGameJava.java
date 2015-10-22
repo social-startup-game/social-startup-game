@@ -33,6 +33,7 @@ public class SimGameJava {
         new Parser().process(args);
         LWJGLPlatform.Config config = createPlatformConfiguration();
         LWJGLPlatform plat = new SimGameJavaPlatform(config);
+        plat.graphics().registerFont("Lato-Regular", "fonts/Lato-Regular.ttf");
         new SimGame(plat);
         plat.start();
     }

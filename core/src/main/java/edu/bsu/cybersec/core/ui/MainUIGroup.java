@@ -166,11 +166,11 @@ public class MainUIGroup extends Group {
             final Name name = gameWorld.name.get(id);
             final float borderThickness = percentOfViewHeight(0.005f);
             Group employeeDataGroup = new Group(AxisLayout.vertical())
-                    .add(new Label(name.fullName),
+                    .add(new Label(name.fullName).setStyles(Style.FONT.is(GameFont.NORMAL.font)),
                             createDevelopmentSkillBlock(),
                             createMaintenanceSkillBlock(),
                             wrappingLabel("Degree: Bachelor of Science"),
-                            wrappingLabel("Discipline: Computer Science"),
+                            wrappingLabel("Discipline: Computer Science").addStyles(Style.FONT.is(GameFont.NORMAL.font)),
                             wrappingLabel("University: Ball State"))
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Colors.BLACK, Colors.WHITE, borderThickness)

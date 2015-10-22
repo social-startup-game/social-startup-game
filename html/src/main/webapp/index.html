@@ -1,9 +1,44 @@
 <!DOCTYPE html>
+<!--
+  ~ Copyright 2015 Paul Gestwicki
+  ~
+  ~ This file is part of The Social Startup Game
+  ~
+  ~ The Social Startup Game is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Social Startup Game is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <html>
 <head>
-    <title>SimGame</title>
+    <title>The Social Startup Game</title>
+    <style>
+        @font-face {
+        font-family: "Lato-Regular";
+        src: url(sim/fonts/Lato-Regular.ttf);
+        }
+        #playn-root {
+        width: 426px;
+        height: 757px;
+        }
+    </style>
 </head>
 <body bgcolor="black">
+<!-- the contents of this div will be cleared when PlayN initializes -->
+<!-- the contents will be replaced with the PlayN <canvas> element -->
+<div id="playn-root">
+    <!-- cause the browser to preload our custom fonts -->
+    <span style="font-family: 'Lato-Regular'">.</span>
+</div>
 <script src="sim/sim.nocache.js"></script>
 </body>
 </html>
