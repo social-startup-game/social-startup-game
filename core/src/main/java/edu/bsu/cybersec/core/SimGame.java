@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
+import edu.bsu.cybersec.core.ui.FontCache;
 import edu.bsu.cybersec.core.ui.ImageCache;
 import edu.bsu.cybersec.core.ui.LoadingScreen;
 import playn.core.Platform;
@@ -35,6 +36,7 @@ public class SimGame extends SceneGame {
         super(plat, 33);
         game = this;
         ImageCache.initialize(plat.assets());
+        FontCache.initialize(plat.graphics());
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
         screenStack.push(new LoadingScreen(screenStack));
     }

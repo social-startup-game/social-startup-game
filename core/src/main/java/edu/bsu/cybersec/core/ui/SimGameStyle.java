@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import playn.core.Font;
 import playn.core.Graphics;
 import tripleplay.ui.*;
 
@@ -40,13 +41,14 @@ public class SimGameStyle {
      * caller can augment the sheet with additional styles and call {@code create}.
      */
     public static Stylesheet.Builder newSheetBuilder(Graphics gfx) {
+        final Font font = FontCache.instance().REGULAR;
         int bgColor = 0xFFCCCCCC, ulColor = 0xFFEEEEEE, brColor = 0xFFAAAAAA;
         Background butBg = Background.roundRect(gfx, bgColor, 5, ulColor, 2).inset(5, 6, 2, 6);
         Background butSelBg = Background.roundRect(gfx, bgColor, 5, brColor, 2).inset(6, 5, 1, 7);
         return Stylesheet.builder().
                 add(Button.class,
                         Style.BACKGROUND.is(butBg),
-                        Style.FONT.is(GameFont.NORMAL.font)).
+                        Style.FONT.is(font)).
                 add(Button.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(butSelBg)).
                 add(ToggleButton.class,
@@ -70,14 +72,13 @@ public class SimGameStyle {
                 add(MenuItem.class,
                         Style.BACKGROUND.is(Background.solid(0xFFFFFFFF)),
                         Style.HALIGN.left,
-                        Style.FONT.is(GameFont.NORMAL.font)).
+                        Style.FONT.is(font)).
                 add(MenuItem.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(Background.solid(0xFF000000)),
                         Style.COLOR.is(0xFFFFFFFF)).
                 add(Tabs.class,
                         Tabs.HIGHLIGHTER.is(Tabs.textColorHighlighter(0xFF000000, 0xFFFFFFFF))).
                 add(Label.class,
-                        Style.FONT.is(GameFont.NORMAL.font));
+                        Style.FONT.is(font));
     }
-
 }
