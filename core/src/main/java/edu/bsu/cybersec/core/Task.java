@@ -21,12 +21,59 @@ package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableList;
 import react.Value;
+import react.ValueView;
 
-public class Task {
+import static com.google.common.base.Preconditions.checkNotNull;
+
+public abstract class Task {
 
     public static final Task MAINTENANCE = new ReassignableTask("Maintenance");
     public static final Task DEVELOPMENT = new ReassignableTask("Development");
     public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(MAINTENANCE, DEVELOPMENT);
+
+    public static Task createReassignableTask(String name) {
+        return new ReassignableTask(name);
+    }
+
+    public static TaskBuilder createTask(String name) {
+        return new TaskBuilder(name);
+    }
+
+    public static final class TaskBuilder {
+        private final String name;
+        private TimedTaskBuilder timed;
+
+        private TaskBuilder(String name) {
+            this.name = checkNotNull(name);
+        }
+
+        public TimedTaskBuilder expiringAt(int time) {
+            return new TimedTaskBuilder(time);
+        }
+
+        public Task build() {
+            if (timed == null) {
+                return new ReassignableTask(name);
+            } else {
+                return new TimedTask(this);
+            }
+        }
+
+        public final class TimedTaskBuilder {
+            private final int time;
+            private GameWorld world;
+
+            private TimedTaskBuilder(int time) {
+                this.time = time;
+            }
+
+            public TaskBuilder inWorld(GameWorld world) {
+                this.world = checkNotNull(world);
+                timed = this;
+                return TaskBuilder.this;
+            }
+        }
+    }
 
     public final Value<String> name;
 
@@ -34,9 +81,7 @@ public class Task {
         this.name = Value.create(name);
     }
 
-    public boolean isReassignable() {
-        return false;
-    }
+    public abstract boolean isReassignable();
 
     private static final class ReassignableTask extends Task {
         private ReassignableTask(String name) {
@@ -46,6 +91,31 @@ public class Task {
         @Override
         public boolean isReassignable() {
             return true;
+        }
+    }
+
+    private static class TimedTask extends Task {
+        private TimedTask(final TaskBuilder builder) {
+            super(builder.name);
+            final String baseName = builder.name;
+            final GameWorld world = builder.timed.world;
+            final int completionTime = builder.timed.time;
+            world.gameTime.connect(new ValueView.Listener<GameTime>() {
+                @Override
+                public void onChange(GameTime value, GameTime oldValue) {
+                    int millisToCompletion = completionTime - value.now;
+                    int hoursToCompletion = (millisToCompletion / ClockUtils.MS_PER_HOUR) + 1;
+                    name.update(baseName + " (" + hoursToCompletion + "h)");
+                    if (millisToCompletion <= 0) {
+                        world.gameTime.disconnect(this);
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean isReassignable() {
+            return false;
         }
     }
 }

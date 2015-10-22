@@ -262,15 +262,25 @@ public class MainUIGroup extends Group {
         }
 
         public void select(Task task) {
+            checkNotNull(task);
             if (selected != task) {
-                selected = checkNotNull(task);
-                text.update(task.name.get());
+                selected = task;
+                connectLabelTextTo(task);
                 setEnabled(task.isReassignable());
-                if (task.isReassignable()) {
-                    icon.update(triangleIcon);
-                } else {
-                    icon.update(null);
-                }
+                updateIconBasedOnReassignability(task);
+            }
+        }
+
+        private void connectLabelTextTo(Task task) {
+            text.update(task.name.get());
+            task.name.connect(text.slot());
+        }
+
+        private void updateIconBasedOnReassignability(Task task) {
+            if (task.isReassignable()) {
+                icon.update(triangleIcon);
+            } else {
+                icon.update(null);
             }
         }
     }

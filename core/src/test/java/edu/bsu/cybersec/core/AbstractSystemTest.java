@@ -25,7 +25,7 @@ import playn.core.Clock;
 public abstract class AbstractSystemTest {
 
     protected static final float EPSILON = 0.00001f;
-    protected static final Task IDLE = new Task("Idle");
+    protected static final Task IDLE = Task.createTask("Idle").build();
 
     protected GameWorld world;
     private PlayNClockUtil clockUtil;

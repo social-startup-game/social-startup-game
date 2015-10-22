@@ -286,10 +286,12 @@ public class GameScreen extends ScreenStack.UIScreen {
                             @Override
                             public void run() {
                                 final Entity worker = gameWorld.workers.get(0);
-                                gameWorld.tasked.set(worker.id, new Task("Napping"));
+                                final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.MS_PER_HOUR * hours;
+                                gameWorld.tasked.set(worker.id,
+                                        Task.createTask("Napping").expiringAt(wakeupTime).inWorld(gameWorld).build());
                                 final Entity wakingUp = gameWorld.create(true)
                                         .add(gameWorld.timeTrigger, gameWorld.event);
-                                gameWorld.timeTrigger.set(wakingUp.id, gameWorld.gameTime.get().now + ClockUtils.MS_PER_HOUR * hours);
+                                gameWorld.timeTrigger.set(wakingUp.id, wakeupTime);
                                 gameWorld.event.set(wakingUp.id, new Runnable() {
                                     @Override
                                     public void run() {
