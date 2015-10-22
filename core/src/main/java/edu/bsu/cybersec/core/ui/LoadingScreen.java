@@ -29,7 +29,6 @@ import react.Try;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.Label;
 import tripleplay.ui.Root;
-import tripleplay.ui.SimpleStyles;
 import tripleplay.ui.Style;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
@@ -68,7 +67,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), SimpleStyles.newSheet(game().plat.graphics())).setSize(size());
+        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
         root.add(new Label("Loading...").addStyles(Style.COLOR.is(Colors.WHITE)));
         return root;
     }

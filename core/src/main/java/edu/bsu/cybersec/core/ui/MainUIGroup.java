@@ -38,7 +38,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MainUIGroup extends Group {
-    private static final String DOWN_ARROW = "\u25BC";
     private static final float TRANSPARENT_AREA_WEIGHT = 1.0f;
     private static final float CONTROLS_AREA_WEIGHT = 1.0f;
 
@@ -166,11 +165,11 @@ public class MainUIGroup extends Group {
             final Name name = gameWorld.name.get(id);
             final float borderThickness = percentOfViewHeight(0.005f);
             Group employeeDataGroup = new Group(AxisLayout.vertical())
-                    .add(new Label(name.fullName).setStyles(Style.FONT.is(GameFont.NORMAL.font)),
+                    .add(new Label(name.fullName),
                             createDevelopmentSkillBlock(),
                             createMaintenanceSkillBlock(),
                             wrappingLabel("Degree: Bachelor of Science"),
-                            wrappingLabel("Discipline: Computer Science").addStyles(Style.FONT.is(GameFont.NORMAL.font)),
+                            wrappingLabel("Discipline: Computer Science"),
                             wrappingLabel("University: Ball State"))
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Colors.BLACK, Colors.WHITE, borderThickness)
@@ -219,9 +218,12 @@ public class MainUIGroup extends Group {
     private final class TaskSelector extends Button {
 
         Task selected;
+        private final Icon triangleIcon = Icons.image(ImageCache.instance().SMALL_TRIANGLE);
 
         TaskSelector(Root root, final Entity worker) {
             super();
+            icon.update(triangleIcon);
+            setStyles(Style.ICON_POS.right);
             Task currentTask = gameWorld.tasked.get(worker.id);
             select(currentTask);
             final MenuHost menuHost = new MenuHost(iface, root);
@@ -240,7 +242,7 @@ public class MainUIGroup extends Group {
                     return new Slot<MenuItem>() {
                         @Override
                         public void onEmit(MenuItem menuItem) {
-                            button.text.update(menuItem.text.get() + " " + DOWN_ARROW);
+                            button.text.update(menuItem.text.get());
                             Task assignedTask = ((TaskItem) menuItem).task;
                             gameWorld.tasked.set(worker.id, assignedTask);
                             worker.didChange();
@@ -262,8 +264,13 @@ public class MainUIGroup extends Group {
         public void select(Task task) {
             if (selected != task) {
                 selected = checkNotNull(task);
-                text.update(task.name.get() + " " + DOWN_ARROW);
+                text.update(task.name.get());
                 setEnabled(task.isReassignable());
+                if (task.isReassignable()) {
+                    icon.update(triangleIcon);
+                } else {
+                    icon.update(null);
+                }
             }
         }
     }

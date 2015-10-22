@@ -337,7 +337,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private Stylesheet makeStyleSheet() {
-        Stylesheet.Builder builder = SimpleStyles.newSheetBuilder(game().plat.graphics());
+        Stylesheet.Builder builder = SimGameStyle.newSheetBuilder(game().plat.graphics());
         builder.add(Label.class, Style.COLOR.is(Colors.WHITE));
         return builder.create();
     }
