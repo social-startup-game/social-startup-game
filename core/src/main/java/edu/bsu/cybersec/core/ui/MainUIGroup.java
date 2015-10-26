@@ -32,6 +32,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -44,11 +45,11 @@ public class MainUIGroup extends Group {
     private final Interface iface;
     private final GameWorld gameWorld;
     private final Value<Group> focus = Value.create(null);
-    private Group contentGroup;
     private final GameInteractionArea gameInteractionArea;
-    private final EmployeeViewUpdateSystem employeeViewUpdateSystem;
-
-    private final Image employeeBackground = ImageCache.instance().EMPLOYEE_BG;
+    private final ArrayList<Image> employeeBgList = new ArrayList<>();
+    private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
+    private Group contentGroup;
+    private EmployeeViewUpdateSystem employeeViewUpdateSystem;
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface, Root root) {
         super(AxisLayout.vertical().offStretch().gap(0));
@@ -56,18 +57,25 @@ public class MainUIGroup extends Group {
         this.gameWorld = checkNotNull(gameWorld);
         employeeViewUpdateSystem = new EmployeeViewUpdateSystem(gameWorld);
         gameInteractionArea = new GameInteractionArea(gameWorld, iface);
+        populateEmployeeArrayList();
         configureUI(root);
         animateFocusChanges();
     }
 
-    private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
+    public void populateEmployeeArrayList() {
+        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_1);
+        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_2);
+        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_3);
+    }
 
     private void configureUI(Root root) {
+        int backgroundIndex = 0;
         for (Entity e : gameWorld.workers) {
             final int id = e.id;
-            DeveloperView developerView = new DeveloperView(id, root);
+            DeveloperView developerView = new DeveloperView(id, root, backgroundIndex);
             developerViews.put(id, developerView);
             add(developerView);
+            backgroundIndex++;
         }
         contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
                 .add(gameInteractionArea)
@@ -127,20 +135,30 @@ public class MainUIGroup extends Group {
         });
     }
 
+    private static final class TaskItem extends MenuItem {
+
+        public final Task task;
+
+        public TaskItem(Task task) {
+            super(task.name.get());
+            this.task = checkNotNull(task);
+        }
+    }
+
     private final class DeveloperView extends Group {
 
         private final int id;
         private Label developmentSkillLabel;
         private Label maintenanceSkillLabel;
 
-        DeveloperView(int id, Root root) {
+        DeveloperView(int id, Root root, int bgIndex) {
             super(AxisLayout.horizontal().offStretch());
             this.id = id;
             checkNotNull(root);
 
             final Image image = gameWorld.image.get(id);
             addStyles(Style.BACKGROUND.is(
-                    ExpandableParallaxBackground.foreground(image).background(employeeBackground.tile())))
+                    ExpandableParallaxBackground.foreground(image).background(employeeBgList.get(bgIndex).tile())))
                     .setConstraint(AxisLayout.stretched());
             add(createTransparentClickableArea(),
                     createControlsAndBioGroup(root));
@@ -217,8 +235,8 @@ public class MainUIGroup extends Group {
 
     private final class TaskSelector extends Button {
 
-        Task selected;
         private final Icon triangleIcon = Icons.image(ImageCache.instance().SMALL_TRIANGLE);
+        Task selected;
 
         TaskSelector(Root root, final Entity worker) {
             super();
@@ -282,16 +300,6 @@ public class MainUIGroup extends Group {
             } else {
                 icon.update(null);
             }
-        }
-    }
-
-    private static final class TaskItem extends MenuItem {
-
-        public final Task task;
-
-        public TaskItem(Task task) {
-            super(task.name.get());
-            this.task = checkNotNull(task);
         }
     }
 
