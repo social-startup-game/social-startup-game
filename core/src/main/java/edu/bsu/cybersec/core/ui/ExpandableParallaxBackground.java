@@ -25,6 +25,7 @@ import playn.core.TileSource;
 import playn.scene.Layer;
 import pythagoras.f.IDimension;
 import tripleplay.ui.Background;
+import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -66,6 +67,7 @@ public final class ExpandableParallaxBackground extends Background {
             protected void paintImpl(Surface surf) {
                 paintBackground(surf);
                 paintForeground(surf);
+                paintBorder(surf);
             }
 
             private void paintBackground(Surface surf) {
@@ -97,6 +99,12 @@ public final class ExpandableParallaxBackground extends Background {
                 surf.draw(tile,
                         destinationX, destinationY, destinationWidth, destinationHeight,
                         sourceX, sourceY, sourceWidth, sourceHeight);
+            }
+
+            private void paintBorder(Surface surf) {
+                surf.setFillColor(Colors.BLACK);
+                final float y = size.height();
+                surf.drawLine(0, y, size.width(), y, 4);
             }
 
         });
