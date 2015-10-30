@@ -65,7 +65,7 @@ public class MainUIGroup extends Group {
     public void populateEmployeeArrayList() {
         employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_1);
         employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_2);
-        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_3);
+        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_4);
     }
 
     private void configureUI(Root root) {
