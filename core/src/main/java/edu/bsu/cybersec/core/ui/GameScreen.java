@@ -137,7 +137,6 @@ public class GameScreen extends ScreenStack.UIScreen {
             gameWorld.maintenanceSystem,
             gameWorld.expirySystem,
             gameWorld.eventTriggerSystem,
-            gameWorld.vulnerabilitySystem,
             gameWorld.featureGenerationSystem,
             gameWorld.learningSystem,
             gameWorld.exploitSystem);

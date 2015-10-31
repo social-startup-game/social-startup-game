@@ -43,7 +43,6 @@ public class FeatureFactory {
             Entity entity = makeFeature(featureNumber);
             entity.add(world.developmentProgress,
                     world.goal);
-            world.vulnerabilityState.set(entity.id, VulnerabilityState.INACTIVE.value);
             world.usersPerHourState.set(entity.id, UsersPerHourState.INACTIVE.value);
             return entity;
         }
@@ -54,8 +53,7 @@ public class FeatureFactory {
                             world.name,
                             world.usersPerHour,
                             world.usersPerHourState,
-                            world.vulnerability,
-                            world.vulnerabilityState);
+                            world.vulnerability);
             world.featureNumber.set(entity.id, featureNumber);
             world.name.set(entity.id, Name.simply("Unnamed feature"));
             world.vulnerability.set(entity.id, DEFAULT_FEATURE_VULNERABILITY);
@@ -65,7 +63,6 @@ public class FeatureFactory {
 
         public Entity makeCompletedFeature(int featureNumber) {
             Entity entity = makeFeature(featureNumber);
-            world.vulnerabilityState.set(entity.id, VulnerabilityState.ACTIVE.value);
             world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
             return entity;
         }

@@ -52,6 +52,7 @@ public class PlayableWorldFactory {
     private void initializeWorld() {
         world.gameTimeSystem.setScale(SECONDS_PER_HOUR);
         world.featureGenerationSystem.nextFeatureNumber(1);
+        world.exposure.update(10f);
         makeExistingFeature();
         makeDevelopers(3);
     }

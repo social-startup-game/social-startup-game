@@ -54,7 +54,6 @@ public class GameWorld extends World {
     public final Component.IScalar timeTrigger = register("timeTrigger", new Component.IScalar(this));
     public final Component.Generic<Runnable> event = register("event", new Component.Generic<Runnable>(this));
     public final Component.FScalar vulnerability = register("vulnerability", new Component.FScalar(this));
-    public final Component.IScalar vulnerabilityState = register("vulnerabilityState", new Component.IScalar(this));
     public final Component.IScalar usersPerHourState = register("usersPerHourState", new Component.IScalar(this));
     public final Component.IScalar featureNumber = register("featureNumber", new Component.IScalar(this));
     public final Component.IScalar exploitNumber = register("exploitNumber", new Component.IScalar(this));
@@ -77,7 +76,6 @@ public class GameWorld extends World {
         public final MaintenanceSystem maintenanceSystem = new MaintenanceSystem(this);
         public final ExpirySystem expirySystem = new ExpirySystem(this);
         public final EventTriggerSystem eventTriggerSystem = new EventTriggerSystem(this);
-        public final VulnerabilitySystem vulnerabilitySystem = new VulnerabilitySystem(this);
         public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
         public final LearningSystem learningSystem = new LearningSystem(this);
         public final ExploitSystem exploitSystem = new ExploitSystem(this);

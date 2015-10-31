@@ -120,7 +120,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     private void complete(int id) {
         final Entity e = world.entity(id);
         e.remove(world.developmentProgress);
-        world.vulnerabilityState.set(id, VulnerabilityState.ACTIVE.value);
+        world.exposure.update(world.exposure.get() + world.vulnerability.get(id));
         world.usersPerHourState.set(id, UsersPerHourState.ACTIVE.value);
     }
 

@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 
 public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
+    private static final float FEATURE_VULNERABILITY = 5f;
     private Entity completedDevelopmentEntity;
 
     @Override
@@ -47,8 +48,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         world.usersPerHour.set(featureEntity.id, 20);
         world.developmentProgress.set(featureEntity.id, 0);
         world.goal.set(featureEntity.id, 100);
-        world.vulnerability.set(featureEntity.id, 10);
-        world.vulnerabilityState.set(featureEntity.id, VulnerabilityState.INACTIVE.value);
+        world.vulnerability.set(featureEntity.id, FEATURE_VULNERABILITY);
         return featureEntity;
     }
 
@@ -126,10 +126,15 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testFeatureCompletion_enablesVulnerability() {
+    public void testFeatureCompletion_addsVulnerabilityToExposure() {
+        float initialExposure = currentExposure();
         whenAFeatureIsCompleted();
         whenOneDayOfGameTimeElapses();
-        assertEquals(VulnerabilityState.ACTIVE.value, world.vulnerabilityState.get(completedDevelopmentEntity.id));
+        assertEquals(initialExposure + FEATURE_VULNERABILITY, currentExposure(), EPSILON);
+    }
+
+    private float currentExposure() {
+        return world.exposure.get();
     }
 
     @Test
