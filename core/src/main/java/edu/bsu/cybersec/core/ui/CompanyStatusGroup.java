@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.DecimalTruncator;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
@@ -74,9 +75,10 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
         private EstimatedExposureLabel(GameWorld gameWorld) {
             super(TEXT_TEMPLATE + gameWorld.exposure.get());
             gameWorld.exposure.connect(new ValueView.Listener<Float>() {
+                private final DecimalTruncator truncator = new DecimalTruncator(1);
                 @Override
                 public void onChange(Float value, Float oldValue) {
-                    text.update(TEXT_TEMPLATE + value);
+                    text.update(TEXT_TEMPLATE + truncator.makeTruncatedString(value) + "%");
                 }
             });
         }
