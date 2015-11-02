@@ -36,10 +36,6 @@ public abstract class AbstractSystemTest {
         clockUtil = new PlayNClockUtil();
     }
 
-    protected void advancePlayNClockOneMillisecond() {
-        advancePlayNClock(1);
-    }
-
     private void advancePlayNClock(int ms) {
         clockUtil.advance(ms);
     }
@@ -48,25 +44,29 @@ public abstract class AbstractSystemTest {
         advancePlayNClock(ClockUtils.MS_PER_SECOND);
     }
 
-    protected void advancePlayNClockOneHour() {
-        advancePlayNClock(ClockUtils.MS_PER_HOUR);
-    }
-
     protected void advancePlayNClockOneDay() {
         advancePlayNClock(ClockUtils.MS_PER_DAY);
     }
 
-    protected void whenOneHourOfGameTimeElapses() {
-        whenGameTimeElapses(ClockUtils.MS_PER_HOUR);
+    protected void whenSomeTimeElapses() {
+        advancePlayNClockOneSecond();
     }
 
-    protected void whenGameTimeElapses(int ms) {
-        world.advanceGameTime(ms);
-        advancePlayNClock(ms);
+    protected void whenOneSecondOfGameTimeElapses() {
+        whenSecondsOfGameTimeElapse(1);
+    }
+
+    protected void whenOneHourOfGameTimeElapses() {
+        whenSecondsOfGameTimeElapse(ClockUtils.SECONDS_PER_HOUR);
+    }
+
+    protected void whenSecondsOfGameTimeElapse(int seconds) {
+        world.advanceGameTime(seconds);
+        advancePlayNClock(seconds * ClockUtils.MS_PER_SECOND);
     }
 
     protected void whenOneDayOfGameTimeElapses() {
-        whenGameTimeElapses(ClockUtils.MS_PER_DAY);
+        whenSecondsOfGameTimeElapse(ClockUtils.SECONDS_PER_DAY);
     }
 
     private final class PlayNClockUtil {

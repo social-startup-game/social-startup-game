@@ -24,4 +24,7 @@ public final class ClockUtils {
     public static final int MS_PER_MINUTE = MS_PER_SECOND * 60;
     public static final int MS_PER_HOUR = MS_PER_MINUTE * 60;
     public static final int MS_PER_DAY = MS_PER_HOUR * 24;
+    public static final int SECONDS_PER_MINUTE = 60;
+    public static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60;
+    public static final int SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
 }

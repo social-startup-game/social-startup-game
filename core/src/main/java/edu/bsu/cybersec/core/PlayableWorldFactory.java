@@ -31,7 +31,8 @@ import static com.google.common.base.Preconditions.*;
 
 public class PlayableWorldFactory {
 
-    private static final float SECONDS_PER_HOUR = 60 * 60;
+    private static final int DAYS_UNTIL_GAME_END = 14;
+
     private final Map<Name, Image> DEVELOPERS;
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
@@ -50,7 +51,7 @@ public class PlayableWorldFactory {
     }
 
     private void initializeWorld() {
-        world.gameTimeSystem.setScale(SECONDS_PER_HOUR);
+        world.gameTimeSystem.setGameTimeUnitsPerRealClockUnits(ClockUtils.SECONDS_PER_HOUR * 2);
         world.featureGenerationSystem.nextFeatureNumber(1);
         world.exposure.update(10f);
         makeExistingFeature();
@@ -60,9 +61,12 @@ public class PlayableWorldFactory {
 
     private void setEndTime() {
         Entity end = world.create(true).add(world.timeTrigger, world.event);
-        // We don't actually see an overflow here when we run the game, so we're suppressing the warning.
+        // SECONDS_PER_DAY = 60*60*24 = 8640.
+        // DAYS_UNTIL_GAME_ENDS = 14
+        // Product of these is 120,960, which is well within integers. The warning must be because
+        // it doesn't know what the range of "now" is. So, we suppress the warning.
         //noinspection NumericOverflow
-        world.timeTrigger.set(end.id, world.gameTime.get().now + ClockUtils.MS_PER_DAY * 60);
+        world.timeTrigger.set(end.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_DAY * DAYS_UNTIL_GAME_END);
         world.event.set(end.id, new Runnable() {
             @Override
             public void run() {

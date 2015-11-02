@@ -37,21 +37,15 @@ public final class EventTriggerSystemTest extends AbstractSystemTest {
 
     @Test
     public void testEvenTriggersWhenTimePassesIt() {
-        givenAnEventThatTriggersInMilliseconds(1);
-        whenOneMsAdvances();
+        givenAnEventThatTriggersInSeconds(1);
+        whenOneSecondOfGameTimeElapses();
         thenTheEventTriggers();
     }
 
-    private void whenOneMsAdvances() {
-        // We manually fiddle with the gameTimeMs here since the unit test runs independently of any GameTimeSystem.
-        world.advanceGameTime(1);
-        advancePlayNClockOneMillisecond();
-    }
-
-    private void givenAnEventThatTriggersInMilliseconds(int ms) {
+    private void givenAnEventThatTriggersInSeconds(int seconds) {
         Entity e = world.create(true)
                 .add(world.timeTrigger, world.event);
-        world.timeTrigger.set(e.id, world.gameTime.get().now + ms);
+        world.timeTrigger.set(e.id, world.gameTime.get().now + seconds);
         world.event.set(e.id, runnable = mock(Runnable.class));
     }
 
@@ -61,8 +55,8 @@ public final class EventTriggerSystemTest extends AbstractSystemTest {
 
     @Test
     public void testEventDoesNotTriggerBeforeItsTime() {
-        givenAnEventThatTriggersInMilliseconds(10);
-        whenOneMsAdvances();
+        givenAnEventThatTriggersInSeconds(10);
+        whenOneSecondOfGameTimeElapses();
         thenTheEventDoesNotTrigger();
     }
 
@@ -72,9 +66,9 @@ public final class EventTriggerSystemTest extends AbstractSystemTest {
 
     @Test
     public void testEventDoesNotTriggerMoreThanOnce() {
-        givenAnEventThatTriggersInMilliseconds(1);
-        whenOneMsAdvances();
-        whenOneMsAdvances();
+        givenAnEventThatTriggersInSeconds(1);
+        whenOneSecondOfGameTimeElapses();
+        whenOneSecondOfGameTimeElapses();
         verify(runnable, times(1)).run();
     }
 }

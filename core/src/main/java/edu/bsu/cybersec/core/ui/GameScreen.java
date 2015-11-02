@@ -82,7 +82,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                 public void update(Clock clock) {
                     final long tick = gameWorld.gameTime.get().now;
                     now = startTime + tick;
-                    final String formatted = formatter.format(now);
+                    final String formatted = formatter.format(now * (long) ClockUtils.MS_PER_SECOND);
                     timeLabel.text.update(formatted);
                 }
             });
@@ -91,7 +91,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         private final PlatformSpecificDateFormatter formatter =
                 ((SimGamePlatform) game().plat).dateFormatter();
 
-        private final long startTime = new java.util.Date().getTime();
+        private final long startTime = new java.util.Date().getTime() / ClockUtils.MS_PER_SECOND;
         private long now = startTime;
 
         @Override

@@ -26,6 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public final class GameTimeSystem extends tripleplay.entity.System {
 
+    private static final int MILLISECONDS_PER_SECOND = 1000;
     private final GameWorld gameWorld;
     private float scale = 1f;
 
@@ -42,11 +43,11 @@ public final class GameTimeSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        int elapsedGameTime = (int) (clock.dt * scale);
+        int elapsedGameTime = (int) (clock.dt * scale / MILLISECONDS_PER_SECOND);
         gameWorld.advanceGameTime(elapsedGameTime);
     }
 
-    public GameTimeSystem setScale(float scale) {
+    public GameTimeSystem setGameTimeUnitsPerRealClockUnits(float scale) {
         checkArgument(scale > 0, "Scale must be positive");
         this.scale = scale;
         return this;

@@ -36,9 +36,9 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testScale_oneMs() {
-        system.setScale(10);
-        advancePlayNClockOneMillisecond();
+    public void testSetGameTimeUnitsPerRealClockUnit_times10() {
+        system.setGameTimeUnitsPerRealClockUnits(10);
+        advancePlayNClockOneSecond();
         assertEquals(10, now());
     }
 
@@ -48,8 +48,8 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
 
     @Test
     public void testPreviousTimeIsAdvanced() {
-        advancePlayNClockOneMillisecond();
-        advancePlayNClockOneMillisecond();
+        whenSomeTimeElapses();
+        whenSomeTimeElapses();
         assertTrue(previous() > 0);
     }
 
@@ -60,22 +60,22 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
     @Test
     public void testSystemDisable_timeStopsMoving() {
         system.setEnabled(false);
-        advancePlayNClockOneMillisecond();
+        whenSomeTimeElapses();
         assertEquals(0, now());
     }
 
     @Test
     public void testSystemDisable_noElapsedTime() {
         system.setEnabled(false);
-        advancePlayNClockOneMillisecond();
+        whenSomeTimeElapses();
         assertTrue(now() == previous());
     }
 
     @Test
     public void testSystemDisableAfterHavingRun_noElapsedTime() {
-        advancePlayNClockOneMillisecond();
+        whenSomeTimeElapses();
         system.setEnabled(false);
-        advancePlayNClockOneMillisecond();
+        whenSomeTimeElapses();
         assertTrue(now() == previous());
     }
 
