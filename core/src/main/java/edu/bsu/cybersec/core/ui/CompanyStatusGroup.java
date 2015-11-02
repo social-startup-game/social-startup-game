@@ -34,23 +34,25 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
 
     private static final String TEXT = "Users per hour: ";
     private final GameWorld gameWorld;
-    private final Label usersPerSecondLabel = new Label(TEXT);
+    private final Label usersPerHourLabel = new Label(TEXT);
 
     public CompanyStatusGroup(GameWorld world) {
         super(AxisLayout.vertical());
         this.gameWorld = checkNotNull(world);
-        new UsersPerSecondLabelSystem();
+        new UsersPerHourLabelSystem();
         layoutUI();
     }
 
     private void layoutUI() {
-        add(usersPerSecondLabel);
+        add(usersPerHourLabel);
         add(new EstimatedExposureLabel(gameWorld));
     }
 
-    private final class UsersPerSecondLabelSystem extends tripleplay.entity.System {
+    private final class UsersPerHourLabelSystem extends tripleplay.entity.System {
 
-        private UsersPerSecondLabelSystem() {
+        private DecimalTruncator truncator = new DecimalTruncator(0);
+
+        private UsersPerHourLabelSystem() {
             super(gameWorld, SystemPriority.UI_LEVEL.value);
         }
 
@@ -65,7 +67,8 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
             for (int i = 0, limit = entities.size(); i < limit; i++) {
                 sum += gameWorld.usersPerHour.get(entities.get(i));
             }
-            usersPerSecondLabel.text.update(TEXT + sum);
+            String truncatedUsersPerHour = truncator.makeTruncatedString(sum);
+            usersPerHourLabel.text.update(TEXT + truncatedUsersPerHour);
         }
     }
 
