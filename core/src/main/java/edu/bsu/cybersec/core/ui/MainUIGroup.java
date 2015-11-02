@@ -30,7 +30,6 @@ import tripleplay.entity.Entity;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
-import tripleplay.util.Colors;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -183,19 +182,19 @@ public class MainUIGroup extends Group {
             final Name name = gameWorld.name.get(id);
             final float borderThickness = percentOfViewHeight(0.005f);
             Group employeeDataGroup = new Group(AxisLayout.vertical())
-                    .add(new Label(name.fullName),
+                    .add(dialogStyledLabel(name.fullName),
                             createDevelopmentSkillBlock(),
                             createMaintenanceSkillBlock(),
                             wrappingLabel("Degree: Bachelor of Science"),
                             wrappingLabel("Discipline: Computer Science"),
                             wrappingLabel("University: Ball State"))
                     .addStyles(Style.BACKGROUND.is(
-                            Background.bordered(Colors.BLACK, Colors.WHITE, borderThickness)
+                            Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness)));
             final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.08f);
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
-                            new Label(name.shortName),
+                            dialogStyledLabel(name.shortName),
                             new TaskSelector(root, gameWorld.entity(id)),
                             new Shim(0, spaceAroundNameAndTaskArea),
                             new Shim(0, 0).setConstraint(AxisLayout.stretched()),
@@ -204,8 +203,12 @@ public class MainUIGroup extends Group {
                     .setConstraint(AxisLayout.stretched(CONTROLS_AREA_WEIGHT));
         }
 
+        private Element<?> dialogStyledLabel(String s) {
+            return new Label(s).setStyles(Style.COLOR.is(Palette.DIALOG_FOREGROUND));
+        }
+
         private Element<?> wrappingLabel(String s) {
-            return new Label(s)
+            return dialogStyledLabel(s)
                     .addStyles(Style.TEXT_WRAP.on);
         }
 

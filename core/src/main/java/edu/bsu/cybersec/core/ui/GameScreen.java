@@ -33,7 +33,6 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
 
 import java.util.List;
 
@@ -321,7 +320,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         return root
                 .add(AbsoluteLayout.at(content,
                         contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
-                .addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)))
+                .addStyles(Style.BACKGROUND.is(Background.solid(Palette.UNUSED_SPACE)))
                 .setSize(size());
     }
 
@@ -340,7 +339,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private Stylesheet makeStyleSheet() {
         Stylesheet.Builder builder = SimGameStyle.newSheetBuilder(game().plat.graphics());
-        builder.add(Label.class, Style.COLOR.is(Colors.WHITE));
+        builder.add(Label.class, Style.COLOR.is(Palette.FOREGROUND));
         return builder.create();
     }
 
@@ -354,7 +353,7 @@ public class GameScreen extends ScreenStack.UIScreen {
             super(AxisLayout.horizontal().stretchByDefault());
             add(timeLabel);
             add(usersLabel);
-            addStyles(Style.BACKGROUND.is(Background.solid(Colors.DARK_GRAY)));
+            addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
         }
     }
 

@@ -38,8 +38,7 @@ public final class GameInteractionArea extends Group {
     private final GameWorld gameWorld;
     private final Interface iface;
     private Group shown = new Group(AxisLayout.vertical().offStretch())
-            .setConstraint(AxisLayout.stretched())
-            .addStyles(Style.BACKGROUND.is(Background.solid(Colors.RED)));
+            .setConstraint(AxisLayout.stretched());
     private final InteractionAreaGroup statusGroup;
 
     public GameInteractionArea(GameWorld gameWorld, Interface iface) {
@@ -51,7 +50,7 @@ public final class GameInteractionArea extends Group {
         showDefaultView();
         add(shown);
         add(makeButtonArea().setConstraint(AxisLayout.fixed()));
-        addStyles(Style.BACKGROUND.is(Background.solid(Colors.MAGENTA)));
+        addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
     }
 
     private void showDefaultView() {

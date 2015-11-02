@@ -39,7 +39,7 @@ import static com.google.common.base.Preconditions.checkState;
 public class EventsGroup extends InteractionAreaGroup {
     private static final Graphics graphics = SimGame.game.plat.graphics();
     private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(graphics,
-            Colors.WHITE, percentOfScreenHeight(0.05f), Colors.LIGHT_GRAY, percentOfScreenHeight(0.01f));
+            Colors.WHITE, percentOfScreenHeight(0.05f), Palette.DIALOG_BORDER, percentOfScreenHeight(0.01f));
 
     private static float percentOfScreenHeight(float percent) {
         return graphics.viewSize.height() * percent;
@@ -47,14 +47,14 @@ public class EventsGroup extends InteractionAreaGroup {
 
 
     private final GameWorld gameWorld;
-    private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Colors.BLACK));
+    private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Palette.FOREGROUND));
     private final Image eventSpeakerImage = ImageCache.instance().ADMIN;
     private IDimension parentSize;
     private Runnable onParented;
 
     public EventsGroup(GameWorld gameWorld) {
         super(new AbsoluteLayout());
-        addStyles(Style.BACKGROUND.is(Background.solid(Colors.CYAN)));
+        addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
         add(noEventsLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.CENTER)));
         this.gameWorld = gameWorld;
         gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
