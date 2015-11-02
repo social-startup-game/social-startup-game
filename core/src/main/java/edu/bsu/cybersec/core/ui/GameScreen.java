@@ -27,12 +27,14 @@ import playn.scene.Pointer;
 import pythagoras.f.Rectangle;
 import react.Connection;
 import react.Slot;
+import react.UnitSlot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.util.Colors;
 
 import java.util.List;
 
@@ -48,6 +50,25 @@ public class GameScreen extends ScreenStack.UIScreen {
         ImageCache imageCache = ImageCache.instance();
         PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(imageCache);
         gameWorld = playableWorldFactory.createPlayableGameWorld();
+        gameWorld.onGameEnd.connect(new UnitSlot() {
+            @Override
+            public void onEmit() {
+                screenStack.replace(new ScreenStack.UIScreen() {
+                    @Override
+                    protected Root createRoot() {
+                        return iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
+                                .setSize(size())
+                                .add(new Label("The game is over")
+                                        .setStyles(Style.COLOR.is(Colors.WHITE)));
+                    }
+
+                    @Override
+                    public Game game() {
+                        return SimGame.game;
+                    }
+                }, screenStack.slide());
+            }
+        });
     }
 
     @SuppressWarnings("unused")
@@ -200,8 +221,10 @@ public class GameScreen extends ScreenStack.UIScreen {
     };
 
     private State state;
+    private final ScreenStack screenStack;
 
-    public GameScreen() {
+    public GameScreen(ScreenStack screenStack) {
+        this.screenStack = screenStack;
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
         gameWorld.connect(update, paint);

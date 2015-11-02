@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import playn.core.Image;
 import react.Signal;
+import react.UnitSignal;
 import react.Value;
 import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
@@ -35,6 +36,7 @@ public class GameWorld extends World {
     public final Map<String, Component> components = Maps.newHashMap();
 
     public final Signal<NarrativeEvent> onNarrativeEvent = Signal.create();
+    public final UnitSignal onGameEnd = new UnitSignal();
     public final Value<GameTime> gameTime = Value.create(new GameTime(0, 0));
     public final Value<Float> exposure = Value.create(0f);
     public final Value<Float> users = Value.create(0f);

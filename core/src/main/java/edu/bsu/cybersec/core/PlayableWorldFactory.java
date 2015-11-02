@@ -27,7 +27,7 @@ import tripleplay.entity.Entity;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.*;
 
 public class PlayableWorldFactory {
 
@@ -55,6 +55,20 @@ public class PlayableWorldFactory {
         world.exposure.update(10f);
         makeExistingFeature();
         makeDevelopers(3);
+        setEndTime();
+    }
+
+    private void setEndTime() {
+        Entity end = world.create(true).add(world.timeTrigger, world.event);
+        // We don't actually see an overflow here when we run the game, so we're suppressing the warning.
+        //noinspection NumericOverflow
+        world.timeTrigger.set(end.id, world.gameTime.get().now + ClockUtils.MS_PER_DAY * 60);
+        world.event.set(end.id, new Runnable() {
+            @Override
+            public void run() {
+                world.onGameEnd.emit();
+            }
+        });
     }
 
     private void makeDevelopers(int number) {

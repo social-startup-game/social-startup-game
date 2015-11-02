@@ -59,7 +59,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
                 if (event instanceof Try.Failure) {
                     game().plat.log().warn("Failed to load some images: " + event);
                 } else {
-                    screenStack.push(new GameScreen(), screenStack.slide());
+                    screenStack.push(new GameScreen(screenStack), screenStack.slide());
                 }
             }
         });
