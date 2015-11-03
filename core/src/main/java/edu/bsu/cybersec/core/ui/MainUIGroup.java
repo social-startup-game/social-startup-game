@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.ui;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
+import playn.core.Font;
 import playn.core.Image;
 import react.Slot;
 import react.Value;
@@ -192,9 +193,12 @@ public class MainUIGroup extends Group {
                             Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness)));
             final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.08f);
+            final Font nameFont = FontCache.instance().REGULAR.derive(percentOfViewHeight(0.03f));
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
-                            dialogStyledLabel(name.shortName),
+                            dialogStyledLabel(name.shortName)
+                                    .addStyles(Style.FONT.is(nameFont),
+                                            Style.COLOR.is(Palette.NAME_COLOR)),
                             new TaskSelector(root, gameWorld.entity(id)),
                             new Shim(0, spaceAroundNameAndTaskArea),
                             new Shim(0, 0).setConstraint(AxisLayout.stretched()),
@@ -204,7 +208,7 @@ public class MainUIGroup extends Group {
         }
 
         private Element<?> dialogStyledLabel(String s) {
-            return new Label(s).setStyles(Style.COLOR.is(Palette.DIALOG_FOREGROUND));
+            return new Label(s).addStyles(Style.COLOR.is(Palette.DIALOG_FOREGROUND));
         }
 
         private Element<?> wrappingLabel(String s) {

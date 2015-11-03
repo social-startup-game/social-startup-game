@@ -26,4 +26,5 @@ public final class Palette {
     public static final int DIALOG_BACKGROUND = GameColors.HALF_BAKED;
     public static final int DIALOG_BORDER = GameColors.ECHO_BLUE;
     public static final int UNUSED_SPACE = GameColors.HUNTER_GREEN;
+    public static final int NAME_COLOR = GameColors.HUNTER_GREEN;
 }
