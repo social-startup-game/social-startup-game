@@ -41,6 +41,7 @@ public class GameWorld extends World {
     public final Value<Float> exposure = Value.create(0f);
     public final Value<Float> users = Value.create(0f);
     public final List<Entity> workers = Lists.newArrayListWithCapacity(3);
+    public final Value<Integer> gameEnd = Value.create(-1);
 
     public final Component.Generic<Task> tasked = register("tasked", new Component.Generic<Task>(this));
     public final Component.IScalar employeeNumber = register("employeeNumber", new Component.IScalar(this));

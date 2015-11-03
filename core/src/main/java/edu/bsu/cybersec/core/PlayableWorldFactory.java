@@ -27,7 +27,7 @@ import tripleplay.entity.Entity;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class PlayableWorldFactory {
 
@@ -66,13 +66,15 @@ public class PlayableWorldFactory {
         // Product of these is 120,960, which is well within integers. The warning must be because
         // it doesn't know what the range of "now" is. So, we suppress the warning.
         //noinspection NumericOverflow
-        world.timeTrigger.set(end.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_DAY * DAYS_UNTIL_GAME_END);
+        int gameEnd = world.gameTime.get().now + ClockUtils.SECONDS_PER_DAY * DAYS_UNTIL_GAME_END;
+        world.timeTrigger.set(end.id, gameEnd);
         world.event.set(end.id, new Runnable() {
             @Override
             public void run() {
                 world.onGameEnd.emit();
             }
         });
+        world.gameEnd.update(gameEnd);
     }
 
     private void makeDevelopers(int number) {

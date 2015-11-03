@@ -19,9 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.DecimalTruncator;
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.SystemPriority;
+import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import react.ValueView;
 import tripleplay.entity.Entity;
@@ -46,6 +44,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
     private void layoutUI() {
         add(usersPerHourLabel);
         add(new EstimatedExposureLabel(gameWorld));
+        add(new DaysRemainingLabel(gameWorld));
     }
 
     private final class UsersPerHourLabelSystem extends tripleplay.entity.System {
@@ -82,6 +81,21 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
                 @Override
                 public void onChange(Float value, Float oldValue) {
                     text.update(TEXT_TEMPLATE + truncator.makeTruncatedString(value) + "%");
+                }
+            });
+        }
+    }
+
+    private static final class DaysRemainingLabel extends Label {
+        private static final String TEXT_TEMPLATE = "Days until performance review: ";
+
+        private DaysRemainingLabel(final GameWorld world) {
+            world.gameTime.connect(new ValueView.Listener<GameTime>() {
+                @Override
+                public void onChange(GameTime value, GameTime oldValue) {
+                    final int secondsLeft = world.gameEnd.get() - value.now;
+                    final int daysLeft = secondsLeft / ClockUtils.SECONDS_PER_DAY + 1;
+                    text.update(TEXT_TEMPLATE + daysLeft);
                 }
             });
         }
