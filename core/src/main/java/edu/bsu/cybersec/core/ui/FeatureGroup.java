@@ -19,20 +19,27 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
+import pythagoras.f.IDimension;
 import tripleplay.entity.Entity;
-import tripleplay.ui.Label;
+import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
-import java.util.Comparator;
-import java.util.SortedSet;
+import java.util.Map;
 
 public class FeatureGroup extends InteractionAreaGroup {
+
+    private final Group featureList = new Group(AxisLayout.vertical().offStretch());
+    private final Map<Integer, FeatureLabel> map = Maps.newHashMap();
+    private final GameWorld world;
+
     public FeatureGroup(final GameWorld gameWorld) {
         super(AxisLayout.vertical());
+        this.world = gameWorld;
+
         new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
 
             @Override
@@ -43,37 +50,58 @@ public class FeatureGroup extends InteractionAreaGroup {
             @Override
             protected void update(Clock clock, Entities entities) {
                 super.update(clock, entities);
-                removeAll();
-                addLabelsSortedByFeatureNumber(entities);
-            }
-
-            private void addLabelsSortedByFeatureNumber(Entities entities) {
-                SortedSet<Integer> sortedFeatures = Sets.newTreeSet(new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer id1, Integer id2) {
-                        return gameWorld.featureNumber.get(id1) - gameWorld.featureNumber.get(id2);
-                    }
-                });
                 for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    sortedFeatures.add(entities.get(i));
-                }
-                for (Integer id : sortedFeatures) {
-                    add(makeLabelFor(id));
-                }
-            }
-
-            private Label makeLabelFor(int id) {
-                final Entity entity = gameWorld.entity(id);
-                final int number = gameWorld.featureNumber.get(id);
-                final String initial = "Feature " + number + " (" + gameWorld.name.get(id) + ") ";
-
-                if (entity.has(gameWorld.developmentProgress)) {
-                    final int progress = (int) (gameWorld.developmentProgress.get(id) / gameWorld.goal.get(id) * 100);
-                    return new Label(initial + " progress : " + progress + " %");
-                } else {
-                    return new Label(initial + " done!");
+                    final int id = entities.get(i);
+                    final int featureId = gameWorld.featureNumber.get(id);
+                    if (!map.containsKey(featureId)) {
+                        FeatureLabel element = new FeatureLabel(id);
+                        featureList.add(element);
+                        map.put(featureId, element);
+                    } else {
+                        map.get(featureId).updateText(id);
+                    }
                 }
             }
         };
+    }
+
+    @Override
+    protected void wasParented(Container<?> parent) {
+        super.wasParented(parent);
+        if (isThisTheFirstParenting()) {
+            final IDimension parentSize = parent.size();
+            Scroller scroller = new Scroller(featureList)
+                    .setBehavior(Scroller.Behavior.VERTICAL)
+                    .setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
+            add(scroller);
+        }
+    }
+
+    private boolean isThisTheFirstParenting() {
+        return childCount() == 0;
+    }
+
+    private final class FeatureLabel extends Label {
+
+        private boolean hasCompletedText = false;
+
+        FeatureLabel(int entityId) {
+            super();
+            addStyles(Style.HALIGN.left);
+            updateText(entityId);
+        }
+
+        public void updateText(int entityId) {
+            Entity entity = world.entity(entityId);
+            final int number = world.featureNumber.get(entityId);
+            final String numberAndName = number + ": " + world.name.get(entityId).fullName;
+            if (entity.has(world.developmentProgress)) {
+                final int progress = (int) (world.developmentProgress.get(entityId) / world.goal.get(entityId) * 100);
+                text.update(numberAndName + " [" + progress + "%]");
+            } else if (!hasCompletedText) {
+                text.update(numberAndName);
+                hasCompletedText = true;
+            }
+        }
     }
 }
