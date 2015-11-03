@@ -71,8 +71,9 @@ public final class GameInteractionArea extends Group {
 
         //this come from triplePlay simpeStyles class: https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/ui/SimpleStyles.java#L27
         //Once we make our own styles, we can replace this.
-        private final Background CALLOUT_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
-                Colors.BLACK, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
+        private final Background ATTENTION_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
+                Colors.BLACK, 5, 0xFFEEEEEE, 2)
+                .inset(5, 6, 2, 6);
         private final Background REGULAR_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
                 0xFFCCCCCC, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
 
@@ -95,10 +96,11 @@ public final class GameInteractionArea extends Group {
             }
         };
 
-        private final Runnable calloutThemer = new Runnable() {
+        private final Runnable attentionThemer = new Runnable() {
             @Override
             public void run() {
-                setStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
+                setStyles(Style.BACKGROUND.is(ATTENTION_BACKGROUND));
+                addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             }
         };
 
@@ -106,6 +108,7 @@ public final class GameInteractionArea extends Group {
             @Override
             public void run() {
                 setStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
+                addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             }
         };
 
@@ -113,11 +116,7 @@ public final class GameInteractionArea extends Group {
 
         ChangeViewButton(Image iconImage, String text, final InteractionAreaGroup view) {
             super(text);
-            addStyles(Style.ICON_CUDDLE.on,
-                    Style.ICON_GAP.is(-(int) percentOfViewHeight(0.04f)),
-                    Style.TEXT_EFFECT.pixelOutline,
-                    Style.HIGHLIGHT.is(Palette.UNUSED_SPACE),
-                    Style.COLOR.is(Palette.FOREGROUND));
+            addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             final Icon icon = makeIconFromImage(iconImage);
             super.icon.update(icon);
             view.onAttention().connect(new ValueView.Listener<Boolean>() {
@@ -149,7 +148,7 @@ public final class GameInteractionArea extends Group {
 
         private Animation makeFlashOnceAnimation() {
             AnimGroup group = new AnimGroup();
-            group.action(calloutThemer)
+            group.action(attentionThemer)
                     .then()
                     .delay(FLASH_PERIOD)
                     .then()
@@ -165,10 +164,17 @@ public final class GameInteractionArea extends Group {
             return Icons.scaled(Icons.image(iconImage), scale);
         }
 
-        private float percentOfViewHeight(float percent) {
-            return percent * SimGame.game.plat.graphics().viewSize.height();
-        }
+    }
 
+    private static final Styles COMMON_CHANGE_VIEW_BUTTON_STYLES = Styles.make(Style.ICON_CUDDLE.on,
+            Style.ICON_GAP.is(-(int) percentOfViewHeight(0.04f)),
+            Style.TEXT_EFFECT.pixelOutline,
+            Style.HIGHLIGHT.is(Palette.UNUSED_SPACE),
+            Style.COLOR.is(Palette.FOREGROUND));
+
+
+    private static float percentOfViewHeight(float percent) {
+        return percent * SimGame.game.plat.graphics().viewSize.height();
     }
 }
 
