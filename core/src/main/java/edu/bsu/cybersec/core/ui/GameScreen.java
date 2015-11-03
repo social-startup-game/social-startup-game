@@ -171,7 +171,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                 gameWorld.event.set(e.id,
                         NarrativeEvent.inWorld(gameWorld)
                                 .withText("Who gets a " + hours + "-hour nap?")
-                                .addEmployeeSelectionsFor(new NarrativeEvent.Builder.Action() {
+                                .addEmployeeSelectionsFor(new NarrativeEvent.Action() {
                                     @Override
                                     public void runForSelection(final Entity worker) {
                                         final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;

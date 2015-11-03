@@ -121,7 +121,7 @@ public class EventsGroup extends InteractionAreaGroup {
 
     private Group makeButtonGroup(NarrativeEvent narrativeEvent) {
         Group buttonGroup = new Group(AxisLayout.horizontal());
-        for (final NarrativeEvent.Option option : narrativeEvent.options) {
+        for (final NarrativeEvent.Option option : narrativeEvent.options()) {
             buttonGroup.add(new Button(option.text).onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button button) {

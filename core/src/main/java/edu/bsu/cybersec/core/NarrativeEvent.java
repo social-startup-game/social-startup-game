@@ -31,15 +31,16 @@ import static com.google.common.base.Preconditions.checkState;
 
 public class NarrativeEvent implements Runnable {
 
-    public static final class Builder {
+    public interface Action {
+        void runForSelection(Entity e);
+    }
 
-        public interface Action {
-            void runForSelection(Entity e);
-        }
+    public static final class Builder {
 
         private final GameWorld world;
         private final List<Option> options = Lists.newArrayListWithCapacity(4);
         private String text;
+        private Action selectedWorkerAction;
 
         private Builder(GameWorld world) {
             this.world = checkNotNull(world);
@@ -55,14 +56,7 @@ public class NarrativeEvent implements Runnable {
         }
 
         public Builder addEmployeeSelectionsFor(final Action action) {
-            for (final Entity e : world.workers) {
-                addOption(world.name.get(e.id).shortName).withAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        action.runForSelection(e);
-                    }
-                });
-            }
+            this.selectedWorkerAction = checkNotNull(action);
             return this;
         }
 
@@ -103,12 +97,39 @@ public class NarrativeEvent implements Runnable {
 
     private final GameWorld gameWorld;
     public final String text;
-    public final ImmutableList<Option> options;
+    private final ImmutableList<Option> fixedOptions;
+    private final Action selectedWorkerAction;
 
     private NarrativeEvent(Builder builder) {
         this.gameWorld = checkNotNull(builder.world);
         this.text = builder.text;
-        this.options = ImmutableList.copyOf(builder.options);
+        this.fixedOptions = ImmutableList.copyOf(builder.options);
+        this.selectedWorkerAction = builder.selectedWorkerAction;
+    }
+
+    public ImmutableList<Option> options() {
+        List<Option> options = Lists.newArrayListWithCapacity(fixedOptions.size() + gameWorld.workers.size());
+        if (selectedWorkerAction != null) {
+            addWorkersTo(options);
+        }
+        options.addAll(fixedOptions);
+        return ImmutableList.copyOf(options);
+    }
+
+    private void addWorkersTo(List<Option> options) {
+        for (final Entity e : gameWorld.workers) {
+            checkState(e.has(gameWorld.tasked), "Worker is missing its task!");
+            if (gameWorld.tasked.get(e.id).isReassignable()) {
+                final String name = gameWorld.name.get(e.id).shortName;
+                Option option = new Option(name, new Runnable() {
+                    @Override
+                    public void run() {
+                        selectedWorkerAction.runForSelection(e);
+                    }
+                });
+                options.add(option);
+            }
+        }
     }
 
     @Override
