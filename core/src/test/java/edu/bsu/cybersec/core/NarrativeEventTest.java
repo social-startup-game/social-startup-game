@@ -37,7 +37,7 @@ public final class NarrativeEventTest extends AbstractSystemTest {
     }
 
     private NarrativeEvent makeTestEvent() {
-        return new NarrativeEvent(world, "");
+        return NarrativeEvent.inWorld(world).withText("").build();
     }
 
     @SuppressWarnings("unchecked")

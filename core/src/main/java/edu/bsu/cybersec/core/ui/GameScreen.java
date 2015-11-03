@@ -168,33 +168,35 @@ public class GameScreen extends ScreenStack.UIScreen {
                 final int hours = 4;
                 Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
                 gameWorld.timeTrigger.set(e.id, gameWorld.gameTime.get().now + 1);
-                gameWorld.event.set(e.id, new NarrativeEvent(gameWorld,
-                        "Your first worker wants to take a " + hours + "-hour nap. Is that allowed?",
-                        new NarrativeEvent.Option("Yes", new Runnable() {
-                            @Override
-                            public void run() {
-                                final Entity worker = gameWorld.workers.get(0);
-                                final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;
-                                gameWorld.tasked.set(worker.id,
-                                        Task.createTask("Napping").expiringAt(wakeupTime).inWorld(gameWorld).build());
-                                final Entity wakingUp = gameWorld.create(true)
-                                        .add(gameWorld.timeTrigger, gameWorld.event);
-                                gameWorld.timeTrigger.set(wakingUp.id, wakeupTime);
-                                gameWorld.event.set(wakingUp.id, new Runnable() {
+                gameWorld.event.set(e.id,
+                        NarrativeEvent.inWorld(gameWorld)
+                                .withText("Who gets a " + hours + "-hour nap?")
+                                .addEmployeeSelectionsFor(new NarrativeEvent.Builder.Action() {
                                     @Override
-                                    public void run() {
-                                        gameWorld.tasked.set(worker.id, Task.MAINTENANCE);
-                                        wakingUp.close();
+                                    public void runForSelection(final Entity worker) {
+                                        final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;
+                                        gameWorld.tasked.set(worker.id,
+                                                Task.createTask("Napping").expiringAt(wakeupTime).inWorld(gameWorld).build());
+                                        final Entity wakingUp = gameWorld.create(true)
+                                                .add(gameWorld.timeTrigger, gameWorld.event);
+                                        gameWorld.timeTrigger.set(wakingUp.id, wakeupTime);
+                                        gameWorld.event.set(wakingUp.id, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                gameWorld.tasked.set(worker.id, Task.MAINTENANCE);
+                                                wakingUp.close();
+                                            }
+                                        });
                                     }
-                                });
-                            }
-                        }),
-                        new NarrativeEvent.Option("No", new Runnable() {
+                                })
+                                .addOption("No one!").withAction(new Runnable() {
                             @Override
                             public void run() {
-                                // Do nothing.
+                                //Do nothing because you are mean.
                             }
-                        })));
+                        })
+                                .build());
+
             }
         });
     }
