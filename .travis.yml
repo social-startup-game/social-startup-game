@@ -1,0 +1,8 @@
+language: java
+script: 
+  - mvn -Phtml clean package
+  - bash ./deploy.sh
+env:
+  global:
+    - GH_REF: github.com/doctor-g/social-startup-game.git
+    - secure: "KhGWh7yV0//c9CHIXobyPQpD7Fr3YBKVpvisn0EEv1LTbZ1nkLFFfyQOE+XuI7UK+6J6fwYQfQ1oHCPP+baChfOSrzvnGwigElDRk1qr4j6NtdCC9e03abyz4BPJ39661nbP645UtApjg3p1crAw/eAhy/YFi0p4T5yAP2Fz5S4PmETD7lvgy0LJItn4BahSfNqA27XIcea9D9WiDyXQ24EKlY+4+BJGZRUnzgTOUnEqDyp+Vbsj7z2PSHGF1NUFcV8PE11jsic3Lw/Pz1th2N+jQr8aW8QLlneoByxiPus+Ie6aWFqfvgYvu8OBvSGhOfIWsy7AIRVy2OU25Nw58m88d10QYxBfDAOC2er+ILVmCkR+YX4CyptTOCA17novjyW2sRaLrrItygqLHnoRXg37RRsVVkAWhnbs115hldOx91Hqn0TYTAKsXfavrMdFzJL1LDoygxNVPIPdWPg3GPwrEgQblIvuLYAO0uIa7bf3KP/64tiA7HSBESrJDTk60sQ4v/oLkGjqQjvonPf8uxr/jSIWUXA/BAzidcVb9EicM2cBCcXdiX/bOnDD1GLSdWTXiknck2iIBnl1V7emd1dRberhzWvOg7wOd46Y/IwY9OAoQhX+ECf57xFkbws6grjkhtgOmGTRBJyUl+d2/LFX7pvOgs0R5XwV1hbDtOo="
