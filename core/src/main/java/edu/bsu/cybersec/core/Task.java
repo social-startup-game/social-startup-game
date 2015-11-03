@@ -31,10 +31,6 @@ public abstract class Task {
     public static final Task DEVELOPMENT = new ReassignableTask("Development");
     public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(MAINTENANCE, DEVELOPMENT);
 
-    public static Task createReassignableTask(String name) {
-        return new ReassignableTask(name);
-    }
-
     public static TaskBuilder createTask(String name) {
         return new TaskBuilder(name);
     }
@@ -104,7 +100,7 @@ public abstract class Task {
                 @Override
                 public void onChange(GameTime value, GameTime oldValue) {
                     int millisToCompletion = completionTime - value.now;
-                    int hoursToCompletion = (millisToCompletion / ClockUtils.MS_PER_HOUR) + 1;
+                    int hoursToCompletion = (millisToCompletion / ClockUtils.SECONDS_PER_HOUR) + 1;
                     name.update(baseName + " (" + hoursToCompletion + "h)");
                     if (millisToCompletion <= 0) {
                         world.gameTime.disconnect(this);

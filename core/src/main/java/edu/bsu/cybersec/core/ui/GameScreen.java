@@ -174,7 +174,7 @@ public class GameScreen extends ScreenStack.UIScreen {
                             @Override
                             public void run() {
                                 final Entity worker = gameWorld.workers.get(0);
-                                final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.MS_PER_HOUR * hours;
+                                final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;
                                 gameWorld.tasked.set(worker.id,
                                         Task.createTask("Napping").expiringAt(wakeupTime).inWorld(gameWorld).build());
                                 final Entity wakingUp = gameWorld.create(true)
