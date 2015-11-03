@@ -19,13 +19,11 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.*;
 import playn.core.*;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
 import pythagoras.f.Rectangle;
-import react.Connection;
 import react.Slot;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
@@ -36,9 +34,6 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 public class GameScreen extends ScreenStack.UIScreen {
@@ -115,112 +110,9 @@ public class GameScreen extends ScreenStack.UIScreen {
         }
     };
 
-    @SuppressWarnings("unused")
-    tripleplay.entity.System progressRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
-        @Override
-        protected boolean isInterested(Entity entity) {
-            return entity.has(gameWorld.developmentProgress);
-        }
-
-        @Override
-        protected void update(Clock clock, Entities entities) {
-            super.update(clock, entities);
-            checkState(entities.size() <= 1,
-                    "I expected at most one featureId in development but found " + entities.size());
-            for (int i = 0, limit = entities.size(); i < limit; i++) {
-                int id = entities.get(i);
-                progressLabel.text.update("Progress: " + gameWorld.developmentProgress.get(id) + " / " + gameWorld.goal.get(id));
-            }
-        }
-    };
-
-    @SuppressWarnings("unused")
-    System vulnerabilityRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
-
-        @Override
-        protected boolean isInterested(Entity entity) {
-            return true;
-        }
-
-        @Override
-        protected void update(Clock clock, Entities entities) {
-            super.update(clock, entities);
-            attackSurfaceLabel.text.update("Vulnerability estimate: " + gameWorld.vulnerability);
-        }
-    };
-
-    private final SystemToggle systemToggle = new SystemToggle(
-            gameWorld.updatingSystem,
-            gameWorld.gameTimeSystem,
-            gameWorld.userGenerationSystem,
-            gameWorld.featureDevelopmentSystem,
-            gameWorld.maintenanceSystem,
-            gameWorld.expirySystem,
-            gameWorld.eventTriggerSystem,
-            gameWorld.featureGenerationSystem,
-            gameWorld.learningSystem,
-            gameWorld.exploitSystem);
-    private final List<Element<?>> interactiveElements = Lists.newArrayList();
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");
-    private final Label progressLabel = new Label("");
-    private final Label attackSurfaceLabel = new Label("");
-    private final ToggleButton pauseButton = new ToggleButton("Pause");
 
-    private interface State {
-        void onEnter();
-
-        void onExit();
-    }
-
-    private abstract class AbstractState implements State {
-        protected void disableInteractiveElements() {
-            for (Element<?> element : interactiveElements) {
-                element.setEnabled(false);
-            }
-        }
-
-        protected void enableInteractiveElements() {
-            for (Element<?> element : interactiveElements) {
-                element.setEnabled(true);
-            }
-        }
-    }
-
-
-    private final State playingState = new AbstractState() {
-
-        private Connection connection;
-
-        @Override
-        public void onEnter() {
-            checkState(connection == null, "There is a leaked connection");
-            enableInteractiveElements();
-        }
-
-        @Override
-        public void onExit() {
-            connection.close();
-            connection = null;
-        }
-    };
-
-    private final State pausedState = new AbstractState() {
-
-        @Override
-        public void onEnter() {
-            disableInteractiveElements();
-            pauseButton.setEnabled(true);
-            systemToggle.disable();
-        }
-
-        @Override
-        public void onExit() {
-            systemToggle.enable();
-        }
-    };
-
-    private State state;
     private final ScreenStack screenStack;
 
     public GameScreen(ScreenStack screenStack) {
@@ -228,33 +120,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
         gameWorld.connect(update, paint);
-        configurePauseButton();
-        enterState(playingState);
         registerDebugHooks();
-    }
-
-    private void configurePauseButton() {
-        pauseButton.selected().update(false);
-        pauseButton.selected().connect(new Slot<Boolean>() {
-            @Override
-            public void onEmit(Boolean selected) {
-                if (selected) {
-                    enterState(pausedState);
-                } else {
-                    enterState(playingState);
-                }
-            }
-        });
-        interactiveElements.add(pauseButton);
-    }
-
-    private void enterState(State state) {
-        checkNotNull(state);
-        if (this.state != null) {
-            this.state.onExit();
-        }
-        this.state = state;
-        this.state.onEnter();
     }
 
     private void registerDebugHooks() {

@@ -71,15 +71,22 @@ public class GameWorld extends World {
     }
 
     public static class Systematized extends GameWorld {
-        public final UpdatingSystem updatingSystem = new UpdatingSystem(this);
+        {
+            initializeSystemsThatAreNeverDirectlyReferenced();
+        }
+
+        private void initializeSystemsThatAreNeverDirectlyReferenced() {
+            new UpdatingSystem(this);
+            new FeatureDevelopmentSystem(this);
+            new MaintenanceSystem(this);
+            new ExpirySystem(this);
+            new EventTriggerSystem(this);
+            new LearningSystem(this);
+            new ExploitSystem(this);
+        }
+
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
-        public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
-        public final MaintenanceSystem maintenanceSystem = new MaintenanceSystem(this);
-        public final ExpirySystem expirySystem = new ExpirySystem(this);
-        public final EventTriggerSystem eventTriggerSystem = new EventTriggerSystem(this);
         public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
-        public final LearningSystem learningSystem = new LearningSystem(this);
-        public final ExploitSystem exploitSystem = new ExploitSystem(this);
     }
 }
