@@ -19,79 +19,38 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.SystemPriority;
-import playn.core.Clock;
-import pythagoras.f.IDimension;
 import tripleplay.entity.Entity;
-import tripleplay.ui.*;
+import tripleplay.ui.Group;
 import tripleplay.ui.layout.AxisLayout;
 
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public class FeatureGroup extends InteractionAreaGroup {
+public final class FeatureGroup extends ScrollingListInteractionAreaGroup {
 
     private final Group featureList = new Group(AxisLayout.vertical().offStretch());
-    private final Map<Integer, FeatureLabel> map = Maps.newHashMap();
     private final GameWorld world;
 
     public FeatureGroup(final GameWorld gameWorld) {
-        super(AxisLayout.vertical());
-        this.world = gameWorld;
-
-        new tripleplay.entity.System(gameWorld, SystemPriority.UI_LEVEL.value) {
-
-            @Override
-            protected boolean isInterested(Entity entity) {
-                return entity.has(gameWorld.featureNumber);
-            }
-
-            @Override
-            protected void update(Clock clock, Entities entities) {
-                super.update(clock, entities);
-                for (int i = 0, limit = entities.size(); i < limit; i++) {
-                    final int id = entities.get(i);
-                    final int featureId = gameWorld.featureNumber.get(id);
-                    if (!map.containsKey(featureId)) {
-                        FeatureLabel element = new FeatureLabel(id);
-                        featureList.add(element);
-                        map.put(featureId, element);
-                    } else {
-                        map.get(featureId).updateText(id);
-                    }
-                }
-            }
-        };
+        super(gameWorld, gameWorld.featureNumber);
+        this.world = checkNotNull(gameWorld);
     }
 
     @Override
-    protected void wasParented(Container<?> parent) {
-        super.wasParented(parent);
-        if (isThisTheFirstParenting()) {
-            final IDimension parentSize = parent.size();
-            Scroller scroller = new Scroller(featureList)
-                    .setBehavior(Scroller.Behavior.VERTICAL)
-                    .setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
-            add(scroller);
-        }
+    protected ScrollingListItem createLabel(int entityId) {
+        return new FeatureLabel(entityId);
     }
 
-    private boolean isThisTheFirstParenting() {
-        return childCount() == 0;
-    }
-
-    private final class FeatureLabel extends Label {
+    private final class FeatureLabel extends ScrollingListItem {
 
         private boolean hasCompletedText = false;
 
         FeatureLabel(int entityId) {
-            super();
-            addStyles(Style.HALIGN.left);
-            updateText(entityId);
+            super(entityId);
         }
 
-        public void updateText(int entityId) {
+        @Override
+        public void update(int entityId) {
             Entity entity = world.entity(entityId);
             final int number = world.featureNumber.get(entityId);
             final String numberAndName = number + ": " + world.name.get(entityId).fullName;
