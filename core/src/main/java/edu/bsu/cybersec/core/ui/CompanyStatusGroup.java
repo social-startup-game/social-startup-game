@@ -80,7 +80,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
                 private final DecimalTruncator truncator = new DecimalTruncator(1);
                 @Override
                 public void onChange(Float value, Float oldValue) {
-                    text.update(TEXT_TEMPLATE + truncator.makeTruncatedString(value) + "%");
+                    text.update(TEXT_TEMPLATE + truncator.makeTruncatedString(value * 100) + "%");
                 }
             });
         }

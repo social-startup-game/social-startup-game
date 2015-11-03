@@ -19,16 +19,32 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.Range;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PlayableWorldFactoryTest extends AbstractMockedAssetsTest {
 
+    private GameWorld.Systematized world;
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        PlayableWorldFactory factory = new PlayableWorldFactory(imageCache);
+        world = factory.createPlayableGameWorld();
+    }
+
     @Test
     public void testCreate_workerListHasThreeWorkers() {
-        PlayableWorldFactory factory = new PlayableWorldFactory(imageCache);
-        GameWorld.Systematized world = factory.createPlayableGameWorld();
         assertEquals(3, world.workers.size());
+    }
+
+    @Test
+    public void testCreate_exposureIsValidPercent() {
+        Range<Float> range = Range.closed(0f, 1f);
+        final float exposure = world.exposure.get();
+        assertTrue("Exposure (" + exposure + ") is out of range.", range.contains(exposure));
     }
 }

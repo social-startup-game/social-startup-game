@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
-    private static final float DEFAULT_FEATURE_VULNERABILITY = 10f;
+    private static final float DEFAULT_FEATURE_VULNERABILITY = 0.01f;
     private static final int DEFAULT_FEATURE_USERS_PER_HOUR = 50;
 
     public static FeatureBuilder in(GameWorld world) {
