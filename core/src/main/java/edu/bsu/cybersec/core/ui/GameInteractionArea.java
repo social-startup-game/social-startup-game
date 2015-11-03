@@ -22,7 +22,6 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Image;
-import pythagoras.f.IDimension;
 import react.Slot;
 import react.ValueView;
 import tripleplay.anim.AnimGroup;
@@ -60,10 +59,10 @@ public final class GameInteractionArea extends Group {
     private Element makeButtonArea() {
         ImageCache images = ImageCache.instance();
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(images.DOLLAR_SIGN, statusGroup),
-                        new ChangeViewButton(images.STAR, new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(images.WRENCH, new ExploitsGroup(gameWorld)),
-                        new ChangeViewButton(images.ENVELOPE, new EventsGroup(gameWorld)));
+                .add(new ChangeViewButton(images.DOLLAR_SIGN, "Status", statusGroup),
+                        new ChangeViewButton(images.STAR, "Features", new FeatureGroup(gameWorld)),
+                        new ChangeViewButton(images.WRENCH, "Exploits", new ExploitsGroup(gameWorld)),
+                        new ChangeViewButton(images.ENVELOPE, "News & Events", new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {
@@ -112,8 +111,13 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
 
-        ChangeViewButton(Image iconImage, final InteractionAreaGroup view) {
-            super("");
+        ChangeViewButton(Image iconImage, String text, final InteractionAreaGroup view) {
+            super(text);
+            addStyles(Style.ICON_CUDDLE.on,
+                    Style.ICON_GAP.is(-(int) percentOfViewHeight(0.04f)),
+                    Style.TEXT_EFFECT.pixelOutline,
+                    Style.HIGHLIGHT.is(Palette.UNUSED_SPACE),
+                    Style.COLOR.is(Palette.FOREGROUND));
             final Icon icon = makeIconFromImage(iconImage);
             super.icon.update(icon);
             view.onAttention().connect(new ValueView.Listener<Boolean>() {
@@ -156,10 +160,13 @@ public final class GameInteractionArea extends Group {
         }
 
         private Icon makeIconFromImage(Image iconImage) {
-            final IDimension viewSize = SimGame.game.plat.graphics().viewSize;
-            final float desiredHeight = viewSize.height() * PERCENT_OF_VIEW_HEIGHT;
+            final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
             final float scale = desiredHeight / iconImage.height();
             return Icons.scaled(Icons.image(iconImage), scale);
+        }
+
+        private float percentOfViewHeight(float percent) {
+            return percent * SimGame.game.plat.graphics().viewSize.height();
         }
 
     }
