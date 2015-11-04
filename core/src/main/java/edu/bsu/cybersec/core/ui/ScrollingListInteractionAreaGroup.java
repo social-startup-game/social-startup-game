@@ -32,7 +32,7 @@ import tripleplay.ui.layout.AxisLayout;
 
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public abstract class ScrollingListInteractionAreaGroup extends InteractionAreaGroup {
 
@@ -58,7 +58,7 @@ public abstract class ScrollingListInteractionAreaGroup extends InteractionAreaG
                     final int featureId = countingComponent.get(id);
                     if (!map.containsKey(featureId)) {
                         ScrollingListItem element = createLabel(id);
-                        content.add(element);
+                        content.add(0, element);
                         map.put(featureId, element);
                     } else {
                         map.get(featureId).update(id);
