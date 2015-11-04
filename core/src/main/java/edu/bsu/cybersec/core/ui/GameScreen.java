@@ -192,11 +192,27 @@ public class GameScreen extends ScreenStack.UIScreen {
                                 .addOption("No one!").withAction(new Runnable() {
                             @Override
                             public void run() {
-                                //Do nothing because you are mean.
+                                makePunitiveEvent();
                             }
                         })
                                 .build());
 
+            }
+
+            private void makePunitiveEvent() {
+                Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
+                gameWorld.timeTrigger.set(e.id, gameWorld.gameTime.get().now);
+                gameWorld.event.set(e.id, NarrativeEvent.inWorld(gameWorld)
+                        .withText("Your workers are shocked at your greed and incompetenece and become worse at their jobs.")
+                        .addOption("Oops.").withAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (Entity employee : gameWorld.workers) {
+                                    gameWorld.developmentSkill.set(employee.id, 1);
+                                    gameWorld.maintenanceSkill.set(employee.id, 1);
+                                }
+                            }
+                        }).build());
             }
         });
     }
