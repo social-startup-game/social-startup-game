@@ -5,9 +5,6 @@
 # Exit with nonzero exit code if anything fails
 set -e
 
-# Echo commands to assist with debugging from log files
-set -x
-
 # Go to the target directory and create a new Git repo.
 # Any old one should have been removed by the maven 'clean' command.
 cd html/target/sim-html-1.0-SNAPSHOT
@@ -15,7 +12,7 @@ git init
 
 # Inside this git repo we'll pretend to be a new user
 git config user.name "Travis CI"
-git config user.email "pvgestwicki@bsu.edu"
+git config user.email "${CI_EMAIL}"
 
 # Commit the Web deployment files to the repository, ignoring folders that are unnecessary,
 # and commit as "Deploy to GitHub Pages".
