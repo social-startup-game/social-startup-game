@@ -23,37 +23,45 @@ import tripleplay.entity.Entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class DefaultNarrativeScript {
+public final class DefaultNarrativeScript {
 
     private GameWorld world;
 
     public void createIn(GameWorld world) {
         this.world = checkNotNull(world);
-        final Entity welcomeEventEntity = world.create(true)
-                .add(world.timeTrigger, world.event);
-        world.timeTrigger.set(welcomeEventEntity.id, world.gameTime.get().now);
-        world.event.set(welcomeEventEntity.id, makeWelcomeEvent(welcomeEventEntity));
+        new WelcomeEventFactory().addWelcomeEvent();
     }
 
-    private Runnable makeWelcomeEvent(final Entity owner) {
-        return NarrativeEvent.inWorld(world)
-                .withText("Hello! I am Frieda, your administrative assistant.\n\n" + makeListOfEmployeeNames() + " are currently maintaining our software. You can tap them to find out more about them.\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!")
-                .addOption("OK").withAction(new EntityRemover(owner))
-                .build();
-    }
+    private final class WelcomeEventFactory {
 
-    private String makeListOfEmployeeNames() {
-        final StringBuilder namesBuilder = new StringBuilder();
-        final int numberOfWorkers = world.workers.size();
-        for (int i = 0, limit = numberOfWorkers - 1; i < limit; i++) {
-            final Entity e = world.workers.get(i);
-            namesBuilder.append(world.name.get(e.id).shortName);
-            namesBuilder.append(", ");
+        private void addWelcomeEvent() {
+            final Entity welcomeEventEntity = world.create(true)
+                    .add(world.timeTrigger, world.event);
+            world.timeTrigger.set(welcomeEventEntity.id, world.gameTime.get().now);
+            world.event.set(welcomeEventEntity.id, makeWelcomeEvent(welcomeEventEntity));
         }
-        final Entity last = world.workers.get(numberOfWorkers - 1);
-        namesBuilder.append("and ");
-        namesBuilder.append(world.name.get(last.id).shortName);
-        return namesBuilder.toString();
+
+        private Runnable makeWelcomeEvent(final Entity owner) {
+            return NarrativeEvent.inWorld(world)
+                    .withText("Hello! I am Frieda, your administrative assistant.\n\n" + makeListOfEmployeeNames() + " are currently maintaining our software. You can tap them to find out more about them.\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!")
+                    .addOption("OK").withAction(new EntityRemover(owner))
+                    .build();
+        }
+
+        private String makeListOfEmployeeNames() {
+            final StringBuilder namesBuilder = new StringBuilder();
+            final int numberOfWorkers = world.workers.size();
+            for (int i = 0, limit = numberOfWorkers - 1; i < limit; i++) {
+                final Entity e = world.workers.get(i);
+                namesBuilder.append(world.name.get(e.id).shortName);
+                namesBuilder.append(", ");
+            }
+            final Entity last = world.workers.get(numberOfWorkers - 1);
+            namesBuilder.append("and ");
+            namesBuilder.append(world.name.get(last.id).shortName);
+            return namesBuilder.toString();
+        }
+
     }
 
     private static final class EntityRemover implements Runnable {
