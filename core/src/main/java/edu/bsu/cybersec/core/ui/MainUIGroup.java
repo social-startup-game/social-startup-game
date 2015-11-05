@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
@@ -32,7 +33,8 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -41,12 +43,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class MainUIGroup extends Group {
     private static final float TRANSPARENT_AREA_WEIGHT = 1.0f;
     private static final float CONTROLS_AREA_WEIGHT = 1.0f;
+    private static final List<Image> BACKGROUNDS = ImmutableList.of(
+            ImageCache.instance().EMPLOYEE_BG_1,
+            ImageCache.instance().EMPLOYEE_BG_2,
+            ImageCache.instance().EMPLOYEE_BG_4);
 
     private final Interface iface;
     private final GameWorld gameWorld;
     private final Value<Group> focus = Value.create(null);
     private final GameInteractionArea gameInteractionArea;
-    private final ArrayList<Image> employeeBgList = new ArrayList<>();
     private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
     private Group contentGroup;
     private EmployeeViewUpdateSystem employeeViewUpdateSystem;
@@ -57,25 +62,17 @@ public class MainUIGroup extends Group {
         this.gameWorld = checkNotNull(gameWorld);
         employeeViewUpdateSystem = new EmployeeViewUpdateSystem(gameWorld);
         gameInteractionArea = new GameInteractionArea(gameWorld, iface);
-        populateEmployeeArrayList();
         configureUI(root);
         animateFocusChanges();
     }
 
-    public void populateEmployeeArrayList() {
-        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_1);
-        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_2);
-        employeeBgList.add(ImageCache.instance().EMPLOYEE_BG_4);
-    }
-
     private void configureUI(Root root) {
-        int backgroundIndex = 0;
+        Iterator<Image> backgroundIterator = BACKGROUNDS.iterator();
         for (Entity e : gameWorld.workers) {
             final int id = e.id;
-            DeveloperView developerView = new DeveloperView(id, root, backgroundIndex);
+            DeveloperView developerView = new DeveloperView(id, root, backgroundIterator.next());
             developerViews.put(id, developerView);
             add(developerView);
-            backgroundIndex++;
         }
         contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
                 .add(gameInteractionArea)
@@ -151,14 +148,14 @@ public class MainUIGroup extends Group {
         private Label developmentSkillLabel;
         private Label maintenanceSkillLabel;
 
-        DeveloperView(int id, Root root, int bgIndex) {
+        DeveloperView(int id, Root root, Image background) {
             super(AxisLayout.horizontal().offStretch());
             this.id = id;
             checkNotNull(root);
 
             final Image image = gameWorld.image.get(id);
             addStyles(Style.BACKGROUND.is(
-                    ExpandableParallaxBackground.foreground(image).background(employeeBgList.get(bgIndex).tile())))
+                    ExpandableParallaxBackground.foreground(image).background(background.tile())))
                     .setConstraint(AxisLayout.stretched());
             add(createTransparentClickableArea(),
                     createControlsAndBioGroup(root));
