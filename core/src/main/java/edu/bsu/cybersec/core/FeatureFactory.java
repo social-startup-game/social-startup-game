@@ -21,15 +21,33 @@ package edu.bsu.cybersec.core;
 
 import tripleplay.entity.Entity;
 
+import java.util.ArrayList;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
     private static final float DEFAULT_FEATURE_VULNERABILITY = 0.01f;
     private static final int DEFAULT_FEATURE_USERS_PER_HOUR = 50;
+    private static ArrayList<String> featureNames = new ArrayList<>();
 
     public static FeatureBuilder in(GameWorld world) {
+        populateFeatureNameList();
         return new FeatureBuilder(world);
+    }
+
+    private static void populateFeatureNameList() {
+        featureNames.add("Selfie of the Week");
+        featureNames.add("Flappy Turd");
+        featureNames.add("Tumblr Pun");
+        featureNames.add("Twitter Nest");
+        featureNames.add("Hollywood Ville");
+        featureNames.add("Fun Ville");
+        featureNames.add("Puppy Ville");
+        featureNames.add("Cat Ville");
+        featureNames.add("Village Ville");
+        featureNames.add("Dislike Button");
+        featureNames.add("User reviews");
     }
 
     public final static class FeatureBuilder {
@@ -55,7 +73,7 @@ public class FeatureFactory {
                             world.usersPerHourState,
                             world.vulnerability);
             world.featureNumber.set(entity.id, featureNumber);
-            world.name.set(entity.id, Name.simply("Unnamed feature"));
+            world.name.set(entity.id, Name.simply(featureNames.remove(0)));
             world.vulnerability.set(entity.id, DEFAULT_FEATURE_VULNERABILITY);
             world.usersPerHour.set(entity.id, DEFAULT_FEATURE_USERS_PER_HOUR);
             return entity;
