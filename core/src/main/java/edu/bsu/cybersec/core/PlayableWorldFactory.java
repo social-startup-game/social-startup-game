@@ -57,6 +57,7 @@ public class PlayableWorldFactory {
         makeExistingFeature();
         makeDevelopers(3);
         setEndTime();
+        new DefaultNarrativeScript().createIn(world);
     }
 
     private void setEndTime() {
