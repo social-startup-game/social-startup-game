@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LearningSystem extends tripleplay.entity.System {
 
-    private static final float SKILL_PER_GAME_HOUR = 0.1f;
+    public static final float SKILL_PER_GAME_HOUR = 0.1f;
 
     private final GameWorld world;
     private final Map<? extends Task, Component.FScalar> taskSkillMap;
@@ -52,7 +52,7 @@ public class LearningSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        this.elapsedHours = (float) (world.gameTime.get().delta()) / ClockUtils.MS_PER_HOUR;
+        this.elapsedHours = (float) (world.gameTime.get().delta()) / ClockUtils.SECONDS_PER_HOUR;
 
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);

@@ -79,12 +79,24 @@ public final class LearningSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdate_maintenance_maintenanceSkillIncreased() {
         givenAnActiveMaintainer();
+        final float initialMaintenance = world.maintenanceSkill.get(e.id);
         whenOneDayOfGameTimeElapses();
-        assertTrue(world.maintenanceSkill.get(e.id) > 0);
+        final float maintenance = world.maintenanceSkill.get(e.id);
+        assertTrue(maintenance > initialMaintenance);
     }
 
     private void givenAnActiveMaintainer() {
         e = makeWorker();
         world.tasked.set(e.id, Task.MAINTENANCE);
+    }
+
+    @Test
+    public void testUpdate_skillPerGameHour_scaleIsCorrectlyComputed() {
+        givenAnActiveDeveloper();
+        final float initialSkill = world.developmentSkill.get(e.id);
+        whenOneHourOfGameTimeElapses();
+        final float expected = initialSkill + LearningSystem.SKILL_PER_GAME_HOUR;
+        final float actual = world.developmentSkill.get(e.id);
+        assertEquals(expected, actual, EPSILON);
     }
 }
