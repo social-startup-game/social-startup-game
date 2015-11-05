@@ -25,26 +25,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DefaultNarrativeScript {
 
-    private static final Runnable DO_NOTHING = new Runnable() {
-        @Override
-        public void run() {
-        }
-    };
-
     private GameWorld world;
 
     public void createIn(GameWorld world) {
         this.world = checkNotNull(world);
-        final Entity e = world.create(true)
+        final Entity welcomeEventEntity = world.create(true)
                 .add(world.timeTrigger, world.event);
-        world.timeTrigger.set(e.id, world.gameTime.get().now);
-        world.event.set(e.id, makeWelcomeEvent());
+        world.timeTrigger.set(welcomeEventEntity.id, world.gameTime.get().now);
+        world.event.set(welcomeEventEntity.id, makeWelcomeEvent(welcomeEventEntity));
     }
 
-    private Runnable makeWelcomeEvent() {
+    private Runnable makeWelcomeEvent(final Entity owner) {
         return NarrativeEvent.inWorld(world)
                 .withText("Hello! I am Frieda, your administrative assistant.\n\n" + makeListOfEmployeeNames() + " are currently maintaining our software. You can tap them to find out more about them.\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!")
-                .addOption("OK").withAction(DO_NOTHING)
+                .addOption("OK").withAction(new EntityRemover(owner))
                 .build();
     }
 
@@ -60,6 +54,20 @@ public class DefaultNarrativeScript {
         namesBuilder.append("and ");
         namesBuilder.append(world.name.get(last.id).shortName);
         return namesBuilder.toString();
+    }
+
+    private static final class EntityRemover implements Runnable {
+
+        private final Entity e;
+
+        EntityRemover(Entity e) {
+            this.e = checkNotNull(e);
+        }
+
+        @Override
+        public void run() {
+            e.close();
+        }
     }
 
 }
