@@ -165,54 +165,38 @@ public class GameScreen extends ScreenStack.UIScreen {
             }
 
             private void makeArtificialEvent() {
-                final int hours = 4;
+                final int hours = 48;
                 Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
                 gameWorld.timeTrigger.set(e.id, gameWorld.gameTime.get().now + 1);
                 gameWorld.event.set(e.id,
                         NarrativeEvent.inWorld(gameWorld)
-                                .withText("Who gets a " + hours + "-hour nap?")
+                                .withText("Would you like to send one of your employees to a two-day conference on system maintenance?")
                                 .addEmployeeSelectionsFor(new NarrativeEvent.Action() {
                                     @Override
                                     public void runForSelection(final Entity worker) {
-                                        final int wakeupTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;
+                                        final int returnTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;
                                         gameWorld.tasked.set(worker.id,
-                                                Task.createTask("Napping").expiringAt(wakeupTime).inWorld(gameWorld).build());
+                                                Task.createTask("At Conference").expiringAt(returnTime).inWorld(gameWorld).build());
                                         final Entity wakingUp = gameWorld.create(true)
                                                 .add(gameWorld.timeTrigger, gameWorld.event);
-                                        gameWorld.timeTrigger.set(wakingUp.id, wakeupTime);
+                                        gameWorld.timeTrigger.set(wakingUp.id, returnTime);
                                         gameWorld.event.set(wakingUp.id, new Runnable() {
                                             @Override
                                             public void run() {
                                                 gameWorld.tasked.set(worker.id, Task.MAINTENANCE);
+                                                gameWorld.maintenanceSkill.add(worker.id, 10);
                                                 wakingUp.close();
                                             }
                                         });
                                     }
                                 })
-                                .addOption("No one!").withAction(new Runnable() {
+                                .addOption("None").withAction(new Runnable() {
                             @Override
                             public void run() {
-                                makePunitiveEvent();
+                                // Do nothing
                             }
                         })
                                 .build());
-
-            }
-
-            private void makePunitiveEvent() {
-                Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
-                gameWorld.timeTrigger.set(e.id, gameWorld.gameTime.get().now);
-                gameWorld.event.set(e.id, NarrativeEvent.inWorld(gameWorld)
-                        .withText("Your workers are shocked at your greed and incompetenece and become worse at their jobs.")
-                        .addOption("Oops.").withAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (Entity employee : gameWorld.workers) {
-                                    gameWorld.developmentSkill.set(employee.id, 1);
-                                    gameWorld.maintenanceSkill.set(employee.id, 1);
-                                }
-                            }
-                        }).build());
             }
         });
     }
