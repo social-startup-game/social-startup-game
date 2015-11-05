@@ -145,8 +145,8 @@ public class MainUIGroup extends Group {
     private final class DeveloperView extends Group {
 
         private final int id;
-        private Label developmentSkillLabel;
-        private Label maintenanceSkillLabel;
+        private Value<Integer> developmentSkill = Value.create(0);
+        private Value<Integer> maintenanceSkill = Value.create(0);
 
         DeveloperView(int id, Root root, Image background) {
             super(AxisLayout.horizontal().offStretch());
@@ -181,27 +181,59 @@ public class MainUIGroup extends Group {
             final float borderThickness = percentOfViewHeight(0.005f);
             Group employeeDataGroup = new Group(AxisLayout.vertical())
                     .add(dialogStyledLabel(name.fullName),
-                            createDevelopmentSkillBlock(),
-                            createMaintenanceSkillBlock(),
+                            createSkillBlock("Development", developmentSkill),
+                            createSkillBlock("Maintenance", maintenanceSkill),
                             wrappingLabel("Degree: Bachelor of Science"),
                             wrappingLabel("Discipline: Computer Science"),
                             wrappingLabel("University: Ball State"))
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness)));
-            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.08f);
+            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.06f);
             final Font nameFont = FontCache.instance().REGULAR.derive(percentOfViewHeight(0.03f));
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
                             dialogStyledLabel(name.shortName)
                                     .addStyles(Style.FONT.is(nameFont),
                                             Style.COLOR.is(Palette.NAME_COLOR)),
+                            createSkillSummaryGroup(),
                             new TaskSelector(root, gameWorld.entity(id)),
                             new Shim(0, spaceAroundNameAndTaskArea),
                             new Shim(0, 0).setConstraint(AxisLayout.stretched()),
                             employeeDataGroup,
                             new Shim(0, 0).setConstraint(AxisLayout.stretched()))
                     .setConstraint(AxisLayout.stretched(CONTROLS_AREA_WEIGHT));
+        }
+
+        private Group createSkillSummaryGroup() {
+            final int color = Palette.NAME_COLOR;
+            return new Group(AxisLayout.horizontal())
+                    .add(new Label("D:").addStyles(Style.COLOR.is(color)),
+                            createSkillLabel(developmentSkill),
+                            new Shim(percentOfViewHeight(0.001f), 0),
+                            new Label("M:").addStyles(Style.COLOR.is(color)),
+                            createSkillLabel(maintenanceSkill));
+        }
+
+        private Element<?> createSkillLabel(Value<Integer> skill) {
+            final Label updatingLabel = new Label(skill.get().toString());
+            updatingLabel.text.connect(new ValueView.Listener<String>() {
+                @Override
+                public void onChange(String value, String oldValue) {
+                    iface.anim.tween(new LabelColorHighlightAmount(updatingLabel))
+                            .from(1)
+                            .to(0)
+                            .in(850f)
+                            .easeIn();
+                }
+            });
+            skill.connect(new ValueView.Listener<Integer>() {
+                @Override
+                public void onChange(Integer value, Integer oldValue) {
+                    updatingLabel.text.update(value.toString());
+                }
+            });
+            return updatingLabel;
         }
 
         private Element<?> dialogStyledLabel(String s) {
@@ -213,16 +245,17 @@ public class MainUIGroup extends Group {
                     .addStyles(Style.TEXT_WRAP.on);
         }
 
-        private Element<?> createDevelopmentSkillBlock() {
+        private Element<?> createSkillBlock(String name, Value<Integer> hudValue) {
+            final Label updatingLabel = new Label(hudValue.get().toString());
+            hudValue.connect(new ValueView.Listener<Integer>() {
+                @Override
+                public void onChange(Integer value, Integer oldValue) {
+                    updatingLabel.text.update("" + value);
+                }
+            });
             return new Group(AxisLayout.horizontal())
-                    .add(new Label("Development: "),
-                            developmentSkillLabel = new Label("0"));
-        }
-
-        private Element<?> createMaintenanceSkillBlock() {
-            return new Group(AxisLayout.horizontal())
-                    .add(new Label("Maintenance: "),
-                            maintenanceSkillLabel = new Label("0"));
+                    .add(new Label(name + ": "),
+                            updatingLabel);
         }
 
         private float percentOfViewHeight(float v) {
@@ -231,9 +264,9 @@ public class MainUIGroup extends Group {
 
         void update() {
             final int displayedDevelopmentSkill = (int) gameWorld.developmentSkill.get(id);
-            developmentSkillLabel.text.update(String.valueOf(displayedDevelopmentSkill));
+            developmentSkill.update(displayedDevelopmentSkill);
             final int displayedMaintenanceSkill = (int) gameWorld.maintenanceSkill.get(id);
-            maintenanceSkillLabel.text.update(String.valueOf(displayedMaintenanceSkill));
+            maintenanceSkill.update(displayedMaintenanceSkill);
         }
     }
 
