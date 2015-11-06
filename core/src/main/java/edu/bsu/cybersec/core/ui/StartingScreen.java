@@ -19,66 +19,45 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.core.Image;
-import react.RFuture;
+import playn.scene.Pointer;
 import react.Slot;
-import react.Try;
 import tripleplay.game.ScreenStack;
-import tripleplay.ui.Label;
-import tripleplay.ui.Root;
-import tripleplay.ui.Style;
+import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
-
-import java.util.Collection;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class LoadingScreen extends ScreenStack.UIScreen {
-
+public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
-    public static boolean shouldStartGame = false;
 
-    public LoadingScreen(ScreenStack screenStack) {
+    public StartingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
-    }
-
-    @Override
-    public void wasShown() {
-        super.wasShown();
-        List<RFuture<Image>> futures = Lists.newArrayList();
-        for (Image image : ImageCache.instance().all()) {
-            futures.add(image.state);
-        }
-        RFuture.collect(futures).onComplete(new Slot<Try<Collection<Image>>>() {
-            @Override
-            public void onEmit(Try<Collection<Image>> event) {
-                if (event instanceof Try.Failure) {
-                    game().plat.log().warn("Failed to load some images: " + event);
-                } else {
-                    if (shouldStartGame) {
-                        screenStack.push(new GameScreen(screenStack), screenStack.slide());
-                    } else {
-                        screenStack.push(new StartingScreen(screenStack), screenStack.slide());
-                    }
-                }
-            }
-        });
+        new Pointer(game().plat, layer, true);
     }
 
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
-        root.add(new Label("Loading...").addStyles(Style.COLOR.is(Colors.WHITE)));
+        Image logo = ImageCache.instance().LOGO;
+        Icon iconLogo = Icons.image(logo.tile());
+        root.add(new Label(iconLogo))
+                .add(new Button("Start the Game!").onClick(new Slot<Button>() {
+                    @Override
+                    public void onEmit(Button button) {
+                        screenStack.push(new GameScreen(screenStack), screenStack.slide());
+                    }
+                }));
+        root.setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
         return root;
     }
+
 
     @Override
     public Game game() {
         return SimGame.game;
     }
+
 }
