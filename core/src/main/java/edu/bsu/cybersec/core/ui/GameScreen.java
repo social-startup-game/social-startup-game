@@ -32,7 +32,6 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -48,20 +47,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         gameWorld.onGameEnd.connect(new UnitSlot() {
             @Override
             public void onEmit() {
-                screenStack.replace(new ScreenStack.UIScreen() {
-                    @Override
-                    protected Root createRoot() {
-                        return iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
-                                .setSize(size())
-                                .add(new Label("The game is over")
-                                        .setStyles(Style.COLOR.is(Colors.WHITE)));
-                    }
-
-                    @Override
-                    public Game game() {
-                        return SimGame.game;
-                    }
-                }, screenStack.slide());
+                screenStack.replace(new EndScreen(), screenStack.slide());
             }
         });
     }
@@ -199,6 +185,18 @@ public class GameScreen extends ScreenStack.UIScreen {
                                 .build());
             }
         });
+    }
+
+    @Override
+    public void wasShown() {
+        super.wasShown();
+        playBackgroundMusic();
+    }
+
+    private void playBackgroundMusic() {
+        Sound sound = game().plat.assets().getMusic("music/Pamgaea");
+        sound.setLooping(true);
+        sound.play();
     }
 
     @Override
