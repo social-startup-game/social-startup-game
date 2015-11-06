@@ -19,23 +19,53 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
+import playn.scene.Pointer;
+import react.Slot;
 import tripleplay.game.ScreenStack;
-import tripleplay.ui.Label;
-import tripleplay.ui.Root;
-import tripleplay.ui.Style;
+import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
 public class EndScreen extends ScreenStack.UIScreen {
 
+    private final GameWorld gameWorld;
+    private final ScreenStack screenStack;
+
+    public EndScreen(ScreenStack screenStack, GameWorld gameWorld) {
+        this.gameWorld = gameWorld;
+        this.screenStack = screenStack;
+        new Pointer(game().plat, layer, true);
+    }
+
     @Override
     protected Root createRoot() {
-        return iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
+        Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size())
                 .add(new Label("The game is over")
-                        .setStyles(Style.COLOR.is(Colors.WHITE)));
+                        .setStyles(Style.COLOR.is(Colors.WHITE)))
+                .setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
+        String outcomeText = determineOutcomeText();
+        root.add(new Label(outcomeText).setStyles(Style.COLOR.is(Colors.WHITE)))
+                .add(new Button("Back to Start Screen").onClick(new Slot<Button>() {
+
+                    @Override
+                    public void onEmit(Button button) {
+                        screenStack.push(new StartingScreen(screenStack));
+                    }
+                }));
+        return root;
+    }
+
+    private String determineOutcomeText() {
+        if (gameWorld.users.get() > 100000) {
+            return "You were succesful, and get to keep your job!";
+        } else {
+            return "You made poor security decisions. You're fired.";
+        }
+
     }
 
     @Override
