@@ -22,15 +22,11 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.core.Image;
-import playn.scene.Mouse;
+import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
-import tripleplay.ui.Button;
-import tripleplay.ui.Label;
-import tripleplay.ui.Root;
-import tripleplay.ui.Style;
+import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -39,21 +35,22 @@ public class StartingScreen extends ScreenStack.UIScreen {
 
     public StartingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
-        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
+        new Pointer(game().plat, layer, true);
     }
-
 
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
-        root.add(new Label("This is the start screen.").addStyles(Style.COLOR.is(Colors.WHITE)))
+        Image logo = ImageCache.instance().LOGO;
+        Icon iconLogo = Icons.image(logo.tile());
+        root.add(new Label(iconLogo))
                 .add(new Button("Start the Game!").onClick(new Slot<Button>() {
-
                     @Override
                     public void onEmit(Button button) {
-                        screenStack.push(new StartingScreen(screenStack), screenStack.slide());
+                        screenStack.push(new GameScreen(screenStack), screenStack.slide());
                     }
                 }));
+        root.setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
         return root;
     }
 
