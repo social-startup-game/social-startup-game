@@ -47,7 +47,13 @@ public class StartingScreen extends ScreenStack.UIScreen {
                 .add(new Button("Start the Game!").onClick(new Slot<Button>() {
                     @Override
                     public void onEmit(Button button) {
-                        screenStack.push(new GameScreen(screenStack), screenStack.slide());
+                        screenStack.replace(new GameScreen(screenStack), screenStack.slide());
+                    }
+                }))
+                .add(new Button("Credits").onClick(new Slot<Button>() {
+                    @Override
+                    public void onEmit(Button button) {
+                        screenStack.push(new CreditScreen(screenStack), screenStack.slide());
                     }
                 }));
         root.setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
