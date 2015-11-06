@@ -41,6 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class LoadingScreen extends ScreenStack.UIScreen {
 
     private final ScreenStack screenStack;
+    public static boolean shouldStartGame = false;
 
     public LoadingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
@@ -59,7 +60,11 @@ public class LoadingScreen extends ScreenStack.UIScreen {
                 if (event instanceof Try.Failure) {
                     game().plat.log().warn("Failed to load some images: " + event);
                 } else {
-                    screenStack.push(new StartingScreen(screenStack), screenStack.slide());
+                    if (shouldStartGame) {
+                        screenStack.push(new GameScreen(screenStack), screenStack.slide());
+                    } else {
+                        screenStack.push(new StartingScreen(screenStack), screenStack.slide());
+                    }
                 }
             }
         });

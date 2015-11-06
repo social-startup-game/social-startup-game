@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.java;
 
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.ui.LoadingScreen;
 import org.apache.commons.cli.*;
 import playn.java.JavaPlatform;
 import playn.java.LWJGLPlatform;
@@ -47,17 +48,24 @@ public class SimGameJava {
 
     private static final class Parser extends BasicParser {
         private static final String SIZE_OPTION_NAME = "size";
+        private static final String START_GAME_OPTION_NAME = "startGame";
         private CommandLine line;
         private Options options = createOptions();
 
         private static Options createOptions() {
             @SuppressWarnings("static-access") // Static access required through CLI API
-                    Option sizeOption = OptionBuilder.withArgName("size")
+                    Option sizeOption = OptionBuilder.withArgName(SIZE_OPTION_NAME)
                     .hasArg()
                     .withDescription("specify game screen size")
                     .create(SIZE_OPTION_NAME);
+            @SuppressWarnings("static-access") // Static access required through CLI API
+                    Option startGameOption = OptionBuilder.withArgName(START_GAME_OPTION_NAME)
+                    .hasArg()
+                    .withDescription("specify if the game should immediatly begin")
+                    .create(START_GAME_OPTION_NAME);
             Options options = new Options();
             options.addOption(sizeOption);
+            options.addOption(startGameOption);
             return options;
         }
 
@@ -71,6 +79,9 @@ public class SimGameJava {
             if (line.hasOption(SIZE_OPTION_NAME)) {
                 processSizeOption(line);
             }
+            if (line.hasOption(START_GAME_OPTION_NAME)) {
+                processStartGameOption(line);
+            }
         }
 
         private static void processSizeOption(CommandLine line) {
@@ -83,6 +94,13 @@ public class SimGameJava {
                 int h = Integer.valueOf(separated[1]);
                 size.width = w;
                 size.height = h;
+            }
+        }
+
+        private void processStartGameOption(CommandLine line) {
+            String startGame = line.getOptionValue(START_GAME_OPTION_NAME);
+            if (startGame.equals("T") || startGame.equals("t")) {
+                LoadingScreen.shouldStartGame = true;
             }
         }
     }
