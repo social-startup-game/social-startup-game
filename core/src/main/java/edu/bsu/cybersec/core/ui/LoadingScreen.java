@@ -21,6 +21,7 @@ package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.SimGamePlatform;
 import playn.core.Game;
 import playn.core.Image;
 import react.RFuture;
@@ -41,7 +42,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class LoadingScreen extends ScreenStack.UIScreen {
 
     private final ScreenStack screenStack;
-    public static boolean shouldStartGame = false;
 
     public LoadingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
@@ -60,11 +60,15 @@ public class LoadingScreen extends ScreenStack.UIScreen {
                 if (event instanceof Try.Failure) {
                     game().plat.log().warn("Failed to load some images: " + event);
                 } else {
-                    if (shouldStartGame) {
-                        screenStack.push(new GameScreen(screenStack), screenStack.slide());
-                    } else {
-                        screenStack.push(new StartingScreen(screenStack), screenStack.slide());
-                    }
+                    start();
+                }
+            }
+
+            private void start() {
+                if (((SimGamePlatform) game().plat).skipIntro()) {
+                    screenStack.push(new GameScreen(screenStack), screenStack.slide());
+                } else {
+                    screenStack.push(new StartingScreen(screenStack), screenStack.slide());
                 }
             }
         });

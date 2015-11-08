@@ -26,13 +26,20 @@ import playn.java.LWJGLPlatform;
 public class SimGameJavaPlatform extends LWJGLPlatform implements SimGamePlatform {
 
     private final Java7DateFormatter formatter = new Java7DateFormatter();
+    private final boolean skipIntro;
 
-    public SimGameJavaPlatform(Config config) {
+    public SimGameJavaPlatform(CustomLWJGLPlatformConfig config) {
         super(config);
+        skipIntro = config.skipIntro;
     }
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
         return formatter;
+    }
+
+    @Override
+    public boolean skipIntro() {
+        return skipIntro;
     }
 }

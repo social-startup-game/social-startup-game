@@ -17,27 +17,19 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.html;
+package edu.bsu.cybersec.java;
 
-import edu.bsu.cybersec.core.SimGamePlatform;
-import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
-import playn.html.HtmlPlatform;
+import playn.java.LWJGLPlatform;
+import pythagoras.i.Dimension;
+import pythagoras.i.IDimension;
 
-public class SimGameHtmlPlatform extends HtmlPlatform implements SimGamePlatform {
+public class CustomLWJGLPlatformConfig extends LWJGLPlatform.Config {
+    private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
 
-    private final GWTDateFormatter formatter = new GWTDateFormatter();
+    public boolean skipIntro = false;
 
-    public SimGameHtmlPlatform(Config config) {
-        super(config);
-    }
-
-    @Override
-    public PlatformSpecificDateFormatter dateFormatter() {
-        return formatter;
-    }
-
-    @Override
-    public boolean skipIntro() {
-        return false;
+    public CustomLWJGLPlatformConfig() {
+        this.width = DEFAULT_SIZE.width();
+        this.height = DEFAULT_SIZE.height();
     }
 }

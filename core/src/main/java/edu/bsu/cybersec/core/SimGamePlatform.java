@@ -25,4 +25,6 @@ public interface SimGamePlatform {
 
     PlatformSpecificDateFormatter dateFormatter();
 
+    boolean skipIntro();
+
 }

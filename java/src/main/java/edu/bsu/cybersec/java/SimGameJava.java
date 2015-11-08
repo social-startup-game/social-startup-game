@@ -20,52 +20,39 @@
 package edu.bsu.cybersec.java;
 
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.ui.LoadingScreen;
 import org.apache.commons.cli.*;
-import playn.java.JavaPlatform;
 import playn.java.LWJGLPlatform;
-import pythagoras.i.Dimension;
 
 public class SimGameJava {
 
-    private static Dimension size = new Dimension(640, 480);
+    private static CustomLWJGLPlatformConfig config = new CustomLWJGLPlatformConfig();
 
     public static void main(String[] args) {
         new Parser().process(args);
-        LWJGLPlatform.Config config = createPlatformConfiguration();
         LWJGLPlatform plat = new SimGameJavaPlatform(config);
         plat.graphics().registerFont("Lato-Regular", "fonts/Lato-Regular.ttf");
         new SimGame(plat);
         plat.start();
     }
 
-    private static JavaPlatform.Config createPlatformConfiguration() {
-        LWJGLPlatform.Config config = new LWJGLPlatform.Config();
-        config.width = size.width;
-        config.height = size.height;
-        return config;
-    }
-
     private static final class Parser extends BasicParser {
         private static final String SIZE_OPTION_NAME = "size";
-        private static final String START_GAME_OPTION_NAME = "startGame";
+        private static final String SKIP_INTRO_OPTION = "skipIntro";
         private CommandLine line;
         private Options options = createOptions();
 
+        @SuppressWarnings("static-access") // Static access required through CLI API
         private static Options createOptions() {
-            @SuppressWarnings("static-access") // Static access required through CLI API
-                    Option sizeOption = OptionBuilder.withArgName(SIZE_OPTION_NAME)
+            Option sizeOption = OptionBuilder.withArgName(SIZE_OPTION_NAME)
                     .hasArg()
                     .withDescription("specify game screen size")
                     .create(SIZE_OPTION_NAME);
-            @SuppressWarnings("static-access") // Static access required through CLI API
-                    Option startGameOption = OptionBuilder.withArgName(START_GAME_OPTION_NAME)
-                    .hasArg()
-                    .withDescription("specify if the game should immediatly begin")
-                    .create(START_GAME_OPTION_NAME);
+            Option skipIntroOption = OptionBuilder.withArgName(SKIP_INTRO_OPTION)
+                    .withDescription("skip the game introduction")
+                    .create(SKIP_INTRO_OPTION);
             Options options = new Options();
             options.addOption(sizeOption);
-            options.addOption(startGameOption);
+            options.addOption(skipIntroOption);
             return options;
         }
 
@@ -79,8 +66,8 @@ public class SimGameJava {
             if (line.hasOption(SIZE_OPTION_NAME)) {
                 processSizeOption(line);
             }
-            if (line.hasOption(START_GAME_OPTION_NAME)) {
-                processStartGameOption(line);
+            if (line.hasOption(SKIP_INTRO_OPTION)) {
+                config.skipIntro = true;
             }
         }
 
@@ -92,15 +79,8 @@ public class SimGameJava {
             } else {
                 int w = Integer.valueOf(separated[0]);
                 int h = Integer.valueOf(separated[1]);
-                size.width = w;
-                size.height = h;
-            }
-        }
-
-        private void processStartGameOption(CommandLine line) {
-            String startGame = line.getOptionValue(START_GAME_OPTION_NAME);
-            if (startGame.equals("T") || startGame.equals("t")) {
-                LoadingScreen.shouldStartGame = true;
+                config.width = w;
+                config.height = h;
             }
         }
     }
