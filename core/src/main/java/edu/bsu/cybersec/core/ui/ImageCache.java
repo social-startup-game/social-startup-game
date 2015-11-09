@@ -37,6 +37,10 @@ public final class ImageCache {
     public final Image EMPLOYEE_BG_1 = load("employee_bg_1.jpg");
     public final Image EMPLOYEE_BG_2 = load("employee_bg_2.jpg");
     public final Image EMPLOYEE_BG_4 = load("employee_bg_4.jpg");
+    public final Image NARRATIVE_BACKGROUND_1 = load("crop-1.jpg");
+    public final Image NARRATIVE_BACKGROUND_2 = load("crop-2.jpg");
+    public final Image NARRATIVE_BACKGROUND_3 = load("crop-3.jpg");
+    public final Image NARRATIVE_BACKGROUND_4 = load("crop-4.jpg");
     public final Image ADMIN = load("admin.png");
     public final Image DOLLAR_SIGN = load("dollar-sign.png");
     public final Image ENVELOPE = load("envelope.png");

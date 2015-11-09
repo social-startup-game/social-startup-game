@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.core.Image;
@@ -32,6 +33,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
+    private final ImmutableList<NarrativeSlideInformation> narrativeInfoList = ImmutableList.of(
+            new NarrativeSlideInformation("Social Jam is an up and coming social media service, and they have hired you as their chief security advisor.", ImageCache.instance().NARRATIVE_BACKGROUND_1),
+            new NarrativeSlideInformation("You were hired to manage a team of developers and protect the company from hackers! ", ImageCache.instance().NARRATIVE_BACKGROUND_2),
+            new NarrativeSlideInformation("You have three employees. Assign them to develop features or maintain your current system.", ImageCache.instance().NARRATIVE_BACKGROUND_3),
+            new NarrativeSlideInformation("You have a job review in two weeks. Do you have what it takes?", ImageCache.instance().NARRATIVE_BACKGROUND_4)
+    );
 
     public StartingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
@@ -47,7 +54,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                 .add(new Button("Start the Game!").onClick(new Slot<Button>() {
                     @Override
                     public void onEmit(Button button) {
-                        screenStack.replace(new GameScreen(screenStack), screenStack.slide());
+                        screenStack.push(new NarrativeScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
                     }
                 }))
                 .add(new Button("Credits").onClick(new Slot<Button>() {
