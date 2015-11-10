@@ -35,18 +35,32 @@ public class NarrativeEvent implements Runnable {
         void runForSelection(Entity e);
     }
 
+    public interface Text {
+        String text();
+    }
+
     public static final class Builder {
 
         private final GameWorld world;
         private final List<Option> options = Lists.newArrayListWithCapacity(4);
-        private String text;
+        private Text text;
         private Action selectedWorkerAction;
 
         private Builder(GameWorld world) {
             this.world = checkNotNull(world);
         }
 
-        public Builder withText(String text) {
+        public Builder withText(final String text) {
+            this.text = new Text() {
+                @Override
+                public String text() {
+                    return text;
+                }
+            };
+            return this;
+        }
+
+        public Builder withDynamicText(Text text) {
             this.text = text;
             return this;
         }
@@ -96,7 +110,7 @@ public class NarrativeEvent implements Runnable {
     }
 
     private final GameWorld gameWorld;
-    public final String text;
+    public final Text text;
     private final ImmutableList<Option> fixedOptions;
     private final Action selectedWorkerAction;
 

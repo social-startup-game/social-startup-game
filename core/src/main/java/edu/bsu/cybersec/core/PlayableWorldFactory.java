@@ -54,6 +54,7 @@ public class PlayableWorldFactory {
         world.gameTimeSystem.setGameTimeUnitsPerRealClockUnits(ClockUtils.SECONDS_PER_HOUR * 2);
         world.featureGenerationSystem.nextFeatureNumber(1);
         world.exposure.update(0.10f);
+        world.users.update(1000f);
         makeExistingFeature();
         makeDevelopers(3);
         setEndTime();

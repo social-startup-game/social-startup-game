@@ -102,7 +102,7 @@ public class EventsGroup extends InteractionAreaGroup {
     private Group makeCallout(NarrativeEvent narrativeEvent) {
         final float shimSize = percentOfScreenHeight(0.01f);
         final float inset = percentOfScreenHeight(0.02f);
-        Label label = new Label(narrativeEvent.text)
+        Label label = new Label(narrativeEvent.text.text())
                 .addStyles(Style.TEXT_WRAP.on,
                         Style.COLOR.is(Colors.BLACK),
                         Style.BACKGROUND.is(Background.blank().inset(inset, inset)));

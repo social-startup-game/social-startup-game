@@ -30,6 +30,7 @@ public final class DefaultNarrativeScript {
     public void createIn(GameWorld world) {
         this.world = checkNotNull(world);
         new WelcomeEventFactory().addWelcomeEvent();
+        new UserDataStolenEventFactory().newEvent();
     }
 
     private final class WelcomeEventFactory {
@@ -64,6 +65,85 @@ public final class DefaultNarrativeScript {
 
     }
 
+    private final class UserDataStolenEventFactory {
+
+        private Runnable notifyAction = new Runnable() {
+            @Override
+            public void run() {
+                UserLossAfterNotify loss = new UserLossAfterNotify();
+                Entity e = world.create(true).add(world.event, world.timeTrigger);
+                world.timeTrigger.set(e.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR);
+                world.event.set(e.id, NarrativeEvent.inWorld(world)
+                        .withDynamicText(loss)
+                        .addOption("OK")
+                        .withAction(loss)
+                        .build());
+            }
+
+        };
+
+        private final class UserLossAfterNotify implements NarrativeEvent.Text, Runnable {
+
+            private final float percent = 0.20f;
+            private float loss;
+
+            @Override
+            public String text() {
+                loss = world.users.get() * percent;
+                return (int) loss + " users are leaving after you notified them of the data breach.";
+            }
+
+            @Override
+            public void run() {
+                world.users.update(world.users.get() - loss);
+            }
+        }
+
+        private final Runnable ignoreAction = new Runnable() {
+            @Override
+            public void run() {
+                UserLossAfterIgnore loss = new UserLossAfterIgnore();
+                Entity e = world.create(true).add(world.event, world.timeTrigger);
+                world.timeTrigger.set(e.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR);
+                world.event.set(e.id, NarrativeEvent.inWorld(world)
+                        .withDynamicText(loss)
+                        .addOption("OK")
+                        .withAction(loss)
+                        .build());
+            }
+        };
+
+        private final class UserLossAfterIgnore implements NarrativeEvent.Text, Runnable {
+            private final float percent = 0.75f;
+            private float loss;
+
+            @Override
+            public String text() {
+                loss = world.users.get() * percent;
+                return "The user community has found out that you failed to disclose a data breach. "
+                        + (int) loss + " users angrily leave your service for a competitor!";
+            }
+
+            @Override
+            public void run() {
+                world.users.update(world.users.get() - loss);
+            }
+        }
+
+        public void newEvent() {
+            final Entity e = world.create(true).add(world.event, world.timeTrigger);
+            world.event.set(e.id,
+                    NarrativeEvent.inWorld(world)
+                            .withText("It looks like some of your user data was stolen by hackers! What do you do?")
+                            .addOption("Notify our users")
+                            .withAction(notifyAction)
+                            .addOption("Ignore it")
+                            .withAction(ignoreAction)
+                            .build());
+            world.timeTrigger.set(e.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * 4);
+        }
+    }
+
     private static final class EntityRemover implements Runnable {
 
         private final Entity e;
@@ -77,5 +157,4 @@ public final class DefaultNarrativeScript {
             e.close();
         }
     }
-
 }
