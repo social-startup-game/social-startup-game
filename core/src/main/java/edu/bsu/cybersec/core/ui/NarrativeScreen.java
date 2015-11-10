@@ -23,19 +23,13 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.core.Mouse;
-import pythagoras.f.IRectangle;
-import pythagoras.f.Rectangle;
+import playn.core.Touch;
 import react.Connection;
 import react.Slot;
-import react.ValueView;
 import tripleplay.game.ScreenStack;
-import tripleplay.gesture.Gesture;
-import tripleplay.gesture.GestureDirector;
-import tripleplay.gesture.Swipe;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
-import tripleplay.util.Timer;
 
 import java.util.Iterator;
 import java.util.List;
@@ -44,8 +38,6 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
     private final Iterator<NarrativeSlideInformation> iterator;
     private final List<Connection> connections = Lists.newArrayList();
-    private final Gesture swipe;
-    private final GestureDirector director;
 
     public NarrativeScreen(ScreenStack screenStack, Iterator<NarrativeSlideInformation> iterator) {
         this.screenStack = screenStack;
@@ -67,20 +59,16 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
                 }
             }
         }));
-
-        director = new GestureDirector(game().plat, screenBounds(), new Timer());
-        director.add(swipe = new Swipe(Gesture.Direction.LEFT).greedy(true));
-        director.greedyGesture().connect(new ValueView.Listener<Gesture<?>>() {
+        connections.add(game().plat.input().touchEvents.connect(new Slot<Touch.Event[]>() {
             @Override
-            public void onChange(Gesture<?> value, Gesture<?> oldValue) {
-                game().plat.log().debug("Value: " + value);
-                advance();
+            public void onEmit(Touch.Event[] events) {
+                for (Touch.Event e : events) {
+                    if (e.kind.isEnd) {
+                        advance();
+                    }
+                }
             }
-        });
-    }
-
-    private IRectangle screenBounds() {
-        return new Rectangle(0, 0, size().width(), size().height());
+        }));
     }
 
     @Override
@@ -114,7 +102,6 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
         for (Connection c : connections) {
             c.close();
         }
-        director.remove(swipe);
         if (iterator.hasNext()) {
             screenStack.replace(new NarrativeScreen(screenStack, iterator), screenStack.slide());
         } else {
