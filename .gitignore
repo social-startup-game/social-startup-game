@@ -2,3 +2,5 @@
 .idea/tasks.xml
 .idea/libraries/**
 **/Thumbs.db
+android/target
+android/assets
