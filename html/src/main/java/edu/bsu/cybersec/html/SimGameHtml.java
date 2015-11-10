@@ -28,9 +28,9 @@ public class SimGameHtml implements EntryPoint {
     @Override
     public void onModuleLoad() {
         HtmlPlatform.Config config = new HtmlPlatform.Config();
-        HtmlPlatform plat = new SimGameHtmlPlatform(config);
+        HtmlPlatform plat = new HtmlPlatform(config);
         plat.assets().setPathPrefix("sim/");
-        new SimGame(plat);
+        new SimGame(plat, new HtmlGameConfig());
         plat.start();
     }
 }

@@ -19,18 +19,16 @@
 
 package edu.bsu.cybersec.java;
 
-import edu.bsu.cybersec.core.SimGamePlatform;
+import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
-import playn.java.LWJGLPlatform;
 
-public class SimGameJavaPlatform extends LWJGLPlatform implements SimGamePlatform {
+public class JavaGameConfig implements GameConfig {
 
     private final Java7DateFormatter formatter = new Java7DateFormatter();
     private final boolean skipIntro;
 
-    public SimGameJavaPlatform(CustomLWJGLPlatformConfig config) {
-        super(config);
-        skipIntro = config.skipIntro;
+    public JavaGameConfig(boolean skipIntro) {
+        this.skipIntro = skipIntro;
     }
 
     @Override

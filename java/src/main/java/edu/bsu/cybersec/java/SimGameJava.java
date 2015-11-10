@@ -21,18 +21,30 @@ package edu.bsu.cybersec.java;
 
 import edu.bsu.cybersec.core.SimGame;
 import org.apache.commons.cli.*;
+import playn.java.JavaPlatform;
 import playn.java.LWJGLPlatform;
+import pythagoras.i.Dimension;
+import pythagoras.i.IDimension;
 
 public class SimGameJava {
 
-    private static CustomLWJGLPlatformConfig config = new CustomLWJGLPlatformConfig();
+    private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
+    private static boolean skipIntro = false;
+    private static Dimension size = new Dimension(DEFAULT_SIZE.width(), DEFAULT_SIZE.height());
 
     public static void main(String[] args) {
         new Parser().process(args);
-        LWJGLPlatform plat = new SimGameJavaPlatform(config);
+        LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
         plat.graphics().registerFont("Lato-Regular", "fonts/Lato-Regular.ttf");
-        new SimGame(plat);
+        new SimGame(plat, new JavaGameConfig(skipIntro));
         plat.start();
+    }
+
+    private static JavaPlatform.Config makeLWJGLConfig() {
+        LWJGLPlatform.Config config = new LWJGLPlatform.Config();
+        config.width = size.width();
+        config.height = size.height();
+        return config;
     }
 
     private static final class Parser extends BasicParser {
@@ -67,7 +79,7 @@ public class SimGameJava {
                 processSizeOption(line);
             }
             if (line.hasOption(SKIP_INTRO_OPTION)) {
-                config.skipIntro = true;
+                skipIntro = true;
             }
         }
 
@@ -79,8 +91,8 @@ public class SimGameJava {
             } else {
                 int w = Integer.valueOf(separated[0]);
                 int h = Integer.valueOf(separated[1]);
-                config.width = w;
-                config.height = h;
+                size.width = w;
+                size.height = h;
             }
         }
     }

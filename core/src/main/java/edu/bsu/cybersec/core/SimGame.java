@@ -26,15 +26,20 @@ import playn.core.Platform;
 import playn.scene.SceneGame;
 import tripleplay.game.ScreenStack;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class SimGame extends SceneGame {
 
     // This is required for ScreenStack.UIScreen's game() method, which is called before the constructor.
     // See https://github.com/threerings/tripleplay/blob/master/demo/core/src/main/java/tripleplay/demo/TripleDemo.java#L19
     public static SimGame game;
 
-    public SimGame(Platform plat) {
+    public final GameConfig config;
+
+    public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);
         game = this;
+        this.config = checkNotNull(config);
         ImageCache.initialize(plat.assets());
         FontCache.initialize(plat.graphics());
         ScreenStack screenStack = new ScreenStack(this, rootLayer);

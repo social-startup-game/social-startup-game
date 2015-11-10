@@ -17,19 +17,14 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.java;
+package edu.bsu.cybersec.core;
 
-import playn.java.LWJGLPlatform;
-import pythagoras.i.Dimension;
-import pythagoras.i.IDimension;
+import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 
-public class CustomLWJGLPlatformConfig extends LWJGLPlatform.Config {
-    private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
+public interface GameConfig {
 
-    public boolean skipIntro = false;
+    PlatformSpecificDateFormatter dateFormatter();
 
-    public CustomLWJGLPlatformConfig() {
-        this.width = DEFAULT_SIZE.width();
-        this.height = DEFAULT_SIZE.height();
-    }
+    boolean skipIntro();
+
 }

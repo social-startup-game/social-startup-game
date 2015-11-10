@@ -34,8 +34,6 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkState;
-
 public class GameScreen extends ScreenStack.UIScreen {
     private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
 
@@ -56,8 +54,6 @@ public class GameScreen extends ScreenStack.UIScreen {
     @SuppressWarnings("unused")
     private tripleplay.entity.System timeRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
         {
-            checkState(game().plat instanceof SimGamePlatform,
-                    "The platform must provide the methods specified in SimGamePlatform");
             Entity updater = gameWorld.create(true).add(gameWorld.onUpdate);
             gameWorld.onUpdate.set(updater.id, new Updatable() {
                 @Override
@@ -71,7 +67,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         }
 
         private final PlatformSpecificDateFormatter formatter =
-                ((SimGamePlatform) game().plat).dateFormatter();
+                ((SimGame) game()).config.dateFormatter();
 
         private final long startTime = new java.util.Date().getTime() / ClockUtils.MS_PER_SECOND;
         private long now = startTime;

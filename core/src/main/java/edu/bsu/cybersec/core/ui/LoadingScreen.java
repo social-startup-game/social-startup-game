@@ -21,7 +21,6 @@ package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.SimGamePlatform;
 import playn.core.Game;
 import playn.core.Image;
 import react.RFuture;
@@ -65,7 +64,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
             }
 
             private void start() {
-                if (((SimGamePlatform) game().plat).skipIntro()) {
+                if (((SimGame) game()).config.skipIntro()) {
                     screenStack.push(new GameScreen(screenStack), screenStack.slide());
                 } else {
                     screenStack.push(new StartingScreen(screenStack), screenStack.slide());
