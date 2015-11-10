@@ -19,14 +19,49 @@
 
 package edu.bsu.cybersec.android;
 
+import android.annotation.SuppressLint;
+import edu.bsu.cybersec.core.GameConfig;
+import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 import playn.android.GameActivity;
 
-import edu.bsu.cybersec.core.SimGame;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SimGameActivity extends GameActivity {
 
     @Override
     public void main() {
-        new SimGame(platform());
+        new SimGame(platform(), new AndroidGameConfig());
+    }
+
+    private final class AndroidGameConfig implements GameConfig {
+        @Override
+        public PlatformSpecificDateFormatter dateFormatter() {
+            return new AndroidDateFormatter();
+        }
+
+        @Override
+        public boolean skipIntro() {
+            return false;
+        }
+    }
+
+    @Override
+    protected boolean usePortraitOrientation() {
+        return true;
+    }
+}
+
+class AndroidDateFormatter implements PlatformSpecificDateFormatter {
+
+    @Override
+    public String format(long ms) {
+        // We are forcing a specific style here to fit into the screen.
+        // Maybe someday we will do localization, but probably not.
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat fmt = new SimpleDateFormat(FORMAT_STRING);
+        Date date = new Date(ms);
+        return fmt.format(date);
     }
 }
