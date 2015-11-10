@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class PlayableWorldFactoryTest extends AbstractMockedAssetsTest {
 
@@ -32,7 +33,8 @@ public class PlayableWorldFactoryTest extends AbstractMockedAssetsTest {
     @Override
     public void setUp() {
         super.setUp();
-        PlayableWorldFactory factory = new PlayableWorldFactory(imageCache);
+        GameConfig config = mock(GameConfig.class);
+        PlayableWorldFactory factory = new PlayableWorldFactory(imageCache, config);
         world = factory.createPlayableGameWorld();
     }
 

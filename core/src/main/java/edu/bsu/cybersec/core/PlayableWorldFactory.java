@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PlayableWorldFactory {
 
@@ -36,13 +37,15 @@ public class PlayableWorldFactory {
     private final Map<Name, Image> DEVELOPERS;
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
+    private final GameConfig config;
 
-    public PlayableWorldFactory(ImageCache imageCache) {
+    public PlayableWorldFactory(ImageCache imageCache, GameConfig config) {
         DEVELOPERS =
                 ImmutableMap.of(
                         Name.first("Esteban").andLast("Cortez"), imageCache.ESTEBAN,
                         Name.first("Nancy").andLast("Stevens"), imageCache.NANCY,
                         Name.first("Jerry").andLast("Chen"), imageCache.JERRY);
+        this.config = checkNotNull(config);
     }
 
     public GameWorld.Systematized createPlayableGameWorld() {
@@ -58,7 +61,7 @@ public class PlayableWorldFactory {
         makeExistingFeature();
         makeDevelopers(3);
         setEndTime();
-        new DefaultNarrativeScript().createIn(world);
+        new DefaultNarrativeScript().createIn(world, config);
     }
 
     private void setEndTime() {

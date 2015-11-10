@@ -41,7 +41,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     {
         ImageCache imageCache = ImageCache.instance();
-        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(imageCache);
+        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(imageCache, SimGame.game.config);
         gameWorld = playableWorldFactory.createPlayableGameWorld();
         gameWorld.onGameEnd.connect(new UnitSlot() {
             @Override
