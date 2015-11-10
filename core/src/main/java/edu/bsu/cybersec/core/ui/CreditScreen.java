@@ -25,12 +25,23 @@ import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
-import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.ui.layout.BorderLayout;
 import tripleplay.util.Colors;
 
 public class CreditScreen extends ScreenStack.UIScreen {
+    private static final String[] CREDITS = new String[]{
+            "Game Design and Development:",
+            "Paul Gestwicki and Kaleb Stumbaugh",
+            " ",
+            "Visuals:",
+            "Coy Yuan",
+            " ",
+            "Music:",
+            "Pamgaea by Kevin MacLeod (incompetech.com)",
+            "Licensed under Creative Commons: By Attribution 3.0",
+            "http://creativecommons.org/licenses/by/3.0/"
+    };
+
     private final ScreenStack screenStack;
     private final ScreenStack.UIScreen creditScreen = this;
 
@@ -41,30 +52,30 @@ public class CreditScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, new BorderLayout(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
-        Group labelGroup = createLabelGroup();
-        root.add(createBackButton().setConstraint(BorderLayout.NORTH))
-                .add(labelGroup.setConstraint(BorderLayout.CENTER))
+        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()))
+                .setSize(size());
+        root.add(createContentArea())
                 .setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
         return root;
     }
 
-    private Element createBackButton() {
-        return new Group(new BorderLayout()).add(new Button("Back").onClick(new Slot<Button>() {
+    private Group createContentArea() {
+        Group group = new Group(AxisLayout.vertical());
+        for (String s : CREDITS) {
+            group.add(new Label(s).setStyles(Style.COLOR.is(Colors.WHITE)));
+        }
+        group.add(new Label(" "));
+        group.add(createBackButton());
+        return group;
+    }
 
+    private Button createBackButton() {
+        return new Button("OK").onClick(new Slot<Button>() {
             @Override
             public void onEmit(Button button) {
                 screenStack.remove(creditScreen, screenStack.slide().right());
             }
-        }).setConstraint(BorderLayout.WEST));
-    }
-
-    private Group createLabelGroup() {
-        return new Group(AxisLayout.vertical())
-                .add(new Label("Developer:\t Paul Gestwicki").setStyles(Style.COLOR.is(Colors.WHITE)))
-                .add(new Label("Developer:\t Kaleb Stumbaugh").setStyles(Style.COLOR.is(Colors.WHITE)))
-                .add(new Label("Artist: \t Coy Yuan").setStyles(Style.COLOR.is(Colors.WHITE)))
-                .add(new Label("Composer: \t Kevin MacLeod").setStyles(Style.COLOR.is(Colors.WHITE)));
+        });
     }
 
     @Override
