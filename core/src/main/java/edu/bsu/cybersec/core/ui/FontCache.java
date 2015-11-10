@@ -31,9 +31,12 @@ public final class FontCache {
     private static ViewSize viewSize;
 
     public static FontCache initialize(Graphics g) {
-        checkState(instance == null, "Already initialized");
-        viewSize = new ViewSize(g);
-        return instance = new FontCache();
+        if (instance == null) {
+            viewSize = new ViewSize(g);
+            return instance = new FontCache();
+        } else {
+            return instance;
+        }
     }
 
     public static FontCache instance() {

@@ -53,11 +53,14 @@ public final class ImageCache {
     }
 
     public static ImageCache initialize(Assets assets) {
-        checkState(INSTANCE == null, "Already initialized");
-        ImageCache.assets = assets;
-        INSTANCE = new ImageCache();
-        ImageCache.assets = null;
-        return INSTANCE;
+        if (INSTANCE == null) {
+            ImageCache.assets = assets;
+            INSTANCE = new ImageCache();
+            ImageCache.assets = null;
+            return INSTANCE;
+        } else {
+            return INSTANCE;
+        }
     }
 
     public static void deinitialize() {

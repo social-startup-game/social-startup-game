@@ -21,12 +21,10 @@ package edu.bsu.cybersec.core;
 
 import edu.bsu.cybersec.core.ui.ImageCache;
 import org.junit.Test;
-import playn.core.Assets;
 
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class ImageCacheTest extends AbstractMockedAssetsTest {
 
@@ -40,10 +38,5 @@ public class ImageCacheTest extends AbstractMockedAssetsTest {
             }
         }
         assertEquals(count, imageCache.all().size());
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testInitialize_throwExceptionIfReinitialized() {
-        ImageCache.initialize(mock(Assets.class));
     }
 }
