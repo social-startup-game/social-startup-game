@@ -28,11 +28,11 @@ import react.RFuture;
 import react.Slot;
 import react.Try;
 import tripleplay.game.ScreenStack;
+import tripleplay.ui.Background;
 import tripleplay.ui.Label;
 import tripleplay.ui.Root;
 import tripleplay.ui.Style;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +43,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
 
     private final ScreenStack screenStack;
     private int countdown = 2;
+    private ProgressBar progressBar;
 
     public LoadingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
@@ -51,9 +52,30 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     @Override
     public void wasShown() {
         super.wasShown();
+        initializeProgressBar();
+        startLoadingImages();
+        startLoadingSounds();
+    }
+
+    private void initializeProgressBar() {
+        final int max = ImageCache.instance().all().size()
+                + MusicCache.instance().all().size();
+        final float width = size().width();
+        final float height = size().height();
+        progressBar = new ProgressBar(max, width * 0.55f, height * 0.02f);
+        layer.addCenterAt(progressBar, width / 2, height * 3 / 5);
+    }
+
+    private void startLoadingImages() {
         List<RFuture<Image>> futures = Lists.newArrayList();
         for (Image image : ImageCache.instance().all()) {
             futures.add(image.state);
+            image.state.onComplete(new Slot<Try<Image>>() {
+                @Override
+                public void onEmit(Try<Image> event) {
+                    progressBar.increment();
+                }
+            });
         }
         RFuture.collect(futures).onComplete(new Slot<Try<Collection<Image>>>() {
             @Override
@@ -65,10 +87,18 @@ public class LoadingScreen extends ScreenStack.UIScreen {
                 }
             }
         });
+    }
 
+    private void startLoadingSounds() {
         List<RFuture<Sound>> sounds = Lists.newArrayList();
         for (Sound sound : MusicCache.instance().all()) {
             sounds.add(sound.state);
+            sound.state.onComplete(new Slot<Try<Sound>>() {
+                @Override
+                public void onEmit(Try<Sound> event) {
+                    progressBar.increment();
+                }
+            });
         }
         RFuture.collect(sounds).onComplete(new Slot<Try<Collection<Sound>>>() {
             @Override
@@ -85,11 +115,11 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     private void countDown() {
         countdown--;
         if (countdown == 0) {
-            start();
+            startGame();
         }
     }
 
-    private void start() {
+    private void startGame() {
         if (((SimGame) game()).config.skipIntro()) {
             screenStack.push(new GameScreen(screenStack), screenStack.slide());
         } else {
@@ -100,7 +130,8 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
-        root.add(new Label("Loading...").addStyles(Style.COLOR.is(Colors.WHITE)));
+        root.add(new Label("Loading...").addStyles(Style.COLOR.is(Palette.FOREGROUND)));
+        root.addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
         return root;
     }
 
