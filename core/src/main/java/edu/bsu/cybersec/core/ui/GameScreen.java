@@ -29,7 +29,6 @@ import react.UnitSlot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
 import tripleplay.game.ScreenStack;
-import tripleplay.sound.SoundBoard;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
@@ -191,8 +190,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void playBackgroundMusic() {
-        SoundBoard soundBoard = new SoundBoard(game().plat, paint);
-        soundBoard.getLoop("music/Pamgaea").play();
+        MusicCache.instance().GAME_THEME.play();
     }
 
     @Override

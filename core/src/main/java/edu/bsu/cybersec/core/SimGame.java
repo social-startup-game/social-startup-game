@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core;
 import edu.bsu.cybersec.core.ui.FontCache;
 import edu.bsu.cybersec.core.ui.ImageCache;
 import edu.bsu.cybersec.core.ui.LoadingScreen;
+import edu.bsu.cybersec.core.ui.MusicCache;
 import playn.core.Platform;
 import playn.scene.SceneGame;
 import tripleplay.game.ScreenStack;
@@ -41,6 +42,7 @@ public class SimGame extends SceneGame {
         game = this;
         this.config = checkNotNull(config);
         ImageCache.initialize(plat.assets());
+        MusicCache.initialize(plat.assets());
         FontCache.initialize(plat.graphics());
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
         screenStack.push(new LoadingScreen(screenStack));

@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.core.Image;
+import playn.core.Sound;
 import react.RFuture;
 import react.Slot;
 import react.Try;
@@ -41,6 +42,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class LoadingScreen extends ScreenStack.UIScreen {
 
     private final ScreenStack screenStack;
+    private int countdown = 2;
 
     public LoadingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
@@ -59,18 +61,40 @@ public class LoadingScreen extends ScreenStack.UIScreen {
                 if (event.isFailure()) {
                     game().plat.log().warn("Failed to load some images: " + event);
                 } else {
-                    start();
-                }
-            }
-
-            private void start() {
-                if (((SimGame) game()).config.skipIntro()) {
-                    screenStack.push(new GameScreen(screenStack), screenStack.slide());
-                } else {
-                    screenStack.push(new StartingScreen(screenStack), screenStack.slide());
+                    countDown();
                 }
             }
         });
+
+        List<RFuture<Sound>> sounds = Lists.newArrayList();
+        for (Sound sound : MusicCache.instance().all()) {
+            sounds.add(sound.state);
+        }
+        RFuture.collect(sounds).onComplete(new Slot<Try<Collection<Sound>>>() {
+            @Override
+            public void onEmit(Try<Collection<Sound>> event) {
+                if (event.isFailure()) {
+                    game().plat.log().warn("Failed to load some sound: " + event);
+                } else {
+                    countDown();
+                }
+            }
+        });
+    }
+
+    private void countDown() {
+        countdown--;
+        if (countdown == 0) {
+            start();
+        }
+    }
+
+    private void start() {
+        if (((SimGame) game()).config.skipIntro()) {
+            screenStack.push(new GameScreen(screenStack), screenStack.slide());
+        } else {
+            screenStack.push(new StartingScreen(screenStack), screenStack.slide());
+        }
     }
 
     @Override
