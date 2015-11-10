@@ -56,7 +56,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
         RFuture.collect(futures).onComplete(new Slot<Try<Collection<Image>>>() {
             @Override
             public void onEmit(Try<Collection<Image>> event) {
-                if (event instanceof Try.Failure) {
+                if (event.isFailure()) {
                     game().plat.log().warn("Failed to load some images: " + event);
                 } else {
                     start();
