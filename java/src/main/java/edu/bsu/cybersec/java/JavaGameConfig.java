@@ -26,9 +26,11 @@ public class JavaGameConfig implements GameConfig {
 
     private final Java7DateFormatter formatter = new Java7DateFormatter();
     private final boolean skipIntro;
+    private final boolean skipWelcome;
 
-    public JavaGameConfig(boolean skipIntro) {
+    public JavaGameConfig(boolean skipIntro, boolean skipWelcome) {
         this.skipIntro = skipIntro;
+        this.skipWelcome = skipWelcome;
     }
 
     @Override
@@ -39,5 +41,10 @@ public class JavaGameConfig implements GameConfig {
     @Override
     public boolean skipIntro() {
         return skipIntro;
+    }
+
+    @Override
+    public boolean skipWelcome() {
+        return skipWelcome;
     }
 }

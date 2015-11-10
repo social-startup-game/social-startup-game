@@ -27,4 +27,18 @@ public interface GameConfig {
 
     boolean skipIntro();
 
+    boolean skipWelcome();
+
+    abstract class Default implements GameConfig {
+        @Override
+        public boolean skipIntro() {
+            return false;
+        }
+
+        @Override
+        public boolean skipWelcome() {
+            return false;
+        }
+    }
+
 }

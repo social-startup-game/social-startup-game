@@ -30,13 +30,14 @@ public class SimGameJava {
 
     private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
     private static boolean skipIntro = false;
+    private static boolean skipWelcome = false;
     private static Dimension size = new Dimension(DEFAULT_SIZE.width(), DEFAULT_SIZE.height());
 
     public static void main(String[] args) {
         new Parser().process(args);
         LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
         plat.graphics().registerFont("Lato-Regular", "fonts/Lato-Regular.ttf");
-        new SimGame(plat, new JavaGameConfig(skipIntro));
+        new SimGame(plat, new JavaGameConfig(skipIntro, skipWelcome));
         plat.start();
     }
 
@@ -50,6 +51,7 @@ public class SimGameJava {
     private static final class Parser extends BasicParser {
         private static final String SIZE_OPTION_NAME = "size";
         private static final String SKIP_INTRO_OPTION = "skipIntro";
+        private static final String SKIP_WELCOME_OPTION = "skipWelcome";
         private CommandLine line;
         private Options options = createOptions();
 
@@ -62,9 +64,13 @@ public class SimGameJava {
             Option skipIntroOption = OptionBuilder.withArgName(SKIP_INTRO_OPTION)
                     .withDescription("skip the game introduction")
                     .create(SKIP_INTRO_OPTION);
+            Option skipWelcomeOption = OptionBuilder.withArgName(SKIP_WELCOME_OPTION)
+                    .withDescription("skip the administrative coordinator's welcome event")
+                    .create(SKIP_WELCOME_OPTION);
             Options options = new Options();
             options.addOption(sizeOption);
             options.addOption(skipIntroOption);
+            options.addOption(skipWelcomeOption);
             return options;
         }
 
@@ -80,6 +86,9 @@ public class SimGameJava {
             }
             if (line.hasOption(SKIP_INTRO_OPTION)) {
                 skipIntro = true;
+            }
+            if (line.hasOption(SKIP_WELCOME_OPTION)) {
+                skipWelcome = true;
             }
         }
 

@@ -29,7 +29,9 @@ public final class DefaultNarrativeScript {
 
     public void createIn(GameWorld world) {
         this.world = checkNotNull(world);
-        new WelcomeEventFactory().addWelcomeEvent();
+        if (!SimGame.game.config.skipWelcome()) {
+            new WelcomeEventFactory().addWelcomeEvent();
+        }
         new UserDataStolenEventFactory().newEvent();
     }
 

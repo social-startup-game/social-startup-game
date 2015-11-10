@@ -35,15 +35,10 @@ public class SimGameActivity extends GameActivity {
         new SimGame(platform(), new AndroidGameConfig());
     }
 
-    private final class AndroidGameConfig implements GameConfig {
+    private final class AndroidGameConfig extends GameConfig.Default {
         @Override
         public PlatformSpecificDateFormatter dateFormatter() {
             return new AndroidDateFormatter();
-        }
-
-        @Override
-        public boolean skipIntro() {
-            return false;
         }
     }
 

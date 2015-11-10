@@ -22,17 +22,12 @@ package edu.bsu.cybersec.html;
 import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 
-public final class HtmlGameConfig implements GameConfig {
+public final class HtmlGameConfig extends GameConfig.Default {
 
     private final GWTDateFormatter formatter = new GWTDateFormatter();
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
         return formatter;
-    }
-
-    @Override
-    public boolean skipIntro() {
-        return false;
     }
 }
