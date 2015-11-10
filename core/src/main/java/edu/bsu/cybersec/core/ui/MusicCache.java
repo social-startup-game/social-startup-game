@@ -30,7 +30,8 @@ import static com.google.common.base.Preconditions.checkState;
 public abstract class MusicCache {
     private static MusicCache instance;
 
-    public final Sound GAME_THEME = load("Pamgaea");
+    public final Sound GAME_THEME = load("ChipperDoodle");
+    public final Sound INTRO_THEME = load("Pamgaea");
     private final ImmutableList<Sound> all = ImmutableList.of(GAME_THEME);
 
     public static MusicCache initialize(final Assets assets) {

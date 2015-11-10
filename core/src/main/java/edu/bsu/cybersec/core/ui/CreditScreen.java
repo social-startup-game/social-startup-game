@@ -37,7 +37,7 @@ public class CreditScreen extends ScreenStack.UIScreen {
             "Coy Yuan",
             " ",
             "Music:",
-            "Pamgaea by Kevin MacLeod (incompetech.com)",
+            "Chipper Doodle and Pamgaea by Kevin MacLeod (incompetech.com)",
             "Licensed under Creative Commons: By Attribution 3.0",
             "http://creativecommons.org/licenses/by/3.0/"
     };

@@ -190,6 +190,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void playBackgroundMusic() {
+        MusicCache.instance().INTRO_THEME.stop();
         MusicCache.instance().GAME_THEME.play();
     }
 

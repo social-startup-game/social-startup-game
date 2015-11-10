@@ -67,6 +67,11 @@ public class StartingScreen extends ScreenStack.UIScreen {
         return root;
     }
 
+    @Override
+    public void wasShown() {
+        super.wasShown();
+        MusicCache.instance().INTRO_THEME.play();
+    }
 
     @Override
     public Game game() {
