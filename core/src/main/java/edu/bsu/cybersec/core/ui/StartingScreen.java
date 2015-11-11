@@ -29,7 +29,7 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
@@ -70,7 +70,9 @@ public class StartingScreen extends ScreenStack.UIScreen {
     @Override
     public void wasShown() {
         super.wasShown();
-        MusicCache.instance().INTRO_THEME.play();
+        if (!MusicCache.instance().INTRO_THEME.isPlaying()) {
+            MusicCache.instance().INTRO_THEME.play();
+        }
     }
 
     @Override
