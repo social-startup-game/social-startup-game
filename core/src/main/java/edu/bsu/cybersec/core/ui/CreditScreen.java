@@ -37,7 +37,8 @@ public class CreditScreen extends ScreenStack.UIScreen {
             "Coy Yuan",
             " ",
             "Music:",
-            "Chipper Doodle and Pamgaea by Kevin MacLeod (incompetech.com)",
+            "Chipper Doodle and Pamgaea",
+            "by Kevin MacLeod (incompetech.com)",
             "Licensed under Creative Commons: By Attribution 3.0",
             "http://creativecommons.org/licenses/by/3.0/"
     };
@@ -62,7 +63,10 @@ public class CreditScreen extends ScreenStack.UIScreen {
     private Group createContentArea() {
         Group group = new Group(AxisLayout.vertical());
         for (String s : CREDITS) {
-            group.add(new Label(s).setStyles(Style.COLOR.is(Colors.WHITE)));
+            group.add(new Label(s)
+                    .setStyles(
+                            Style.COLOR.is(Colors.WHITE),
+                            Style.TEXT_WRAP.on));
         }
         group.add(new Label(" "));
         group.add(createBackButton());
