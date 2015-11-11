@@ -33,6 +33,7 @@ public final class DefaultNarrativeScript {
             new WelcomeEventFactory().addWelcomeEvent();
         }
         new UserDataStolenEventFactory().newEvent();
+        new ScriptAttackEventFactory().newEvent();
     }
 
     private final class WelcomeEventFactory {
@@ -143,6 +144,70 @@ public final class DefaultNarrativeScript {
                             .withAction(ignoreAction)
                             .build());
             world.timeTrigger.set(e.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * 4);
+        }
+    }
+
+    private final class ScriptAttackEventFactory {
+
+        private final int retaliationTime = 12;
+        private final int fbiInvestigationTime = 8;
+
+        private void newEvent() {
+            final Entity scriptAttackEventEntity = world.create(true).add(world.event, world.timeTrigger);
+            world.timeTrigger.set(scriptAttackEventEntity.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_DAY * 2);
+            world.event.set(scriptAttackEventEntity.id, makeScriptAttackEvent(scriptAttackEventEntity));
+        }
+
+        private Runnable makeScriptAttackEvent(final Entity owner) {
+            final UserLossAfterRetaliation loss = new UserLossAfterRetaliation();
+            return NarrativeEvent.inWorld(world)
+                    .withText("You were attacked by Script Kiddie. They tried and failed to break into your servers via a scripting attack. \n\n Would you like to retaliate? If so, who do you want to assign?")
+                    .addEmployeeSelectionsFor(new NarrativeEvent.Action() {
+                        @Override
+                        public void runForSelection(final Entity worker) {
+                            final int returnTime = world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * retaliationTime;
+                            world.tasked.set(worker.id,
+                                    Task.createTask("Retaliating").expiringAt(returnTime).inWorld(world).build());
+                            final Entity wakingUp = world.create(true)
+                                    .add(world.timeTrigger, world.event);
+                            world.timeTrigger.set(wakingUp.id, returnTime);
+                            world.event.set(wakingUp.id, new Runnable() {
+                                @Override
+                                public void run() {
+                                    world.tasked.set(worker.id, Task.MAINTENANCE);
+                                    wakingUp.close();
+                                }
+                            });
+                            final int investigationTime = world.gameTime.get().now + (ClockUtils.SECONDS_PER_HOUR * (retaliationTime + fbiInvestigationTime));
+                            final Entity fbiInvestigationScandal = world.create(true)
+                                    .add(world.timeTrigger, world.event);
+                            world.timeTrigger.set(fbiInvestigationScandal.id, investigationTime);
+                            world.event.set(fbiInvestigationScandal.id, NarrativeEvent.inWorld(world)
+                                    .withDynamicText(loss)
+                                    .addOption("OK")
+                                    .withAction(loss)
+                                    .build());
+                        }
+                    })
+                    .addOption("Ignore It").withAction(new EntityRemover(owner))
+                    .build();
+        }
+
+        private final class UserLossAfterRetaliation implements NarrativeEvent.Text, Runnable {
+            private final float percent = 0.75f;
+            private float loss;
+
+            @Override
+            public String text() {
+                loss = world.users.get() * percent;
+                return "Not only was having your employee retaliate unsuccessful, it was illegal! The FBI will be looking in to this... \n\n You lost "
+                        + (int) loss + " users because of your short temper.";
+            }
+
+            @Override
+            public void run() {
+                world.users.update(world.users.get() - loss);
+            }
         }
     }
 
