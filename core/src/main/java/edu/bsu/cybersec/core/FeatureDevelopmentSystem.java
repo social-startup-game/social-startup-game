@@ -84,14 +84,14 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private float computeTotalDevelopmentEffort() {
-        float effort = 0;
+        float totalEmployeeSkill = 0;
         for (int i = 0, limit = developerBag.size(); i < limit; i++) {
             int entityId = developerBag.get(i);
             if (isDeveloping(entityId)) {
-                effort += roundDownSkillOfEntity(entityId);
+                totalEmployeeSkill += roundDownSkillOfEntity(entityId);
             }
         }
-        return effort;
+        return totalEmployeeSkill / 3;
     }
 
     private int roundDownSkillOfEntity(int entityId) {

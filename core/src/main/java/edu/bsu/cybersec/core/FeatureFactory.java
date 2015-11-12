@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.Lists;
 import tripleplay.entity.Entity;
 
 import java.util.ArrayList;
@@ -27,9 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
-    private static final float DEFAULT_FEATURE_VULNERABILITY = 0.01f;
-    private static final int DEFAULT_FEATURE_USERS_PER_HOUR = 50;
-    private static ArrayList<String> featureNames = new ArrayList<>();
+    private static ArrayList<String> featureNames = Lists.newArrayList();
 
     public static FeatureBuilder in(GameWorld world) {
         populateFeatureNameList();
@@ -74,9 +73,21 @@ public class FeatureFactory {
                             world.vulnerability);
             world.featureNumber.set(entity.id, featureNumber);
             world.name.set(entity.id, Name.simply(featureNames.remove(0)));
-            world.vulnerability.set(entity.id, DEFAULT_FEATURE_VULNERABILITY);
-            world.usersPerHour.set(entity.id, DEFAULT_FEATURE_USERS_PER_HOUR);
+            world.vulnerability.set(entity.id, caculateExposure());
+            world.usersPerHour.set(entity.id, generateUsersPerHour());
             return entity;
+        }
+
+        private float caculateExposure() {
+            int max = 4;
+            return (float) (Math.floor(Math.random() * max) * 0.01);
+        }
+
+        private float generateUsersPerHour() {
+            int min = 5;
+            int max = 50;
+            int range = max - min;
+            return (float) Math.floor(Math.random() * range) + min;
         }
 
         public Entity makeCompletedFeature(int featureNumber) {
