@@ -19,35 +19,29 @@
 
 package edu.bsu.cybersec.core;
 
-import com.google.common.collect.Lists;
 import tripleplay.entity.Entity;
-
-import java.util.ArrayList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
-    private static ArrayList<String> featureNames = Lists.newArrayList();
+    private static final String[] FEATURE_NAMES = {
+            "Selfie of the Week",
+            "Tumblr Pun",
+            "Twitter Nest",
+            "Hollywood Ville",
+            "Fun Ville",
+            "Puppy Ville",
+            "Cat Ville",
+            "Village Ville",
+            "Dislike Button",
+            "User reviews"
+    };
 
     public static FeatureBuilder in(GameWorld world) {
-        populateFeatureNameList();
         return new FeatureBuilder(world);
     }
 
-    private static void populateFeatureNameList() {
-        featureNames.add("Selfie of the Week");
-        featureNames.add("Flappy Turd");
-        featureNames.add("Tumblr Pun");
-        featureNames.add("Twitter Nest");
-        featureNames.add("Hollywood Ville");
-        featureNames.add("Fun Ville");
-        featureNames.add("Puppy Ville");
-        featureNames.add("Cat Ville");
-        featureNames.add("Village Ville");
-        featureNames.add("Dislike Button");
-        featureNames.add("User reviews");
-    }
 
     public final static class FeatureBuilder {
         private static final RandomInRange random = new RandomInRange(1, 4);
@@ -73,10 +67,14 @@ public class FeatureFactory {
                             world.usersPerHourState,
                             world.vulnerability);
             world.featureNumber.set(entity.id, featureNumber);
-            world.name.set(entity.id, Name.simply(featureNames.remove(0)));
+            world.name.set(entity.id, nextFeatureName());
             world.vulnerability.set(entity.id, random.nextInt() * 0.01f);
             world.usersPerHour.set(entity.id, generateUsersPerHour());
             return entity;
+        }
+
+        private Name nextFeatureName() {
+            return Name.simply(FEATURE_NAMES[(int) (Math.random() * FEATURE_NAMES.length)]);
         }
 
         private float generateUsersPerHour() {
