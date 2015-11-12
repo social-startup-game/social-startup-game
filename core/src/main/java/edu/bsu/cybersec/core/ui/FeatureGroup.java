@@ -58,7 +58,12 @@ public final class FeatureGroup extends ScrollingListInteractionAreaGroup {
                 final int progress = (int) (world.developmentProgress.get(entityId) / world.goal.get(entityId) * 100);
                 text.update(numberAndName + " [" + progress + "%]");
             } else if (!hasCompletedText) {
-                text.update(numberAndName);
+                final float usersPerHour = world.usersPerHour.get(entityId);
+                if (number % 10 == 0) {
+                    text.update(numberAndName + " - " + (int) usersPerHour + "  Users Per Hour");
+                } else {
+                    text.update(numberAndName + " - " + (int) usersPerHour);
+                }
                 hasCompletedText = true;
             }
         }
