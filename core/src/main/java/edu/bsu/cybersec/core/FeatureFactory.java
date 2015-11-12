@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
-    private static final float DEFAULT_FEATURE_VULNERABILITY = 0.01f;
     private static ArrayList<String> featureNames = Lists.newArrayList();
 
     public static FeatureBuilder in(GameWorld world) {
@@ -74,14 +73,19 @@ public class FeatureFactory {
                             world.vulnerability);
             world.featureNumber.set(entity.id, featureNumber);
             world.name.set(entity.id, Name.simply(featureNames.remove(0)));
-            world.vulnerability.set(entity.id, DEFAULT_FEATURE_VULNERABILITY);
+            world.vulnerability.set(entity.id, caculateExposure());
             world.usersPerHour.set(entity.id, generateUsersPerHour());
             return entity;
         }
 
+        private float caculateExposure() {
+            int max = 4;
+            return (float) (Math.floor(Math.random() * max) * 0.01);
+        }
+
         private float generateUsersPerHour() {
-            int max = 40;
             int min = 5;
+            int max = 50;
             int range = max - min;
             return (float) Math.floor(Math.random() * range) + min;
         }
