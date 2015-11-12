@@ -50,6 +50,7 @@ public class FeatureFactory {
     }
 
     public final static class FeatureBuilder {
+        private static final RandomInRange random = new RandomInRange(1, 4);
         private final GameWorld world;
 
         private FeatureBuilder(GameWorld world) {
@@ -73,14 +74,9 @@ public class FeatureFactory {
                             world.vulnerability);
             world.featureNumber.set(entity.id, featureNumber);
             world.name.set(entity.id, Name.simply(featureNames.remove(0)));
-            world.vulnerability.set(entity.id, caculateExposure());
+            world.vulnerability.set(entity.id, random.nextInt() * 0.01f);
             world.usersPerHour.set(entity.id, generateUsersPerHour());
             return entity;
-        }
-
-        private float caculateExposure() {
-            int max = 4;
-            return (float) (Math.floor(Math.random() * max) * 0.01);
         }
 
         private float generateUsersPerHour() {
