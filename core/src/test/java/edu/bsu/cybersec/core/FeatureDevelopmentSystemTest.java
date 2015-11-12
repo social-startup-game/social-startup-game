@@ -28,11 +28,12 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
 
     private static final float FEATURE_VULNERABILITY = 5f;
     private Entity completedDevelopmentEntity;
+    private FeatureDevelopmentSystem system;
 
     @Override
     public void setUp() {
         super.setUp();
-        new FeatureDevelopmentSystem(world);
+        system = new FeatureDevelopmentSystem(world);
         completedDevelopmentEntity = null;
     }
 
@@ -105,6 +106,16 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
         assertEquals(10, world.developmentProgress.get(entity.id), EPSILON);
     }
 
+    @Test
+    public void testUpdate_inefficiencyFactor_reducesProductivity() {
+        final float inefficiencyFactor = 1 / 3f;
+        system.inefficiencyFactor.update(inefficiencyFactor);
+        Entity entity = makeFeatureInDevelopment();
+        createActiveDeveloper(10f);
+        whenOneHourOfGameTimeElapses();
+        assertEquals(10 * inefficiencyFactor, world.developmentProgress.get(entity.id), EPSILON);
+    }
+
     private void whenAFeatureIsCompleted() {
         completedDevelopmentEntity = makeFeatureInDevelopmentRequiring(0);
         createActiveDeveloper(10);
@@ -170,4 +181,6 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
             return entity;
         }
     }
+
+
 }

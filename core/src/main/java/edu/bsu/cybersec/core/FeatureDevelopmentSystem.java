@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import playn.core.Clock;
+import react.Value;
 import tripleplay.entity.Entity;
 import tripleplay.entity.IntBag;
 
@@ -30,6 +31,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     private final GameWorld world;
     private final IntBag developmentBag = new IntBag();
     private final IntBag developerBag = new IntBag();
+    public Value<Float> inefficiencyFactor = Value.create(1f);
 
     public FeatureDevelopmentSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
@@ -78,20 +80,20 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         final float effortPerFeature = computeTotalDevelopmentEffort() / developmentBag.size();
         for (int i = 0, limit = developmentBag.size(); i < limit; i++) {
             int id = developmentBag.get(i);
-            float delta = effortPerFeature * dt / ClockUtils.SECONDS_PER_HOUR;
+            float delta = effortPerFeature * dt / ClockUtils.SECONDS_PER_HOUR * inefficiencyFactor.get();
             world.developmentProgress.add(id, delta);
         }
     }
 
     private float computeTotalDevelopmentEffort() {
-        float totalEmployeeSkill = 0;
+        float accumulatedDevelopmentEffort = 0;
         for (int i = 0, limit = developerBag.size(); i < limit; i++) {
             int entityId = developerBag.get(i);
             if (isDeveloping(entityId)) {
-                totalEmployeeSkill += roundDownSkillOfEntity(entityId);
+                accumulatedDevelopmentEffort += roundDownSkillOfEntity(entityId);
             }
         }
-        return totalEmployeeSkill / 3;
+        return accumulatedDevelopmentEffort;
     }
 
     private int roundDownSkillOfEntity(int entityId) {

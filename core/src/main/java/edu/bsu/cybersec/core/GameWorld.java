@@ -80,7 +80,6 @@ public class GameWorld extends World {
 
         private void initializeSystemsThatAreNeverDirectlyReferenced() {
             new UpdatingSystem(this);
-            new FeatureDevelopmentSystem(this);
             new MaintenanceSystem(this);
             new ExpirySystem(this);
             new EventTriggerSystem(this);
@@ -91,5 +90,6 @@ public class GameWorld extends World {
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
+        public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
     }
 }
