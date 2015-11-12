@@ -78,10 +78,15 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
         root.add(new Label(info.text, Icons.image(info.background))
                 .addStyles(Style.TEXT_WRAP.on,
                         Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
-                        Style.ICON_POS.below));
+                        Style.ICON_POS.below,
+                        Style.ICON_GAP.is(percentOfScreenHeight(0.04f))));
         root.addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
         root.add(createTransparentClickableArea());
         return root;
+    }
+
+    private int percentOfScreenHeight(float percent) {
+        return (int) (SimGame.game.plat.graphics().viewSize.height() * percent);
     }
 
     private Element createTransparentClickableArea() {
