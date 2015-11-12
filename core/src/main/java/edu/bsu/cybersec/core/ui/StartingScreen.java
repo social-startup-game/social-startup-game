@@ -70,6 +70,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
     @Override
     public void wasShown() {
         super.wasShown();
+        MusicCache.instance().GAME_THEME.stop();
         if (!MusicCache.instance().INTRO_THEME.isPlaying()) {
             MusicCache.instance().INTRO_THEME.play();
         }
