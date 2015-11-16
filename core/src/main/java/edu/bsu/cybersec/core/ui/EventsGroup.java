@@ -40,6 +40,8 @@ public class EventsGroup extends InteractionAreaGroup {
     private static final Graphics graphics = SimGame.game.plat.graphics();
     private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(graphics,
             Colors.WHITE, percentOfScreenHeight(0.05f), Palette.DIALOG_BORDER, percentOfScreenHeight(0.01f));
+    private static final float TEXTBOX_WIDTH_PERCENT = 0.85f;
+    private static final float SPEAKER_WIDTH_PERCENT = 0.12f;
 
     private static float percentOfScreenHeight(float percent) {
         return graphics.viewSize.height() * percent;
@@ -52,7 +54,7 @@ public class EventsGroup extends InteractionAreaGroup {
     private Runnable onParented;
 
     public EventsGroup(GameWorld gameWorld) {
-        super(new AbsoluteLayout());
+        super(AxisLayout.horizontal().offStretch());
         addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
         add(noEventsLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.CENTER)));
         this.gameWorld = gameWorld;
@@ -83,10 +85,22 @@ public class EventsGroup extends InteractionAreaGroup {
             @Override
             public void run() {
                 removeAll();
-                Group callout = makeCallout(narrativeEvent);
-                add(AbsoluteLayout.at(callout, 0, 0, parentSize.width(), parentSize.height()),
-                        new Label(Icons.image(eventSpeakerImage))
-                                .setConstraint(AbsoluteLayout.uniform(BoxPoint.BR)));
+                setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
+                Group textBox = makeTextBox(narrativeEvent);
+                add(textBox,
+                        new Group(AxisLayout.vertical())
+                                .add(new Shim(0, 0).setConstraint(AxisLayout.stretched()),
+                                        new Label(makeSpeakerIcon()),
+                                        new Shim(0, percentOfScreenHeight(0.01f)))
+                                .setConstraint(AxisLayout.stretched()));
+            }
+
+            private Icon makeSpeakerIcon() {
+                float imageWidth = eventSpeakerImage.width();
+                float proportion = SPEAKER_WIDTH_PERCENT;
+                float desiredWidth = parentSize.width() * proportion;
+                float scale = desiredWidth / imageWidth;
+                return Icons.scaled(Icons.image(eventSpeakerImage), scale);
             }
         };
         if (parentSize != null) {
@@ -97,7 +111,8 @@ public class EventsGroup extends InteractionAreaGroup {
         }
     }
 
-    private Group makeCallout(NarrativeEvent narrativeEvent) {
+    private Group makeTextBox(NarrativeEvent narrativeEvent) {
+        final float width = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
         final float shimSize = percentOfScreenHeight(0.01f);
         final float inset = percentOfScreenHeight(0.02f);
         Label label = new Label(narrativeEvent.text.text())
@@ -111,8 +126,8 @@ public class EventsGroup extends InteractionAreaGroup {
                         buttonGroup,
                         new Shim(0, shimSize));
         Scroller scroller = new Scroller(content).setBehavior(Scroller.Behavior.VERTICAL)
-                .setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
-        return new SizableGroup(AxisLayout.vertical().offStretch(), parentSize.width(), parentSize.height())
+                .setConstraint(Constraints.fixedSize(width, parentSize.height()));
+        return new SizableGroup(AxisLayout.vertical().offStretch(), width, parentSize.height())
                 .add(scroller)
                 .addStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
     }
