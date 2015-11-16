@@ -17,14 +17,14 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.Task;
 import org.junit.After;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public final class LearningSystemTest extends AbstractSystemTest {
 

@@ -17,7 +17,7 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
 import org.junit.Test;
 import tripleplay.entity.Entity;

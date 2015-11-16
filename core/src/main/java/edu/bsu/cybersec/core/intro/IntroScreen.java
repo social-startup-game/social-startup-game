@@ -17,10 +17,14 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core.ui;
+package edu.bsu.cybersec.core.intro;
 
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.ui.ClickableLabel;
+import edu.bsu.cybersec.core.ui.FontCache;
+import edu.bsu.cybersec.core.ui.GameScreen;
+import edu.bsu.cybersec.core.ui.SimGameStyle;
 import playn.core.Game;
 import playn.core.Mouse;
 import playn.core.Touch;
@@ -34,12 +38,12 @@ import tripleplay.util.Colors;
 import java.util.Iterator;
 import java.util.List;
 
-public class NarrativeScreen extends ScreenStack.UIScreen {
+public class IntroScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
-    private final Iterator<NarrativeSlideInformation> iterator;
+    private final Iterator<IntroSlideInformation> iterator;
     private final List<Connection> connections = Lists.newArrayList();
 
-    public NarrativeScreen(ScreenStack screenStack, Iterator<NarrativeSlideInformation> iterator) {
+    public IntroScreen(ScreenStack screenStack, Iterator<IntroSlideInformation> iterator) {
         this.screenStack = screenStack;
         this.iterator = iterator;
         connections.add(game().plat.input().mouseEvents.connect(new Slot<Mouse.Event>() {
@@ -74,7 +78,7 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
     @Override
     protected Root createRoot() {
         Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
-        NarrativeSlideInformation info = iterator.next();
+        IntroSlideInformation info = iterator.next();
         root.add(new Label(info.text, Icons.image(info.background))
                 .addStyles(Style.TEXT_WRAP.on,
                         Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
@@ -95,7 +99,7 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
                     @Override
                     public void onEmit(ClickableLabel event) {
                         if (iterator.hasNext()) {
-                            screenStack.replace(new NarrativeScreen(screenStack, iterator), screenStack.slide());
+                            screenStack.replace(new IntroScreen(screenStack, iterator), screenStack.slide());
                         } else {
                             screenStack.replace(new GameScreen(screenStack), screenStack.slide());
                         }
@@ -108,7 +112,7 @@ public class NarrativeScreen extends ScreenStack.UIScreen {
             c.close();
         }
         if (iterator.hasNext()) {
-            screenStack.replace(new NarrativeScreen(screenStack, iterator), screenStack.slide());
+            screenStack.replace(new IntroScreen(screenStack, iterator), screenStack.slide());
         } else {
             screenStack.replace(new GameScreen(screenStack), screenStack.slide());
         }

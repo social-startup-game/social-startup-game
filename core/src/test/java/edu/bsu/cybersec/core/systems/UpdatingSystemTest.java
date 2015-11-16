@@ -17,15 +17,15 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.Updatable;
 import org.junit.Test;
 import org.mockito.Matchers;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public final class UpdatingSystemTest extends AbstractSystemTest {
 

@@ -17,8 +17,10 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.*;
+import org.junit.Assert;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
@@ -152,7 +154,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     public void testFeatureCompletion_enablesUserGeneration() {
         whenAFeatureIsCompleted();
         whenOneDayOfGameTimeElapses();
-        assertEquals(UsersPerHourState.ACTIVE.value, world.usersPerHourState.get(completedDevelopmentEntity.id));
+        Assert.assertEquals(UsersPerHourState.ACTIVE.value, world.usersPerHourState.get(completedDevelopmentEntity.id));
     }
 
     /**

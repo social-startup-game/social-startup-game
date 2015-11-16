@@ -21,6 +21,8 @@ package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.intro.IntroScreen;
+import edu.bsu.cybersec.core.intro.IntroSlideInformation;
 import playn.core.Game;
 import playn.core.Image;
 import playn.scene.Pointer;
@@ -33,11 +35,11 @@ import static com.google.common.base.Preconditions.*;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
-    private final ImmutableList<NarrativeSlideInformation> narrativeInfoList = ImmutableList.of(
-            new NarrativeSlideInformation("Social Jam is an up and coming social media service, and they have hired you as their chief security advisor.", ImageCache.instance().NARRATIVE_BACKGROUND_1),
-            new NarrativeSlideInformation("You were hired to manage a team of developers and protect the company from hackers! ", ImageCache.instance().NARRATIVE_BACKGROUND_2),
-            new NarrativeSlideInformation("You have three employees. Assign them to develop features or maintain your current system.", ImageCache.instance().NARRATIVE_BACKGROUND_3),
-            new NarrativeSlideInformation("You have a job review in two weeks. Do you have what it takes?", ImageCache.instance().NARRATIVE_BACKGROUND_4)
+    private final ImmutableList<IntroSlideInformation> narrativeInfoList = ImmutableList.of(
+            new IntroSlideInformation("Social Jam is an up and coming social media service, and they have hired you as their chief security advisor.", ImageCache.instance().NARRATIVE_BACKGROUND_1),
+            new IntroSlideInformation("You were hired to manage a team of developers and protect the company from hackers! ", ImageCache.instance().NARRATIVE_BACKGROUND_2),
+            new IntroSlideInformation("You have three employees. Assign them to develop features or maintain your current system.", ImageCache.instance().NARRATIVE_BACKGROUND_3),
+            new IntroSlideInformation("You have a job review in two weeks. Do you have what it takes?", ImageCache.instance().NARRATIVE_BACKGROUND_4)
     );
 
     public StartingScreen(ScreenStack screenStack) {
@@ -54,7 +56,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                 .add(new Button("Start the Game!").onClick(new Slot<Button>() {
                     @Override
                     public void onEmit(Button button) {
-                        screenStack.push(new NarrativeScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
+                        screenStack.push(new IntroScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
                     }
                 }))
                 .add(new Button("Credits").onClick(new Slot<Button>() {

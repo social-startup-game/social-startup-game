@@ -17,44 +17,37 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SystemPriority;
+import edu.bsu.cybersec.core.Updatable;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
-public final class MaintenanceSystem extends tripleplay.entity.System {
+public class UpdatingSystem extends tripleplay.entity.System {
 
-    private final GameWorld world;
+    private final GameWorld gameWorld;
 
-    public MaintenanceSystem(GameWorld world) {
+    public UpdatingSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
-        this.world = checkNotNull(world);
+        this.gameWorld = checkNotNull(world);
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        boolean interested = entity.has(world.tasked)
-                && world.tasked.get(entity.id) == Task.MAINTENANCE;
-        if (interested) {
-            checkState(entity.has(world.maintenanceSkill));
-        }
-        return interested;
+        return entity.has(gameWorld.onUpdate);
     }
 
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        final int elapsedSeconds = world.gameTime.get().delta();
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
-            final float currentExposure = world.exposure.get();
-            final float percentChangePerHour = (int) world.maintenanceSkill.get(id) / 1000f; // 5 skill = 0.05%
-            final float changePerHour = currentExposure * percentChangePerHour;
-            final float change = changePerHour * elapsedSeconds / ClockUtils.SECONDS_PER_HOUR;
-            world.exposure.update(currentExposure - change);
+            final Updatable updatable = gameWorld.onUpdate.get(id);
+            updatable.update(clock);
         }
     }
 }

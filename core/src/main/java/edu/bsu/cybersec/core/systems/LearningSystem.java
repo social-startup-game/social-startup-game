@@ -17,16 +17,20 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
 import com.google.common.collect.ImmutableMap;
+import edu.bsu.cybersec.core.ClockUtils;
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SystemPriority;
+import edu.bsu.cybersec.core.Task;
 import playn.core.Clock;
 import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
 
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class LearningSystem extends tripleplay.entity.System {
 

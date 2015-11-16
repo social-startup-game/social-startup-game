@@ -17,22 +17,16 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.intro;
 
-public enum VulnerabilityState {
-    ACTIVE(1),
-    INACTIVE(0);
+import playn.core.Image;
 
-    public final int value;
+public class IntroSlideInformation {
+    public final String text;
+    public final Image background;
 
-    VulnerabilityState(int value) {
-        this.value = value;
-    }
-
-    public static VulnerabilityState fromInt(int value) {
-        for (VulnerabilityState potential : values()) {
-            if (value == potential.value) return potential;
-        }
-        throw new IllegalArgumentException("Unrecognized value: " + value);
+    public IntroSlideInformation(String text, Image background) {
+        this.text = text;
+        this.background = background;
     }
 }

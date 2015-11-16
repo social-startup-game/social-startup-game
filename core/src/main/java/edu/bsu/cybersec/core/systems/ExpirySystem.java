@@ -17,29 +17,26 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
-public final class EventTriggerSystem extends tripleplay.entity.System {
-    private final GameWorld gameWorld;
+public final class ExpirySystem extends tripleplay.entity.System {
+    private final GameWorld world;
 
-    public EventTriggerSystem(GameWorld gameWorld) {
-        super(gameWorld, SystemPriority.MODEL_LEVEL.value);
-        this.gameWorld = checkNotNull(gameWorld);
+    public ExpirySystem(GameWorld world) {
+        super(world, SystemPriority.MODEL_LEVEL.value);
+        this.world = checkNotNull(world);
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        boolean interested = entity.has(gameWorld.timeTrigger);
-        if (interested) {
-            checkState(entity.has(gameWorld.event), "I expect every time triggerable thing to have an event.");
-        }
-        return interested;
+        return entity.has(world.expiresIn);
     }
 
     @Override
@@ -47,18 +44,12 @@ public final class EventTriggerSystem extends tripleplay.entity.System {
         super.update(clock, entities);
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
-            final int time = gameWorld.timeTrigger.get(id);
-            if (gameWorld.gameTime.get().contains(time)) {
-                runIfPossible(id);
+            final int oldRemaining = world.expiresIn.get(id);
+            final int nowRemaining = oldRemaining - clock.dt;
+            world.expiresIn.set(id, nowRemaining);
+            if (nowRemaining <= 0) {
+                world.entity(id).close();
             }
-        }
-    }
-
-    private void runIfPossible(int id) {
-        Runnable runnable = gameWorld.event.get(id);
-        if (runnable != null) {
-            gameWorld.event.get(id).run();
-            gameWorld.event.set(id, null);
         }
     }
 }

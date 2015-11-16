@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.*;
+import edu.bsu.cybersec.core.systems.WorldLogSystem;
 import playn.core.*;
 import playn.scene.Mouse;
 import playn.scene.Pointer;

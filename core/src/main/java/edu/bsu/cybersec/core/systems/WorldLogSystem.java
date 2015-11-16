@@ -17,34 +17,49 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
+import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-public class UpdatingSystem extends tripleplay.entity.System {
+public final class WorldLogSystem extends tripleplay.entity.System {
 
     private final GameWorld gameWorld;
 
-    public UpdatingSystem(GameWorld world) {
-        super(world, SystemPriority.MODEL_LEVEL.value);
-        this.gameWorld = checkNotNull(world);
+    public WorldLogSystem(GameWorld gameWorld) {
+        super(gameWorld, SystemPriority.DEBUG_LEVEL.value);
+        this.gameWorld = gameWorld;
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(gameWorld.onUpdate);
+        return true;
     }
 
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        for (int i = 0, limit = entities.size(); i < limit; i++) {
-            final int id = entities.get(i);
-            final Updatable updatable = gameWorld.onUpdate.get(id);
-            updatable.update(clock);
+        final int limit = entities.size();
+        for (String name : gameWorld.components.keySet()) {
+            Component component = gameWorld.components.get(name);
+            int count = 0;
+            for (int i = 0; i < limit; i++) {
+                if (gameWorld.entity(entities.get(i)).has(component)) {
+                    count++;
+                }
+            }
+            debug(name + ": " + count);
         }
+        setEnabled(false);
     }
+
+    private static void debug(String mesg) {
+        SimGame.game.plat.log().debug(mesg);
+    }
+
+
 }
