@@ -34,7 +34,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class EventsGroup extends InteractionAreaGroup {
     private static final Graphics graphics = SimGame.game.plat.graphics();
@@ -44,7 +44,6 @@ public class EventsGroup extends InteractionAreaGroup {
     private static float percentOfScreenHeight(float percent) {
         return graphics.viewSize.height() * percent;
     }
-
 
     private final GameWorld gameWorld;
     private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Palette.FOREGROUND));
@@ -65,11 +64,10 @@ public class EventsGroup extends InteractionAreaGroup {
         });
     }
 
-
     @Override
     protected void wasParented(Container<?> parent) {
         super.wasParented(parent);
-        parentSize = parent.size();
+        parentSize = new Dimension(parent.size());
         checkState(!parent.size().equals(new Dimension(0, 0)),
                 "I expect parent to have non-zero size so I can lay out my content.");
         if (onParented != null) {
