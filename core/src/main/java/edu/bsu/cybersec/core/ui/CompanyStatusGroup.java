@@ -26,7 +26,7 @@ import tripleplay.entity.Entity;
 import tripleplay.ui.Label;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public final class CompanyStatusGroup extends InteractionAreaGroup {
 
@@ -62,12 +62,17 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
 
         @Override
         protected void update(Clock clock, Entities entities) {
+            float sum = sumOfUsersPerHour(entities);
+            String truncatedUsersPerHour = truncator.makeTruncatedString(sum);
+            usersPerHourLabel.text.update(TEXT + truncatedUsersPerHour);
+        }
+
+        private float sumOfUsersPerHour(Entities entities) {
             float sum = 0;
             for (int i = 0, limit = entities.size(); i < limit; i++) {
                 sum += gameWorld.usersPerHour.get(entities.get(i));
             }
-            String truncatedUsersPerHour = truncator.makeTruncatedString(sum);
-            usersPerHourLabel.text.update(TEXT + truncatedUsersPerHour);
+            return sum;
         }
     }
 
