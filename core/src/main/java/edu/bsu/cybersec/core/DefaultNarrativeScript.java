@@ -57,12 +57,14 @@ public final class DefaultNarrativeScript {
             final int numberOfWorkers = world.workers.size();
             for (int i = 0, limit = numberOfWorkers - 1; i < limit; i++) {
                 final Entity e = world.workers.get(i);
-                namesBuilder.append(world.name.get(e.id).shortName);
+                final EmployeeProfile profile = world.profile.get(e.id);
+                namesBuilder.append(profile.firstName);
                 namesBuilder.append(", ");
             }
             final Entity last = world.workers.get(numberOfWorkers - 1);
+            final EmployeeProfile profile = world.profile.get(last.id);
             namesBuilder.append("and ");
-            namesBuilder.append(world.name.get(last.id).shortName);
+            namesBuilder.append(profile.firstName);
             return namesBuilder.toString();
         }
 

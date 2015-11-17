@@ -177,15 +177,15 @@ public class MainUIGroup extends Group {
         }
 
         private Group createControlsAndBioGroup(Root root) {
-            final Name name = gameWorld.name.get(id);
+            final EmployeeProfile profile = gameWorld.profile.get(id);
             final float borderThickness = percentOfViewHeight(0.005f);
             Group employeeDataGroup = new Group(AxisLayout.vertical())
-                    .add(dialogStyledLabel(name.fullName),
+                    .add(dialogStyledLabel(profile.firstName + " " + profile.lastName),
                             createSkillBlock("Development", developmentSkill),
                             createSkillBlock("Maintenance", maintenanceSkill),
-                            wrappingLabel("Degree: Bachelor of Science"),
+                            wrappingLabel("Degree: " + profile.degree),
                             wrappingLabel("Discipline: Computer Science"),
-                            wrappingLabel("University: Ball State"))
+                            wrappingLabel("University: " + profile.university))
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness)));
@@ -193,7 +193,7 @@ public class MainUIGroup extends Group {
             final Font nameFont = FontCache.instance().REGULAR.derive(percentOfViewHeight(0.03f));
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
-                            dialogStyledLabel(name.shortName)
+                            dialogStyledLabel(profile.firstName)
                                     .addStyles(Style.FONT.is(nameFont),
                                             Style.COLOR.is(Palette.NAME_COLOR)),
                             createSkillSummaryGroup(),

@@ -34,7 +34,7 @@ public class PlayableWorldFactory {
 
     private static final int DAYS_UNTIL_GAME_END = 14;
 
-    private final Map<Name, Image> DEVELOPERS;
+    private final Map<EmployeeProfile, Image> DEVELOPERS;
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     private final GameConfig config;
@@ -42,9 +42,23 @@ public class PlayableWorldFactory {
     public PlayableWorldFactory(ImageCache imageCache, GameConfig config) {
         DEVELOPERS =
                 ImmutableMap.of(
-                        Name.first("Esteban").andLast("Cortez"), imageCache.ESTEBAN,
-                        Name.first("Nancy").andLast("Stevens"), imageCache.NANCY,
-                        Name.first("Jerry").andLast("Chen"), imageCache.JERRY);
+                        EmployeeProfile.firstName("Esteban").lastName("Cortez")
+                                .degree(EmployeeProfile.Degree.BS)
+                                .university("Ball State University")
+                                .bio("He likes cheese."),
+                        imageCache.ESTEBAN,
+
+                        EmployeeProfile.firstName("Nancy").lastName("Stevens")
+                                .degree(EmployeeProfile.Degree.MS)
+                                .university("Georgetown University")
+                                .bio("She likes cheese."),
+                        imageCache.NANCY,
+
+                        EmployeeProfile.firstName("Jerry").lastName("Chen")
+                                .degree(EmployeeProfile.Degree.BS)
+                                .university("Purdue University")
+                                .bio("He does not like cheese."),
+                        imageCache.JERRY);
         this.config = checkNotNull(config);
     }
 
@@ -85,27 +99,27 @@ public class PlayableWorldFactory {
 
     private void makeDevelopers(int number) {
         checkArgument(number >= 0);
-        Iterator<Name> names = DEVELOPERS.keySet().iterator();
+        Iterator<EmployeeProfile> profiles = DEVELOPERS.keySet().iterator();
         for (int i = 0; i < number; i++) {
-            Entity e = makeDeveloper(i, names.next());
+            Entity e = makeDeveloper(i, profiles.next());
             world.workers.add(e);
         }
     }
 
-    private Entity makeDeveloper(final int number, final Name name) {
+    private Entity makeDeveloper(final int number, final EmployeeProfile profile) {
         Entity developer = world.create(true)
                 .add(world.employeeNumber,
                         world.developmentSkill,
                         world.tasked,
                         world.maintenanceSkill,
-                        world.name,
+                        world.profile,
                         world.image);
         world.employeeNumber.set(developer.id, number);
         world.tasked.set(developer.id, Task.MAINTENANCE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 5);
-        world.name.set(developer.id, name);
-        world.image.set(developer.id, DEVELOPERS.get(name));
+        world.profile.set(developer.id, profile);
+        world.image.set(developer.id, DEVELOPERS.get(profile));
         return developer;
     }
 

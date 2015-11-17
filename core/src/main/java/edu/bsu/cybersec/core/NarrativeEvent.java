@@ -134,7 +134,7 @@ public class NarrativeEvent implements Runnable {
         for (final Entity e : gameWorld.workers) {
             checkState(e.has(gameWorld.tasked), "Worker is missing its task!");
             if (gameWorld.tasked.get(e.id).isReassignable()) {
-                final String name = gameWorld.name.get(e.id).shortName;
+                final String name = gameWorld.profile.get(e.id).firstName;
                 Option option = new Option(name, new Runnable() {
                     @Override
                     public void run() {

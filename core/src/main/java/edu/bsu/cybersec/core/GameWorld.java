@@ -63,6 +63,7 @@ public class GameWorld extends World {
     public final Component.IScalar exploitNumber = register("exploitNumber", new Component.IScalar(this));
     public final Component.FScalar userAttrition = register("userAttrition", new Component.FScalar(this));
     public final Component.IScalar lostUsers = register("lostUsers", new Component.IScalar(this));
+    public final Component.Generic<EmployeeProfile> profile = register("profile", new Component.Generic<EmployeeProfile>(this));
 
     private <T extends Component> T register(String name, T component) {
         components.put(name, component);
