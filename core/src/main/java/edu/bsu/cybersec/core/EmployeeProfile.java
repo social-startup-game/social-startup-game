@@ -21,7 +21,7 @@ package edu.bsu.cybersec.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class EmployeeProfile {
+public class EmployeeProfile {
 
     public enum Degree {
         BS("Bachelor of Science"), MS("Master of Science");

@@ -63,9 +63,9 @@ public final class NarrativeEventTest extends AbstractSystemTest {
 
     private void givenAWorldWithThreeWorkers() {
         for (int i = 0; i < 3; i++) {
-            Entity e = world.create(true).add(world.name, world.employeeNumber, world.tasked);
+            Entity e = world.create(true).add(world.profile, world.employeeNumber, world.tasked);
             world.employeeNumber.set(e.id, i);
-            world.name.set(e.id, Name.first("Bob").andLast("Ross " + i));
+            world.profile.set(e.id, mock(EmployeeProfile.class));
             world.tasked.set(e.id, mockReassignableTask());
             world.workers.add(e);
         }

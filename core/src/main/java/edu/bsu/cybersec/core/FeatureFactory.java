@@ -73,8 +73,8 @@ public class FeatureFactory {
             return entity;
         }
 
-        private Name nextFeatureName() {
-            return Name.simply(FEATURE_NAMES[(int) (Math.random() * FEATURE_NAMES.length)]);
+        private String nextFeatureName() {
+            return FEATURE_NAMES[(int) (Math.random() * FEATURE_NAMES.length)];
         }
 
         private float generateUsersPerHour() {

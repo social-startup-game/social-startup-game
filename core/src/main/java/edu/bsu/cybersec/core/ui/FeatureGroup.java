@@ -21,14 +21,11 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
 import tripleplay.entity.Entity;
-import tripleplay.ui.Group;
-import tripleplay.ui.layout.AxisLayout;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class FeatureGroup extends ScrollingListInteractionAreaGroup {
 
-    private final Group featureList = new Group(AxisLayout.vertical().offStretch());
     private final GameWorld world;
 
     public FeatureGroup(final GameWorld gameWorld) {
@@ -53,7 +50,7 @@ public final class FeatureGroup extends ScrollingListInteractionAreaGroup {
         public void update(int entityId) {
             Entity entity = world.entity(entityId);
             final int number = world.featureNumber.get(entityId);
-            final String numberAndName = number + ": " + world.name.get(entityId).fullName;
+            final String numberAndName = number + ": " + world.name.get(entityId);
             if (entity.has(world.developmentProgress)) {
                 final int progress = (int) (world.developmentProgress.get(entityId) / world.goal.get(entityId) * 100);
                 text.update(numberAndName + " [" + progress + "%]");
