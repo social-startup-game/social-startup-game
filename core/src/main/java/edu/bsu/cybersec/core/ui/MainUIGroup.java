@@ -52,7 +52,7 @@ public class MainUIGroup extends Group {
     private final GameWorld gameWorld;
     private final Value<Group> focus = Value.create(null);
     private final GameInteractionArea gameInteractionArea;
-    private final Map<Integer, DeveloperView> developerViews = Maps.newTreeMap();
+    private final Map<Integer, EmployeeView> developerViews = Maps.newTreeMap();
     private Group contentGroup;
     private EmployeeViewUpdateSystem employeeViewUpdateSystem;
 
@@ -70,9 +70,9 @@ public class MainUIGroup extends Group {
         Iterator<Image> backgroundIterator = BACKGROUNDS.iterator();
         for (Entity e : gameWorld.workers) {
             final int id = e.id;
-            DeveloperView developerView = new DeveloperView(id, root, backgroundIterator.next());
-            developerViews.put(id, developerView);
-            add(developerView);
+            EmployeeView employeeView = new EmployeeView(id, root, backgroundIterator.next());
+            developerViews.put(id, employeeView);
+            add(employeeView);
         }
         contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
                 .add(gameInteractionArea)
@@ -142,13 +142,13 @@ public class MainUIGroup extends Group {
         }
     }
 
-    private final class DeveloperView extends Group {
+    private final class EmployeeView extends Group {
 
         private final int id;
-        private Value<Integer> developmentSkill = Value.create(0);
-        private Value<Integer> maintenanceSkill = Value.create(0);
+        private final Value<Integer> developmentSkill = Value.create(0);
+        private final Value<Integer> maintenanceSkill = Value.create(0);
 
-        DeveloperView(int id, Root root, Image background) {
+        EmployeeView(int id, Root root, Image background) {
             super(AxisLayout.horizontal().offStretch());
             this.id = id;
             checkNotNull(root);
@@ -166,8 +166,8 @@ public class MainUIGroup extends Group {
                     .onClick(new Slot<ClickableLabel>() {
                         @Override
                         public void onEmit(ClickableLabel event) {
-                            if (focus.get() != DeveloperView.this) {
-                                focus.update(DeveloperView.this);
+                            if (focus.get() != EmployeeView.this) {
+                                focus.update(EmployeeView.this);
                             } else {
                                 focus.update(null);
                             }
@@ -388,7 +388,7 @@ public class MainUIGroup extends Group {
         }
 
         private void updateDeveloperInfoArea(int id) {
-            DeveloperView view = checkNotNull(developerViews.get(id), "Missing developer");
+            EmployeeView view = checkNotNull(developerViews.get(id), "Missing developer");
             view.update();
         }
     }
