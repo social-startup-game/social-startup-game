@@ -43,20 +43,17 @@ public class PlayableWorldFactory {
         DEVELOPERS =
                 ImmutableMap.of(
                         EmployeeProfile.firstName("Esteban").lastName("Cortez")
-                                .degree(EmployeeProfile.Degree.BS)
-                                .university("Ball State University")
+                                .withDegree("Bachelors in Computer Science").from("Ball State University")
                                 .bio("He likes cheese."),
                         imageCache.ESTEBAN,
 
                         EmployeeProfile.firstName("Nancy").lastName("Stevens")
-                                .degree(EmployeeProfile.Degree.MS)
-                                .university("Georgetown University")
+                                .withDegree("Bachelors in Computer Science").from("Georgetown University")
+                                .withDegree("Masters in Computer Security").from("Purdue University")
                                 .bio("She likes cheese."),
                         imageCache.NANCY,
 
                         EmployeeProfile.firstName("Jerry").lastName("Chen")
-                                .degree(EmployeeProfile.Degree.BS)
-                                .university("Purdue University")
                                 .bio("He does not like cheese."),
                         imageCache.JERRY);
         this.config = checkNotNull(config);

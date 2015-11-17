@@ -182,11 +182,11 @@ public class MainUIGroup extends Group {
             Group employeeDataGroup = new Group(AxisLayout.vertical().offStretch())
                     .add(dialogStyledLabel(profile.firstName + " " + profile.lastName),
                             createSkillBlock("Development", developmentSkill),
-                            createSkillBlock("Maintenance", maintenanceSkill),
-                            wrappingLabel("Degree: " + profile.degree),
-                            wrappingLabel("Discipline: Computer Science"),
-                            wrappingLabel("University: " + profile.university),
-                            wrappingLabel(profile.bio))
+                            createSkillBlock("Maintenance", maintenanceSkill));
+            for (EmployeeProfile.Credential credential : profile.credentials) {
+                employeeDataGroup.add(wrappingLabel(credential.name + " (" + credential.provider + ")"));
+            }
+            employeeDataGroup.add(wrappingLabel(profile.bio))
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness * 2)));

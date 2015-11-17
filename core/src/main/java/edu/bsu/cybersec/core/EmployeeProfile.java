@@ -19,35 +19,53 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class EmployeeProfile {
 
-    public enum Degree {
-        BS("Bachelor of Science"), MS("Master of Science");
-        private final String text;
-
-        Degree(String text) {
-            this.text = text;
+    public static final class Credential {
+        private static Builder named(String name) {
+            return new Builder(name);
         }
 
-        @Override
-        public String toString() {
-            return text;
+        private static final class Builder {
+            private final String name;
+            private String provider;
+
+            private Builder(String name) {
+                this.name = checkNotNull(name);
+            }
+
+            public Credential from(String provider) {
+                this.provider = checkNotNull(provider);
+                return new Credential(this);
+            }
         }
+
+        public final String provider;
+        public final String name;
+
+        private Credential(Builder importer) {
+            this.provider = importer.provider;
+            this.name = importer.name;
+        }
+
     }
 
     public final String firstName;
     public final String lastName;
-    public final Degree degree;
-    public final String university;
+    public final ImmutableList<Credential> credentials;
     public final String bio;
 
     private EmployeeProfile(Builder importer) {
         this.firstName = importer.firstName;
         this.lastName = importer.lastName;
-        this.degree = importer.degree;
-        this.university = importer.university;
+        this.credentials = ImmutableList.copyOf(importer.credentials);
         this.bio = importer.bio;
     }
 
@@ -58,8 +76,7 @@ public class EmployeeProfile {
     public static final class Builder {
         private String firstName;
         private String lastName;
-        private Degree degree;
-        private String university;
+        private List<Credential> credentials = Lists.newArrayList();
         private String bio;
 
         public Builder(String firstName) {
@@ -71,14 +88,8 @@ public class EmployeeProfile {
             return this;
         }
 
-        public Builder degree(Degree degree) {
-            this.degree = degree;
-            return this;
-        }
-
-        public Builder university(String university) {
-            this.university = university;
-            return this;
+        public CredentialBuilder withDegree(String name) {
+            return new CredentialBuilder(name);
         }
 
         public EmployeeProfile bio(String bio) {
@@ -90,9 +101,21 @@ public class EmployeeProfile {
         private void checkAllFieldsSpecified() {
             checkNotNull(firstName);
             checkNotNull(lastName);
-            checkNotNull(degree);
-            checkNotNull(university);
             checkNotNull(bio);
+        }
+
+        public final class CredentialBuilder {
+            private String name;
+
+            private CredentialBuilder(String name) {
+                this.name = checkNotNull(name);
+            }
+
+            public Builder from(String institution) {
+                Credential credential = Credential.named(name).from(institution);
+                credentials.add(credential);
+                return Builder.this;
+            }
         }
     }
 }
