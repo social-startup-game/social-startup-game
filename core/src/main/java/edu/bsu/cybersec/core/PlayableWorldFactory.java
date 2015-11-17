@@ -44,17 +44,17 @@ public class PlayableWorldFactory {
                 ImmutableMap.of(
                         EmployeeProfile.firstName("Esteban").lastName("Cortez")
                                 .withDegree("Bachelors in Computer Science").from("Ball State University")
-                                .bio("He likes cheese."),
+                                .bio("Esteban worked in a factory until he was 33, then he went to college and decided to get involved in software development."),
                         imageCache.ESTEBAN,
 
                         EmployeeProfile.firstName("Nancy").lastName("Stevens")
                                 .withDegree("Bachelors in Computer Science").from("Georgetown University")
                                 .withDegree("Masters in Computer Security").from("Purdue University")
-                                .bio("She likes cheese."),
+                                .bio("Nancy has a popular podcast about being a woman in technology."),
                         imageCache.NANCY,
 
                         EmployeeProfile.firstName("Jerry").lastName("Chen")
-                                .bio("He does not like cheese."),
+                                .bio("Jerry interned at a local company in high school and has been working as a software developer ever since."),
                         imageCache.JERRY);
         this.config = checkNotNull(config);
     }
