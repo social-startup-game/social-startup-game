@@ -185,11 +185,12 @@ public class MainUIGroup extends Group {
                             createSkillBlock("Maintenance", maintenanceSkill),
                             wrappingLabel("Degree: " + profile.degree),
                             wrappingLabel("Discipline: Computer Science"),
-                            wrappingLabel("University: " + profile.university))
+                            wrappingLabel("University: " + profile.university),
+                            wrappingLabel(profile.bio))
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness)));
-            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.06f);
+            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.04f);
             final Font nameFont = FontCache.instance().REGULAR.derive(percentOfViewHeight(0.03f));
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
@@ -199,7 +200,6 @@ public class MainUIGroup extends Group {
                             createSkillSummaryGroup(),
                             new TaskSelector(root, gameWorld.entity(id)),
                             new Shim(0, spaceAroundNameAndTaskArea),
-                            new Shim(0, 0).setConstraint(AxisLayout.stretched()),
                             employeeDataGroup,
                             new Shim(0, 0).setConstraint(AxisLayout.stretched()))
                     .setConstraint(AxisLayout.stretched(CONTROLS_AREA_WEIGHT));
