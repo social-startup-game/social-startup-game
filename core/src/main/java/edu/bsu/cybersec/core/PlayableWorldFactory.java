@@ -19,13 +19,11 @@
 
 package edu.bsu.cybersec.core;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.ui.ImageCache;
-import playn.core.Image;
 import tripleplay.entity.Entity;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,29 +32,13 @@ public class PlayableWorldFactory {
 
     private static final int DAYS_UNTIL_GAME_END = 14;
 
-    private final Map<EmployeeProfile, Image> DEVELOPERS;
-
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     private final GameConfig config;
+    private final ImageCache imageCache;
 
     public PlayableWorldFactory(ImageCache imageCache, GameConfig config) {
-        DEVELOPERS =
-                ImmutableMap.of(
-                        EmployeeProfile.firstName("Esteban").lastName("Cortez")
-                                .withDegree("Bachelors in Computer Science").from("Ball State University")
-                                .bio("Esteban worked in a factory until he was 33, then he went to college and decided to get involved in software development."),
-                        imageCache.ESTEBAN,
-
-                        EmployeeProfile.firstName("Nancy").lastName("Stevens")
-                                .withDegree("Bachelors in Computer Science").from("Georgetown University")
-                                .withDegree("Masters in Computer Security").from("Purdue University")
-                                .bio("Nancy has a popular podcast about being a woman in technology."),
-                        imageCache.NANCY,
-
-                        EmployeeProfile.firstName("Jerry").lastName("Chen")
-                                .bio("Jerry interned at a local company in high school and has been working as a software developer ever since."),
-                        imageCache.JERRY);
         this.config = checkNotNull(config);
+        this.imageCache = checkNotNull(imageCache);
     }
 
     public GameWorld.Systematized createPlayableGameWorld() {
@@ -96,14 +78,15 @@ public class PlayableWorldFactory {
 
     private void makeDevelopers(int number) {
         checkArgument(number >= 0);
-        Iterator<EmployeeProfile> profiles = DEVELOPERS.keySet().iterator();
+        EmployeePool pool = EmployeePool.create(imageCache);
+        List<EmployeePool.Employee> employees = ImmutableList.copyOf(pool.recruit(number));
         for (int i = 0; i < number; i++) {
-            Entity e = makeDeveloper(i, profiles.next());
+            Entity e = makeDeveloper(i, employees.get(i));
             world.workers.add(e);
         }
     }
 
-    private Entity makeDeveloper(final int number, final EmployeeProfile profile) {
+    private Entity makeDeveloper(final int number, final EmployeePool.Employee employee) {
         Entity developer = world.create(true)
                 .add(world.employeeNumber,
                         world.developmentSkill,
@@ -115,8 +98,8 @@ public class PlayableWorldFactory {
         world.tasked.set(developer.id, Task.MAINTENANCE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 5);
-        world.profile.set(developer.id, profile);
-        world.image.set(developer.id, DEVELOPERS.get(profile));
+        world.profile.set(developer.id, employee.profile);
+        world.image.set(developer.id, employee.image);
         return developer;
     }
 

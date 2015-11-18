@@ -34,6 +34,9 @@ public final class ImageCache {
     public final Image ESTEBAN = load("Esteban.png");
     public final Image NANCY = load("Nancy.png");
     public final Image JERRY = load("Jerry.png");
+    public final Image VANI = load("Vani.png");
+    public final Image ABDULLAH = load("Abdullah.png");
+    public final Image JANINE = load("Janine.png");
     public final Image EMPLOYEE_BG_1 = load("employee_bg_1.jpg");
     public final Image EMPLOYEE_BG_2 = load("employee_bg_2.jpg");
     public final Image EMPLOYEE_BG_4 = load("employee_bg_4.jpg");
