@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
@@ -55,6 +56,7 @@ public class MainUIGroup extends Group {
     private final Map<Integer, EmployeeView> developerViews = Maps.newTreeMap();
     private Group contentGroup;
     private EmployeeViewUpdateSystem employeeViewUpdateSystem;
+    private TaskIconFactory taskIconFactory = new TaskIconFactory();
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface, Root root) {
         super(AxisLayout.vertical().offStretch().gap(0));
@@ -132,13 +134,14 @@ public class MainUIGroup extends Group {
         });
     }
 
-    private static final class TaskItem extends MenuItem {
+    private final class TaskItem extends MenuItem {
 
         public final Task task;
 
         public TaskItem(Task task) {
             super(task.name.get());
             this.task = checkNotNull(task);
+            icon.update(taskIconFactory.getIcon(task));
         }
     }
 
@@ -187,7 +190,7 @@ public class MainUIGroup extends Group {
                     .addStyles(Style.BACKGROUND.is(
                             Background.bordered(Palette.DIALOG_BACKGROUND, Palette.DIALOG_BORDER, borderThickness)
                                     .inset(borderThickness * 2)));
-            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.04f);
+            final float spaceAroundNameAndTaskArea = percentOfViewHeight(0.03f);
             final Font nameFont = FontCache.instance().REGULAR.derive(percentOfViewHeight(0.03f));
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
@@ -205,10 +208,10 @@ public class MainUIGroup extends Group {
         private Group createSkillSummaryGroup() {
             final int color = Palette.NAME_COLOR;
             return new Group(AxisLayout.horizontal())
-                    .add(new Label("D:").addStyles(Style.COLOR.is(color)),
+                    .add(new Label(taskIconFactory.getIcon(Task.DEVELOPMENT)).addStyles(Style.COLOR.is(color)),
                             createSkillLabel(developmentSkill),
                             new Shim(percentOfViewHeight(0.001f), 0),
-                            new Label("M:").addStyles(Style.COLOR.is(color)),
+                            new Label(taskIconFactory.getIcon(Task.MAINTENANCE)).addStyles(Style.COLOR.is(color)),
                             createSkillLabel(maintenanceSkill));
         }
 
@@ -256,14 +259,11 @@ public class MainUIGroup extends Group {
     }
 
     private final class TaskSelector extends Button {
-
-        private final Icon triangleIcon = Icons.image(ImageCache.instance().SMALL_TRIANGLE);
         Task selected;
 
         TaskSelector(Root root, final Entity worker) {
             super();
-            icon.update(triangleIcon);
-            setStyles(Style.ICON_POS.right);
+            updateIconBasedOnSelectedTask();
             Task currentTask = gameWorld.tasked.get(worker.id);
             select(currentTask);
             final MenuHost menuHost = new MenuHost(iface, root);
@@ -301,13 +301,20 @@ public class MainUIGroup extends Group {
             employeeViewUpdateSystem.track(worker.id, this);
         }
 
+        private void updateIconBasedOnSelectedTask() {
+            if (selected != null) {
+                Icon taskIcon = taskIconFactory.getIcon(selected);
+                icon.update(taskIcon);
+            }
+        }
+
         public void select(Task task) {
             checkNotNull(task);
             if (selected != task) {
                 selected = task;
                 connectLabelTextTo(task);
                 setEnabled(task.isReassignable());
-                updateIconBasedOnReassignability(task);
+                updateIconBasedOnSelectedTask();
             }
         }
 
@@ -316,13 +323,6 @@ public class MainUIGroup extends Group {
             task.name.connect(text.slot());
         }
 
-        private void updateIconBasedOnReassignability(Task task) {
-            if (task.isReassignable()) {
-                icon.update(triangleIcon);
-            } else {
-                icon.update(null);
-            }
-        }
     }
 
     private class EmployeeViewUpdateSystem extends tripleplay.entity.System {
@@ -375,6 +375,26 @@ public class MainUIGroup extends Group {
         private void updateDeveloperInfoArea(int id) {
             EmployeeView view = checkNotNull(developerViews.get(id), "Missing developer");
             view.update();
+        }
+    }
+}
+
+final class TaskIconFactory {
+    private final ImageCache imageCache = ImageCache.instance();
+    private Map<Task, Image> iconMap = ImmutableMap.of(
+            Task.MAINTENANCE, imageCache.WRENCH,
+            Task.DEVELOPMENT, imageCache.STAR);
+
+    public Icon getIcon(Task task) {
+        if (!iconMap.containsKey(task)) {
+            return null;
+        } else {
+            final Image image = iconMap.get(task);
+            final float imageHeight = image.height();
+            final float viewHeight = SimGame.game.plat.graphics().viewSize.height();
+            final float percentOfScreenHeight = 0.04f;
+            final float scale = (viewHeight * percentOfScreenHeight) / imageHeight;
+            return Icons.scaled(Icons.image(image), scale);
         }
     }
 }

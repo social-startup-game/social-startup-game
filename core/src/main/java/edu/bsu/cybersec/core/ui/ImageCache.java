@@ -49,9 +49,10 @@ public final class ImageCache {
     public final Image ENVELOPE = load("envelope.png");
     public final Image STAR = load("star.png");
     public final Image WRENCH = load("wrench.png");
-    public final Image SMALL_TRIANGLE = load("small-triangle.png");
     public final Image LOGO = load("logo.png");
+
     private final ImmutableList<Image> all = listBuilder.build();
+
     private ImageCache() {
     }
 
