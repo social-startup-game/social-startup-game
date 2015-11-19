@@ -179,10 +179,7 @@ public class MainUIGroup extends Group {
         private Group createControlsAndBioGroup(Root root) {
             final EmployeeProfile profile = gameWorld.profile.get(id);
             final float borderThickness = percentOfViewHeight(0.005f);
-            Group employeeDataGroup = new Group(AxisLayout.vertical().offStretch())
-                    .add(dialogStyledLabel(profile.firstName + " " + profile.lastName),
-                            createSkillBlock("Development", developmentSkill),
-                            createSkillBlock("Maintenance", maintenanceSkill));
+            Group employeeDataGroup = new Group(AxisLayout.vertical().offStretch());
             for (EmployeeProfile.Credential credential : profile.credentials) {
                 employeeDataGroup.add(wrappingLabel(credential.name + " (" + credential.provider + ")"));
             }
@@ -194,7 +191,7 @@ public class MainUIGroup extends Group {
             final Font nameFont = FontCache.instance().REGULAR.derive(percentOfViewHeight(0.03f));
             return new Group(AxisLayout.vertical())
                     .add(new Shim(0, spaceAroundNameAndTaskArea),
-                            dialogStyledLabel(profile.firstName)
+                            dialogStyledLabel(profile.firstName + " " + profile.lastName)
                                     .addStyles(Style.FONT.is(nameFont),
                                             Style.COLOR.is(Palette.NAME_COLOR)),
                             createSkillSummaryGroup(),
@@ -244,19 +241,6 @@ public class MainUIGroup extends Group {
             return dialogStyledLabel(s)
                     .addStyles(Style.TEXT_WRAP.on,
                             Style.HALIGN.left);
-        }
-
-        private Element<?> createSkillBlock(String name, Value<Integer> hudValue) {
-            final Label updatingLabel = new Label(hudValue.get().toString());
-            hudValue.connect(new ValueView.Listener<Integer>() {
-                @Override
-                public void onChange(Integer value, Integer oldValue) {
-                    updatingLabel.text.update("" + value);
-                }
-            });
-            return new Group(AxisLayout.horizontal())
-                    .add(new Label(name + ": "),
-                            updatingLabel);
         }
 
         private float percentOfViewHeight(float v) {
