@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.systems;
 
-import edu.bsu.cybersec.core.FeatureGenerationSystem;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import org.junit.Test;
@@ -27,7 +26,8 @@ import playn.core.Clock;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FeatureGenerationSystemTest extends AbstractSystemTest {
 
