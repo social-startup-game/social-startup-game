@@ -19,15 +19,17 @@
 
 package edu.bsu.cybersec.core;
 
-import edu.bsu.cybersec.core.systems.AbstractSystemTest;
 import org.junit.Test;
 import react.Slot;
-import tripleplay.entity.Entity;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Mockito.*;
+import java.util.List;
 
-public final class NarrativeEventTest extends AbstractSystemTest {
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+public final class NarrativeEventTest {
+
+    private GameWorld world = new GameWorld();
 
     @Test
     public void testRun_postsEventToGameWorld() {
@@ -39,7 +41,17 @@ public final class NarrativeEventTest extends AbstractSystemTest {
     }
 
     private NarrativeEvent makeTestEvent() {
-        return NarrativeEvent.inWorld(world).withText("").build();
+        return new NarrativeEvent(world) {
+            @Override
+            public List<Option> options() {
+                return null;
+            }
+
+            @Override
+            public String text() {
+                return null;
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
@@ -47,51 +59,4 @@ public final class NarrativeEventTest extends AbstractSystemTest {
         return mock(Slot.class);
     }
 
-    @Test
-    public void testEmployeeSelection_allAvailable() {
-        givenAWorldWithThreeWorkers();
-        NarrativeEvent event = makeWorkerSelectionEvent();
-        assertEquals(3, event.options().size());
-    }
-
-    private NarrativeEvent makeWorkerSelectionEvent() {
-        return NarrativeEvent.inWorld(world)
-                .withText("")
-                .addEmployeeSelectionsFor(mock(NarrativeEvent.Action.class))
-                .build();
-    }
-
-    private void givenAWorldWithThreeWorkers() {
-        for (int i = 0; i < 3; i++) {
-            Entity e = world.create(true).add(world.profile, world.employeeNumber, world.tasked);
-            world.employeeNumber.set(e.id, i);
-            world.profile.set(e.id, mock(EmployeeProfile.class));
-            world.tasked.set(e.id, mockReassignableTask());
-            world.workers.add(e);
-        }
-    }
-
-    private Task mockReassignableTask() {
-        Task task = mock(Task.class);
-        when(task.isReassignable()).thenReturn(true);
-        return task;
-    }
-
-    @Test
-    public void testEmployeeSelection_notAllAvailableWhenOneIsOccupied() {
-        givenAWorldWithThreeWorkers();
-        givenOneWorkerIsOccupied();
-        NarrativeEvent event = makeWorkerSelectionEvent();
-        assertEquals(2, event.options().size());
-    }
-
-    private void givenOneWorkerIsOccupied() {
-        Entity worker = world.workers.get(0);
-        world.tasked.set(worker.id, new Task("An unreassignable task") {
-            @Override
-            public boolean isReassignable() {
-                return false;
-            }
-        });
-    }
 }

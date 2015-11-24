@@ -108,7 +108,6 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     private void registerDebugHooks() {
         registerWorldLogSystemHook();
-        registerArtificialEventHook();
     }
 
     private void registerWorldLogSystemHook() {
@@ -127,59 +126,6 @@ public class GameScreen extends ScreenStack.UIScreen {
                     Keyboard.KeyEvent keyEvent = (Keyboard.KeyEvent) event;
                     return keyEvent.down && keyEvent.key == Key.L;
                 } else return false;
-            }
-        });
-    }
-
-    private void registerArtificialEventHook() {
-        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
-            @Override
-            public void onEmit(Keyboard.Event event) {
-                if (isDebugTrigger(event)) {
-                    makeArtificialEvent();
-                }
-            }
-
-            private boolean isDebugTrigger(Event event) {
-                if (event instanceof Keyboard.KeyEvent) {
-                    Keyboard.KeyEvent keyEvent = (Keyboard.KeyEvent) event;
-                    return keyEvent.down && keyEvent.key == Key.E;
-                } else return false;
-            }
-
-            private void makeArtificialEvent() {
-                final int hours = 48;
-                Entity e = gameWorld.create(true).add(gameWorld.timeTrigger, gameWorld.event);
-                gameWorld.timeTrigger.set(e.id, gameWorld.gameTime.get().now + 1);
-                gameWorld.event.set(e.id,
-                        NarrativeEvent.inWorld(gameWorld)
-                                .withText("Would you like to send one of your employees to a two-day conference on system maintenance?")
-                                .addEmployeeSelectionsFor(new NarrativeEvent.Action() {
-                                    @Override
-                                    public void runForSelection(final Entity worker) {
-                                        final int returnTime = gameWorld.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * hours;
-                                        gameWorld.tasked.set(worker.id,
-                                                Task.createTask("At Conference").expiringAt(returnTime).inWorld(gameWorld).build());
-                                        final Entity wakingUp = gameWorld.create(true)
-                                                .add(gameWorld.timeTrigger, gameWorld.event);
-                                        gameWorld.timeTrigger.set(wakingUp.id, returnTime);
-                                        gameWorld.event.set(wakingUp.id, new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                gameWorld.tasked.set(worker.id, Task.MAINTENANCE);
-                                                gameWorld.maintenanceSkill.add(worker.id, 10);
-                                                wakingUp.close();
-                                            }
-                                        });
-                                    }
-                                })
-                                .addOption("None").withAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Do nothing
-                            }
-                        })
-                                .build());
             }
         });
     }

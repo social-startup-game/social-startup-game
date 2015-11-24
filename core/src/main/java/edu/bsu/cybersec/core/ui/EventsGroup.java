@@ -34,7 +34,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 public class EventsGroup extends InteractionAreaGroup {
     private static final Graphics graphics = SimGame.game.plat.graphics();
@@ -115,7 +115,7 @@ public class EventsGroup extends InteractionAreaGroup {
         final float width = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
         final float shimSize = percentOfScreenHeight(0.01f);
         final float inset = percentOfScreenHeight(0.02f);
-        Label label = new Label(narrativeEvent.text.text())
+        Label label = new Label(narrativeEvent.text())
                 .addStyles(Style.TEXT_WRAP.on,
                         Style.COLOR.is(Colors.BLACK),
                         Style.BACKGROUND.is(Background.blank().inset(inset, inset)));
@@ -135,10 +135,10 @@ public class EventsGroup extends InteractionAreaGroup {
     private Group makeButtonGroup(NarrativeEvent narrativeEvent) {
         Group buttonGroup = new Group(AxisLayout.horizontal());
         for (final NarrativeEvent.Option option : narrativeEvent.options()) {
-            buttonGroup.add(new Button(option.text).onClick(new Slot<Button>() {
+            buttonGroup.add(new Button(option.text()).onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button button) {
-                    option.action.run();
+                    option.onSelected();
                     ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(true);
                     removeAll();
                     needsAttention.update(false);

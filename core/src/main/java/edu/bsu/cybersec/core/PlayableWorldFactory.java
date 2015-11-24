@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableList;
+import edu.bsu.cybersec.core.narrative.DefaultNarrativeScript;
 import edu.bsu.cybersec.core.ui.ImageCache;
 import tripleplay.entity.Entity;
 

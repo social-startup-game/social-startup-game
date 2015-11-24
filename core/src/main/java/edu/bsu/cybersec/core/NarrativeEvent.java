@@ -20,134 +20,69 @@
 package edu.bsu.cybersec.core;
 
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Collections2;
 import tripleplay.entity.Entity;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
-public class NarrativeEvent implements Runnable {
+public abstract class NarrativeEvent implements Runnable {
 
-    public interface Action {
-        void runForSelection(Entity e);
-    }
-
-    public interface Text {
+    public interface Option {
         String text();
-    }
 
-    public static final class Builder {
+        void onSelected();
 
-        private final GameWorld world;
-        private final List<Option> options = Lists.newArrayListWithCapacity(4);
-        private Text text;
-        private Action selectedWorkerAction;
-
-        private Builder(GameWorld world) {
-            this.world = checkNotNull(world);
-        }
-
-        public Builder withText(final String text) {
-            this.text = new Text() {
-                @Override
-                public String text() {
-                    return text;
-                }
-            };
-            return this;
-        }
-
-        public Builder withDynamicText(Text text) {
-            this.text = text;
-            return this;
-        }
-
-        public OptionBuilder addOption(String text) {
-            return new OptionBuilder(text);
-        }
-
-        public Builder addEmployeeSelectionsFor(final Action action) {
-            this.selectedWorkerAction = checkNotNull(action);
-            return this;
-        }
-
-        public NarrativeEvent build() {
-            checkState(text != null, "Text was not specified");
-            return new NarrativeEvent(this);
-        }
-
-        public final class OptionBuilder {
+        final class DoNothingOption implements Option {
             private final String text;
 
-            public OptionBuilder(String text) {
-                this.text = checkNotNull(text);
+            public DoNothingOption(String text) {
+                this.text = text;
             }
 
-            public Builder withAction(Runnable runnable) {
-                checkNotNull(runnable);
-                options.add(new Option(text, runnable));
-                return Builder.this;
+            @Override
+            public String text() {
+                return text;
+            }
+
+            @Override
+            public void onSelected() {
+                // Do nothing
+            }
+        }
+
+        final class OkOption implements Option {
+
+            @Override
+            public String text() {
+                return "OK";
+            }
+
+            @Override
+            public final void onSelected() {
+                // Do nothing
             }
         }
     }
 
-    public static Builder inWorld(GameWorld world) {
-        return new Builder(world);
-    }
+    protected final GameWorld world;
 
-
-    public static class Option {
-        public final String text;
-        public final Runnable action;
-
-        public Option(String text, Runnable action) {
-            this.text = text;
-            this.action = action;
-        }
-    }
-
-    private final GameWorld gameWorld;
-    public final Text text;
-    private final ImmutableList<Option> fixedOptions;
-    private final Action selectedWorkerAction;
-
-    private NarrativeEvent(Builder builder) {
-        this.gameWorld = checkNotNull(builder.world);
-        this.text = builder.text;
-        this.fixedOptions = ImmutableList.copyOf(builder.options);
-        this.selectedWorkerAction = builder.selectedWorkerAction;
-    }
-
-    public ImmutableList<Option> options() {
-        List<Option> options = Lists.newArrayListWithCapacity(fixedOptions.size() + gameWorld.workers.size());
-        if (selectedWorkerAction != null) {
-            addWorkersTo(options);
-        }
-        options.addAll(fixedOptions);
-        return ImmutableList.copyOf(options);
-    }
-
-    private void addWorkersTo(List<Option> options) {
-        for (final Entity e : gameWorld.workers) {
-            checkState(e.has(gameWorld.tasked), "Worker is missing its task!");
-            if (gameWorld.tasked.get(e.id).isReassignable()) {
-                final String name = gameWorld.profile.get(e.id).firstName;
-                Option option = new Option(name, new Runnable() {
-                    @Override
-                    public void run() {
-                        selectedWorkerAction.runForSelection(e);
-                    }
-                });
-                options.add(option);
-            }
-        }
+    public NarrativeEvent(GameWorld world) {
+        this.world = checkNotNull(world);
     }
 
     @Override
     public void run() {
-        gameWorld.onNarrativeEvent.emit(this);
+        world.onNarrativeEvent.emit(this);
+    }
+
+    public abstract List<? extends Option> options();
+
+    public abstract String text();
+
+    protected final Collection<Entity> availableWorkers() {
+        return Collections2.filter(world.workers, new AvailablePredicate(world));
     }
 }
