@@ -19,13 +19,17 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import tripleplay.entity.Entity;
+
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FeatureFactory {
 
-    private static final String[] FEATURE_NAMES = {
+    private static final String[] DEFAULT_FEATURE_NAMES = {
             "Selfie of the Week",
             "Tumblr Pun",
             "Twitter Nest",
@@ -38,58 +42,67 @@ public class FeatureFactory {
             "User reviews"
     };
 
-    public static FeatureBuilder in(GameWorld world) {
-        return new FeatureBuilder(world);
+    private static final RandomInRange vulnerabilityRandomizer = new RandomInRange(1, 4);
+
+    public static FeatureFactory in(GameWorld world) {
+        return new FeatureFactory(world);
     }
 
+    private final GameWorld world;
+    private List<String> namesToDrawFrom;
+    private List<String> nextNameQueue;
 
-    public final static class FeatureBuilder {
-        private static final RandomInRange random = new RandomInRange(1, 4);
-        private final GameWorld world;
-
-        private FeatureBuilder(GameWorld world) {
-            this.world = checkNotNull(world);
-        }
-
-        public Entity makeFeatureInDevelopment(int featureNumber) {
-            Entity entity = makeFeature(featureNumber);
-            entity.add(world.developmentProgress,
-                    world.goal);
-            world.usersPerHourState.set(entity.id, UsersPerHourState.INACTIVE.value);
-            return entity;
-        }
-
-        private Entity makeFeature(int featureNumber) {
-            Entity entity = world.create(true)
-                    .add(world.featureNumber,
-                            world.name,
-                            world.usersPerHour,
-                            world.usersPerHourState,
-                            world.vulnerability);
-            world.featureNumber.set(entity.id, featureNumber);
-            world.name.set(entity.id, nextFeatureName());
-            world.vulnerability.set(entity.id, random.nextInt() * 0.01f);
-            world.usersPerHour.set(entity.id, generateUsersPerHour());
-            return entity;
-        }
-
-        private String nextFeatureName() {
-            return FEATURE_NAMES[(int) (Math.random() * FEATURE_NAMES.length)];
-        }
-
-        private float generateUsersPerHour() {
-            int min = 5;
-            int max = 50;
-            int range = max - min;
-            return (float) Math.floor(Math.random() * range) + min;
-        }
-
-        public Entity makeCompletedFeature(int featureNumber) {
-            Entity entity = makeFeature(featureNumber);
-            world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
-            return entity;
-        }
+    private FeatureFactory(GameWorld world) {
+        this.world = checkNotNull(world);
+        withNames(Lists.newArrayList(DEFAULT_FEATURE_NAMES));
     }
 
+    public FeatureFactory withNames(Iterable<String> names) {
+        this.namesToDrawFrom = ImmutableList.copyOf(names);
+        this.nextNameQueue = Lists.newArrayList(namesToDrawFrom);
+        Shuffler.shuffle(nextNameQueue);
+        return this;
+    }
 
+    public Entity makeFeatureInDevelopment(int featureNumber) {
+        Entity entity = makeFeature(featureNumber);
+        entity.add(world.developmentProgress,
+                world.goal);
+        world.usersPerHourState.set(entity.id, UsersPerHourState.INACTIVE.value);
+        return entity;
+    }
+
+    private Entity makeFeature(int featureNumber) {
+        Entity entity = world.create(true)
+                .add(world.featureNumber,
+                        world.name,
+                        world.usersPerHour,
+                        world.usersPerHourState,
+                        world.vulnerability);
+        world.featureNumber.set(entity.id, featureNumber);
+        world.name.set(entity.id, nextFeatureName());
+        world.vulnerability.set(entity.id, vulnerabilityRandomizer.nextInt() * 0.01f);
+        world.usersPerHour.set(entity.id, generateUsersPerHour());
+        return entity;
+    }
+
+    private String nextFeatureName() {
+        if (nextNameQueue.isEmpty()) {
+            withNames(namesToDrawFrom);
+        }
+        return nextNameQueue.remove(0);
+    }
+
+    private float generateUsersPerHour() {
+        int min = 5;
+        int max = 50;
+        int range = max - min;
+        return (float) Math.floor(Math.random() * range) + min;
+    }
+
+    public Entity makeCompletedFeature(int featureNumber) {
+        Entity entity = makeFeature(featureNumber);
+        world.usersPerHourState.set(entity.id, UsersPerHourState.ACTIVE.value);
+        return entity;
+    }
 }

@@ -19,12 +19,12 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FeatureFactoryTest {
 
@@ -48,5 +48,17 @@ public class FeatureFactoryTest {
     public void testMakeFeatureInDevelopment_hasVulnerability() {
         Entity e = FeatureFactory.in(world).makeFeatureInDevelopment(ARBITRARY_FEATURE_NUMBER);
         assertTrue(world.vulnerability.get(e.id) > 0);
+    }
+
+    @Test
+    public void testMakeFeatureInDevelopment_allFeatureNamesUsedBeforeRepeat() {
+        int timesToRunTest = 20;
+        for (int i = 0; i < timesToRunTest; i++) {
+            GameWorld world = new GameWorld();
+            FeatureFactory featureFactory = FeatureFactory.in(world).withNames(ImmutableList.of("One", "Two"));
+            Entity e1 = featureFactory.makeFeatureInDevelopment(ARBITRARY_FEATURE_NUMBER);
+            Entity e2 = featureFactory.makeFeatureInDevelopment(ARBITRARY_FEATURE_NUMBER + 1);
+            assertNotEquals(world.name.get(e1.id), world.name.get(e2.id));
+        }
     }
 }

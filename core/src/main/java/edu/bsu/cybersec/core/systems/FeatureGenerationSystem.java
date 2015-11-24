@@ -30,10 +30,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class FeatureGenerationSystem extends tripleplay.entity.System {
     private final GameWorld world;
     private int nextFeatureNumber;
+    private final FeatureFactory featureFactory;
 
     public FeatureGenerationSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
+        this.featureFactory = FeatureFactory.in(world);
     }
 
     public FeatureGenerationSystem nextFeatureNumber(int number) {
@@ -49,7 +51,7 @@ public class FeatureGenerationSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         if (entities.size() == 0) {
-            final Entity e = FeatureFactory.in(world).makeFeatureInDevelopment(nextFeatureNumber++);
+            final Entity e = featureFactory.makeFeatureInDevelopment(nextFeatureNumber++);
             world.goal.set(e.id, 20);
         }
     }
