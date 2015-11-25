@@ -36,7 +36,7 @@ public final class GameInteractionArea extends Group {
 
     private final GameWorld gameWorld;
     private final Interface iface;
-    private Group shown = new Group(AxisLayout.vertical().offStretch())
+    private Group shown = new Group(AxisLayout.vertical().stretchByDefault().offStretch())
             .setConstraint(AxisLayout.stretched());
     private final InteractionAreaGroup statusGroup;
 
