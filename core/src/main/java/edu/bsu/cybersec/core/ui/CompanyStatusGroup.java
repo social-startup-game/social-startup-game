@@ -23,10 +23,12 @@ import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import react.ValueView;
 import tripleplay.entity.Entity;
+import tripleplay.ui.Group;
 import tripleplay.ui.Label;
+import tripleplay.ui.Shim;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class CompanyStatusGroup extends InteractionAreaGroup {
 
@@ -35,7 +37,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
     private final Label usersPerHourLabel = new Label(TEXT);
 
     public CompanyStatusGroup(GameWorld world) {
-        super(AxisLayout.vertical());
+        super(AxisLayout.vertical().offStretch());
         this.gameWorld = checkNotNull(world);
         new UsersPerHourLabelSystem();
         layoutUI();
@@ -45,6 +47,15 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
         add(usersPerHourLabel);
         add(new EstimatedExposureLabel(gameWorld));
         add(new DaysRemainingLabel(gameWorld));
+        add(new Group(AxisLayout.horizontal().offStretch())
+                .add(unitShim(),
+                        new CompanyStatusGraph(gameWorld).setConstraint(AxisLayout.stretched(14f)),
+                        unitShim())
+                .setConstraint(AxisLayout.stretched()));
+    }
+
+    private Shim unitShim() {
+        return new Shim(0, 0).setConstraint(AxisLayout.stretched(1));
     }
 
     private final class UsersPerHourLabelSystem extends tripleplay.entity.System {
@@ -83,6 +94,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
             super(TEXT_TEMPLATE + gameWorld.exposure.get());
             gameWorld.exposure.connect(new ValueView.Listener<Float>() {
                 private final DecimalTruncator truncator = new DecimalTruncator(1);
+
                 @Override
                 public void onChange(Float value, Float oldValue) {
                     text.update(TEXT_TEMPLATE + truncator.makeTruncatedString(value * 100) + "%");
