@@ -32,6 +32,7 @@ import java.util.List;
 public class SecurityConferenceEvent extends NarrativeEvent {
 
     private static final int CONFERENCE_SKILL_INCREASE = 10;
+    private static final int CONFERENCE_DURATION = 48;
 
     public SecurityConferenceEvent(GameWorld world) {
         super(world);
@@ -49,7 +50,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
         for (Entity e : availableWorkers) {
             result.add(new SendWorkerToConferenceOption(e.id));
         }
-        result.add(new Option.OkOption());
+        result.add(new Option.DoNothingOption("No one"));
         return result;
     }
 
@@ -68,24 +69,13 @@ public class SecurityConferenceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            final int conferenceEnd = world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * 48;
+            final int conferenceEnd = world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * CONFERENCE_DURATION;
             Task task = Task.createTask("At conference")
                     .expiringAt(conferenceEnd)
                     .inWorld(world)
                     .build();
             world.tasked.set(id, task);
-            makeWakeupEvent(conferenceEnd);
-        }
-
-        private void makeWakeupEvent(int conferenceEnd) {
-            Entity wakeup = world.create(true).add(world.event, world.timeTrigger);
-            world.timeTrigger.set(wakeup.id, conferenceEnd);
-            world.event.set(wakeup.id, new NarrativeEvent(world) {
-                @Override
-                public List<? extends Option> options() {
-                    return Lists.newArrayList(new Option.OkOption());
-                }
-
+            after(CONFERENCE_DURATION).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
                     return world.profile.get(id).firstName + " has returned from the conference with greatly increased maintenance skill!";

@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.narrative;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
@@ -51,7 +50,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        return "You were attacked by a script kiddie---an amateur who copied some code from the Internet to attack our site. The attack was not successful, but we have to keep our guard up against future attacks.\n\nWould you like to try to find the attackers and strike back? Who should do it?";
+        return "You were attacked by a script kiddie\u2014an amateur who copied some code from the Internet to attack our site. The attack was not successful, but we have to keep our guard up against future attacks.\n\nWould you like to try to find the attackers and strike back? Who should do it?";
     }
 
     private final class RetaliateOption implements Option {
@@ -79,14 +78,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                     .expiringAt(endOfRetaliation)
                     .inWorld(world)
                     .build());
-            Entity wakeup = world.create(true).add(world.timeTrigger, world.event);
-            world.timeTrigger.set(wakeup.id, endOfRetaliation);
-            world.event.set(wakeup.id, new NarrativeEvent(world) {
-                @Override
-                public List<? extends Option> options() {
-                    return ImmutableList.of(new OkOption());
-                }
-
+            after(HOURS_FOR_RETALIATION).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
                     return world.profile.get(id).firstName + " was unable to determine who the script kiddies were and returns to work.";
@@ -101,29 +93,11 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
         }
 
         private void registerRepercussion() {
-            int timeOfRepercussion = world.gameTime.get().now + HOURS_UNTIL_REPERCUSSION * ClockUtils.SECONDS_PER_HOUR;
-            Entity repercussion = world.create(true).add(world.event, world.timeTrigger);
-            world.timeTrigger.set(repercussion.id, timeOfRepercussion);
-            world.event.set(repercussion.id, new NarrativeEvent(world) {
-
-                private float loss;
-
-                @Override
-                public void run() {
-                    loss = world.users.get() * LOSS_PERCENT;
-                    world.users.update(world.users.get() - loss);
-                    super.run();
-                }
-
-                @Override
-                public List<? extends Option> options() {
-                    return ImmutableList.of(new OkOption());
-                }
-
+            after(HOURS_UNTIL_REPERCUSSION).post(new AbstractUserLossEvent(world, LOSS_PERCENT) {
                 @Override
                 public String text() {
                     return "Not only was having your employee retaliate unsuccessful, it was illegal! The FBI will be looking in to this...\n\n You lost "
-                            + (int) loss + " users because of your short temper.";
+                            + loss + " users because of your short temper.";
                 }
             });
         }

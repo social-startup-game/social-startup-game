@@ -20,18 +20,18 @@
 package edu.bsu.cybersec.core.narrative;
 
 import com.google.common.collect.ImmutableList;
-import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import tripleplay.entity.Entity;
 
 import java.util.List;
 
 public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
 
+    private static final int HOURS_UNTIL_LOSS_ON_NOTIFY = 1;
     private static final float PERCENT_LOSS_ON_NOTIFY = 0.05f;
     private static final int HOURS_UNTIL_DISCOVERY_AFTER_IGNORE = 6;
     private static final float PERCENT_LOSS_ON_IGNORE = 0.50f;
+
 
     public DataStolenNotifyChoiceEvent(GameWorld world) {
         super(world);
@@ -55,27 +55,10 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            Entity e = world.create(true).add(world.event, world.timeTrigger);
-            world.timeTrigger.set(e.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR);
-            world.event.set(e.id, new NarrativeEvent(world) {
-                float loss;
-
-                @Override
-                public List<? extends Option> options() {
-                    return ImmutableList.of(new OkOption());
-                }
-
-                @Override
-                public void run() {
-                    final float users = world.users.get();
-                    loss = users * PERCENT_LOSS_ON_NOTIFY;
-                    world.users.update(users - loss);
-                    super.run();
-                }
-
+            after(HOURS_UNTIL_LOSS_ON_NOTIFY).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_NOTIFY) {
                 @Override
                 public String text() {
-                    return (int) loss + " users have left our service after hearing about how hackers stole some of their personal information.";
+                    return loss + " users have left our service after hearing about how hackers stole some of their personal information.";
                 }
             });
         }
@@ -89,27 +72,10 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            Entity e = world.create(true).add(world.event, world.timeTrigger);
-            world.timeTrigger.set(e.id, world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * HOURS_UNTIL_DISCOVERY_AFTER_IGNORE);
-            world.event.set(e.id, new NarrativeEvent(world) {
-                float loss;
-
-                @Override
-                public List<? extends Option> options() {
-                    return ImmutableList.of(new OkOption());
-                }
-
-                @Override
-                public void run() {
-                    final float users = world.users.get();
-                    loss = users * PERCENT_LOSS_ON_IGNORE;
-                    world.users.update(users - loss);
-                    super.run();
-                }
-
+            after(HOURS_UNTIL_DISCOVERY_AFTER_IGNORE).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
                 @Override
                 public String text() {
-                    return "An independent security expert discovered that you ignored a data breach and has informed the press! " + (int) loss + " users have left your service after finding out that you did not notify them of the problem.";
+                    return "An independent security expert discovered that you ignored a data breach and has informed the press! " + loss + " users have left your service after finding out that you did not notify them of the problem.";
                 }
             });
         }

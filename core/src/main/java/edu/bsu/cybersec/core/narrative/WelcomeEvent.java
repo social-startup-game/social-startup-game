@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.narrative;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.EmployeeProfile;
 import edu.bsu.cybersec.core.GameWorld;
@@ -35,16 +34,11 @@ public class WelcomeEvent extends NarrativeEvent {
     }
 
     @Override
-    public List<? extends Option> options() {
-        return ImmutableList.of(new Option.OkOption());
-    }
-
-    @Override
     public String text() {
         ListStringifier stringifier = new ListStringifier();
-        return "\"Hello! I am Frieda, your administrative assistant.\n\n"
+        return "Hello! I am Frieda, your administrative assistant.\n\n"
                 + stringifier.stringify(employeeNames())
-                + " are currently maintaining our software. You can tap them to find out more about them.\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!\"";
+                + " are currently maintaining our software. You can tap them to find out more about them.\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!";
     }
 
     private List<String> employeeNames() {

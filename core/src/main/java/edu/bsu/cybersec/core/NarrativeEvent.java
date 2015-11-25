@@ -21,6 +21,7 @@ package edu.bsu.cybersec.core;
 
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import tripleplay.entity.Entity;
 
 import java.util.Collection;
@@ -52,20 +53,9 @@ public abstract class NarrativeEvent implements Runnable {
                 // Do nothing
             }
         }
-
-        final class OkOption implements Option {
-
-            @Override
-            public String text() {
-                return "OK";
-            }
-
-            @Override
-            public final void onSelected() {
-                // Do nothing
-            }
-        }
     }
+
+    private static final List<? extends Option> ONLY_OK_OPTION = ImmutableList.of(new Option.DoNothingOption("OK"));
 
     protected final GameWorld world;
 
@@ -78,11 +68,32 @@ public abstract class NarrativeEvent implements Runnable {
         world.onNarrativeEvent.emit(this);
     }
 
-    public abstract List<? extends Option> options();
+    public List<? extends Option> options() {
+        return ONLY_OK_OPTION;
+    }
 
     public abstract String text();
 
     protected final Collection<Entity> availableWorkers() {
         return Collections2.filter(world.workers, new AvailablePredicate(world));
+    }
+
+    protected SubsequentEventBuilder after(int hours) {
+        return new SubsequentEventBuilder(hours);
+    }
+
+    protected class SubsequentEventBuilder {
+        private final int hours;
+
+        private SubsequentEventBuilder(int hours) {
+            this.hours = hours;
+        }
+
+        public void post(NarrativeEvent event) {
+            checkNotNull(event);
+            final Entity e = world.create(true).add(world.event, world.timeTrigger);
+            world.timeTrigger.set(e.id, world.gameTime.get().now + hours * ClockUtils.SECONDS_PER_HOUR);
+            world.event.set(e.id, event);
+        }
     }
 }
