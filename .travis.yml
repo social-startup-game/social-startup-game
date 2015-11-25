@@ -1,7 +1,7 @@
 language: java
 script:
 - mvn -Phtml clean package
-- bash ./deploy.sh
+- if [ "$TRAVIS_BRANCH" == "master" ]; then bash ./deploy.sh; fi
 env:
   global:
   - GH_REF: github.com/doctor-g/social-startup-game.git
