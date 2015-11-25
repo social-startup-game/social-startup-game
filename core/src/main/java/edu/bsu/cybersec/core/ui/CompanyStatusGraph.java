@@ -19,11 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import com.google.common.collect.Lists;
-import edu.bsu.cybersec.core.ClockUtils;
-import edu.bsu.cybersec.core.GameTime;
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.*;
 import playn.core.Canvas;
 import playn.core.Surface;
 import playn.core.TextFormat;
@@ -36,8 +32,6 @@ import react.ValueView;
 import tripleplay.ui.SizableWidget;
 import tripleplay.util.Colors;
 
-import java.util.List;
-
 public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> {
 
     private static final int BACKGROUND_COLOR = Colors.WHITE;
@@ -46,7 +40,7 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
     private static final float BORDER_WIDTH_PERCENT = 0.01f;
     private static final float THICKNESS = 1f;
 
-    private List<Integer> data = Lists.newArrayList();
+    private SizeConstrainedSmoothingList data = SizeConstrainedSmoothingList.withCapacity(200);
     private int max;
 
     public CompanyStatusGraph(final GameWorld world) {
