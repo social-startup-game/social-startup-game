@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.intro.IntroScreen;
 import edu.bsu.cybersec.core.intro.IntroSlideInformation;
+import playn.core.Font;
 import playn.core.Game;
 import playn.core.Image;
 import playn.scene.Pointer;
@@ -31,7 +32,7 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
@@ -49,24 +50,36 @@ public class StartingScreen extends ScreenStack.UIScreen {
 
     @Override
     protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
+        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()))
+                .setSize(size());
         Image logo = ImageCache.instance().LOGO;
         Icon iconLogo = Icons.image(logo.tile());
+        final float buttonFontSize = percentOfViewHeight(0.04f);
+        final Font font = FontCache.instance().REGULAR.derive(buttonFontSize);
         root.add(new Label(iconLogo))
-                .add(new Button("Start the Game!").onClick(new Slot<Button>() {
-                    @Override
-                    public void onEmit(Button button) {
-                        screenStack.push(new IntroScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
-                    }
-                }))
-                .add(new Button("Credits").onClick(new Slot<Button>() {
-                    @Override
-                    public void onEmit(Button button) {
-                        screenStack.push(new CreditScreen(screenStack), screenStack.slide());
-                    }
-                }));
+                .add(new Button("Start the Game!")
+                                .addStyles(Style.FONT.is(font))
+                                .onClick(new Slot<Button>() {
+                                    @Override
+                                    public void onEmit(Button button) {
+                                        screenStack.push(new IntroScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
+                                    }
+                                }),
+                        new Shim(0, buttonFontSize / 2),
+                        new Button("Credits")
+                                .addStyles(Style.FONT.is(font))
+                                .onClick(new Slot<Button>() {
+                                    @Override
+                                    public void onEmit(Button button) {
+                                        screenStack.push(new CreditScreen(screenStack), screenStack.slide());
+                                    }
+                                }));
         root.setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
         return root;
+    }
+
+    private float percentOfViewHeight(float v) {
+        return SimGame.game.plat.graphics().viewSize.height() * v;
     }
 
     @Override
