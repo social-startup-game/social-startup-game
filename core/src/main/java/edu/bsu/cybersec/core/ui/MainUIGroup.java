@@ -89,8 +89,6 @@ public class MainUIGroup extends Group {
             private static final float DEFAULT_CONTENT_GROUP_WEIGHT = 2;
             private static final float INVISIBLE_CONTENT_GROUP_WEIGHT = 0;
             private static final float ANIMATION_DURATION = 1000f;
-            private static final float TRANSPARENT = 0f;
-            private static final float OPAQUE = 1f;
 
             @Override
             public void onChange(Group newSelection, Group previousSelection) {
@@ -121,15 +119,11 @@ public class MainUIGroup extends Group {
             private void expandContentArea() {
                 iface.anim.tween(new AxisLayoutWeightAnimationValue(contentGroup))
                         .from(INVISIBLE_CONTENT_GROUP_WEIGHT).to(DEFAULT_CONTENT_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
-                iface.anim.tweenAlpha(contentGroup.layer)
-                        .from(TRANSPARENT).to(OPAQUE).in(ANIMATION_DURATION / 2);
             }
 
             private void shrinkContentArea() {
                 iface.anim.tween(new AxisLayoutWeightAnimationValue(contentGroup))
                         .from(DEFAULT_CONTENT_GROUP_WEIGHT).to(INVISIBLE_CONTENT_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
-                iface.anim.tweenAlpha(contentGroup.layer)
-                        .from(OPAQUE).to(TRANSPARENT).in(ANIMATION_DURATION / 2);
             }
         });
     }

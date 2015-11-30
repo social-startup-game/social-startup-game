@@ -20,7 +20,10 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.SimGame;
+import playn.core.Surface;
 import playn.core.Tile;
+import playn.scene.Layer;
+import pythagoras.f.IDimension;
 import react.Value;
 import react.ValueView;
 import tripleplay.ui.Background;
@@ -43,7 +46,17 @@ public class InteractionAreaGroup extends Group {
     }
 
     private void applyCompanyLogoBackground() {
-        Background b = Background.centered(COMPANY_LOGO);
+        Background b = new Background() {
+            @Override
+            protected Instance instantiate(final IDimension size) {
+                return new LayerInstance(size, new Layer() {
+                    @Override
+                    protected void paintImpl(Surface surf) {
+                        surf.draw(COMPANY_LOGO, 0, 0, size.width(), size.height());
+                    }
+                });
+            }
+        };
         b = applyInsets(b);
         addStyles(Style.BACKGROUND.is(b));
     }
