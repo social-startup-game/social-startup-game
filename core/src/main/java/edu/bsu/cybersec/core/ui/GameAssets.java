@@ -36,13 +36,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GameAssets {
 
     public enum ImageKey {
-        BACKGROUND_1("employee_bg_1.jpg"),
-        BACKGROUND_2("employee_bg_2.jpg"),
-        BACKGROUND_4("employee_bg_4.jpg"),
-        NARRATIVE_BACKGROUND_1("crop-1.jpg"),
-        NARRATIVE_BACKGROUND_2("crop-2.jpg"),
-        NARRATIVE_BACKGROUND_3("crop-3.jpg"),
-        NARRATIVE_BACKGROUND_4("crop-4.jpg"),
+        BACKGROUND_1("employee_bg_1.png"),
+        BACKGROUND_2("employee_bg_2.png"),
+        BACKGROUND_4("employee_bg_4.png"),
+        NARRATIVE_BACKGROUND_1("crop-1.png"),
+        NARRATIVE_BACKGROUND_2("crop-2.png"),
+        NARRATIVE_BACKGROUND_3("crop-3.png"),
+        NARRATIVE_BACKGROUND_4("crop-4.png"),
         ESTEBAN("Esteban.png"),
         NANCY("Nancy.png"),
         JERRY("Jerry.png"),
