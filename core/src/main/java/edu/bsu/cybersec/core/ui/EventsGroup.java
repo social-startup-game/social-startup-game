@@ -55,7 +55,6 @@ public class EventsGroup extends InteractionAreaGroup {
 
     public EventsGroup(GameWorld gameWorld) {
         super(AxisLayout.horizontal().offStretch());
-        addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
         add(noEventsLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.CENTER)));
         this.gameWorld = gameWorld;
         gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {

@@ -50,6 +50,7 @@ public final class ImageCache {
     public final Image DEVELOPMENT = load("development.png");
     public final Image MAINTENANCE = load("maintenance.png");
     public final Image LOGO = load("logo.png");
+    public final Image COMPANY_LOGO_WITH_ALPHA = load("company_logo.png");
 
     private final ImmutableList<Image> all = listBuilder.build();
 

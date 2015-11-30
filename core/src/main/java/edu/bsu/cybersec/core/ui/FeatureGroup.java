@@ -55,7 +55,6 @@ public final class FeatureGroup extends InteractionAreaGroup {
 
     public FeatureGroup(final GameWorld gameWorld) {
         super(AxisLayout.vertical());
-        configureInsets();
         content.add(new Label("FEATURE"),
                 new Label("PROGRESS"),
                 new Label("USERS PER HOUR"));
@@ -86,9 +85,10 @@ public final class FeatureGroup extends InteractionAreaGroup {
         };
     }
 
-    private void configureInsets() {
+    @Override
+    protected Background applyInsets(Background b) {
         float horizontal = SimGame.game.plat.graphics().viewSize.height() * 0.02f;
-        addStyles(Style.BACKGROUND.is(Background.blank().inset(horizontal, 0f)));
+        return b.inset(horizontal, 0f);
     }
 
     @Override

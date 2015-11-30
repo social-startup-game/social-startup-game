@@ -19,21 +19,35 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import playn.core.Tile;
 import react.Value;
 import react.ValueView;
+import tripleplay.ui.Background;
 import tripleplay.ui.Group;
 import tripleplay.ui.Layout;
+import tripleplay.ui.Style;
 
 public class InteractionAreaGroup extends Group {
+    private static final Tile COMPANY_LOGO = ImageCache.instance().COMPANY_LOGO_WITH_ALPHA.tile();
 
     protected Value<Boolean> needsAttention = Value.create(false);
 
     public InteractionAreaGroup(Layout layout) {
         super(layout);
+        applyCompanyLogoBackground();
     }
 
     public final ValueView<Boolean> onAttention() {
         return needsAttention;
     }
 
+    private void applyCompanyLogoBackground() {
+        Background b = Background.centered(COMPANY_LOGO);
+        b = applyInsets(b);
+        addStyles(Style.BACKGROUND.is(b));
+    }
+
+    protected Background applyInsets(Background b) {
+        return b;
+    }
 }
