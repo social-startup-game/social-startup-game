@@ -29,7 +29,7 @@ public abstract class Task {
 
     public static final Task MAINTENANCE = new ReassignableTask("Maintenance");
     public static final Task DEVELOPMENT = new ReassignableTask("Development");
-    public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(MAINTENANCE, DEVELOPMENT);
+    public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(DEVELOPMENT, MAINTENANCE);
 
     public static TaskBuilder createTask(String name) {
         return new TaskBuilder(name);
