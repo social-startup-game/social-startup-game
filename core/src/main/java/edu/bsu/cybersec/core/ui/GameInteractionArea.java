@@ -60,8 +60,8 @@ public final class GameInteractionArea extends Group {
         ImageCache images = ImageCache.instance();
         return new Group(AxisLayout.horizontal())
                 .add(new ChangeViewButton(images.DOLLAR_SIGN, "Status", statusGroup),
-                        new ChangeViewButton(images.STAR, "Features", new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(images.WRENCH, "Exploits", new ExploitsGroup(gameWorld)),
+                        new ChangeViewButton(images.DEVELOPMENT, "Features", new FeatureGroup(gameWorld)),
+                        new ChangeViewButton(images.MAINTENANCE, "Exploits", new ExploitsGroup(gameWorld)),
                         new ChangeViewButton(images.ENVELOPE, "News & Events", new EventsGroup(gameWorld)));
     }
 

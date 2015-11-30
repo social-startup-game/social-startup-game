@@ -47,8 +47,8 @@ public final class ImageCache {
     public final Image ADMIN = load("admin.png");
     public final Image DOLLAR_SIGN = load("dollar-sign.png");
     public final Image ENVELOPE = load("envelope.png");
-    public final Image STAR = load("star.png");
-    public final Image WRENCH = load("wrench.png");
+    public final Image DEVELOPMENT = load("development.png");
+    public final Image MAINTENANCE = load("maintenance.png");
     public final Image LOGO = load("logo.png");
 
     private final ImmutableList<Image> all = listBuilder.build();

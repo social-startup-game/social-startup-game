@@ -382,8 +382,8 @@ public class MainUIGroup extends Group {
 final class TaskIconFactory {
     private final ImageCache imageCache = ImageCache.instance();
     private Map<Task, Image> iconMap = ImmutableMap.of(
-            Task.MAINTENANCE, imageCache.WRENCH,
-            Task.DEVELOPMENT, imageCache.STAR);
+            Task.MAINTENANCE, imageCache.MAINTENANCE,
+            Task.DEVELOPMENT, imageCache.DEVELOPMENT);
 
     public Icon getIcon(Task task) {
         if (!iconMap.containsKey(task)) {
