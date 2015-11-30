@@ -20,7 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import edu.bsu.cybersec.core.ui.FontCache;
-import edu.bsu.cybersec.core.ui.ImageCache;
+import edu.bsu.cybersec.core.ui.GameAssets;
 import edu.bsu.cybersec.core.ui.LoadingScreen;
 import edu.bsu.cybersec.core.ui.MusicCache;
 import playn.core.Platform;
@@ -37,11 +37,13 @@ public class SimGame extends SceneGame {
 
     public final GameConfig config;
 
+    public final GameAssets assets;
+
     public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);
+        assets = new GameAssets(plat.assets());
         game = this;
         this.config = checkNotNull(config);
-        ImageCache.initialize(plat.assets());
         MusicCache.initialize(plat.assets());
         FontCache.initialize(plat.graphics());
         ScreenStack screenStack = new ScreenStack(this, rootLayer);

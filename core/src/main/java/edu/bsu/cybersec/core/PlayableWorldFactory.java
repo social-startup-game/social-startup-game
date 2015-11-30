@@ -21,7 +21,7 @@ package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.narrative.DefaultNarrativeScript;
-import edu.bsu.cybersec.core.ui.ImageCache;
+import edu.bsu.cybersec.core.ui.GameAssets;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -35,11 +35,11 @@ public class PlayableWorldFactory {
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     private final GameConfig config;
-    private final ImageCache imageCache;
+    private final GameAssets assets;
 
-    public PlayableWorldFactory(ImageCache imageCache, GameConfig config) {
+    public PlayableWorldFactory(GameAssets assets, GameConfig config) {
         this.config = checkNotNull(config);
-        this.imageCache = checkNotNull(imageCache);
+        this.assets = checkNotNull(assets);
     }
 
     public GameWorld.Systematized createPlayableGameWorld() {
@@ -79,7 +79,7 @@ public class PlayableWorldFactory {
 
     private void makeDevelopers(int number) {
         checkArgument(number >= 0);
-        EmployeePool pool = EmployeePool.create(imageCache);
+        EmployeePool pool = EmployeePool.create(assets);
         List<EmployeePool.Employee> employees = ImmutableList.copyOf(pool.recruit(number));
         for (int i = 0; i < number; i++) {
             Entity e = makeDeveloper(i, employees.get(i));

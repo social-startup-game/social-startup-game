@@ -23,7 +23,7 @@ import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Graphics;
-import playn.core.Image;
+import playn.core.Tile;
 import pythagoras.f.Dimension;
 import pythagoras.f.IDimension;
 import react.Slot;
@@ -49,7 +49,7 @@ public class EventsGroup extends InteractionAreaGroup {
 
     private final GameWorld gameWorld;
     private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Palette.FOREGROUND));
-    private final Image eventSpeakerImage = ImageCache.instance().ADMIN;
+    private final Tile eventSpeakerImage = SimGame.game.assets.getTile(GameAssets.ImageKey.ADMIN);
     private IDimension parentSize;
     private Runnable onParented;
 

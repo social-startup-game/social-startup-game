@@ -22,8 +22,8 @@ package edu.bsu.cybersec.core;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import edu.bsu.cybersec.core.ui.ImageCache;
-import playn.core.Image;
+import edu.bsu.cybersec.core.ui.GameAssets;
+import playn.core.Tile;
 
 import java.util.List;
 import java.util.Map;
@@ -39,58 +39,58 @@ public final class EmployeePool {
 
     public static class Employee {
         public final EmployeeProfile profile;
-        public final Image image;
+        public final Tile image;
 
-        private Employee(EmployeeProfile profile, Image image) {
+        private Employee(EmployeeProfile profile, Tile image) {
             this.profile = checkNotNull(profile);
             this.image = checkNotNull(image);
         }
     }
 
-    private static ImmutableMap<EmployeeProfile, Image> makeDeveloperMap(ImageCache imageCache) {
-        ImmutableMap.Builder<EmployeeProfile, Image> builder = ImmutableMap.builder();
+    private static ImmutableMap<EmployeeProfile, Tile> makeDeveloperMap(GameAssets assets) {
+        ImmutableMap.Builder<EmployeeProfile, Tile> builder = ImmutableMap.builder();
         builder.put(EmployeeProfile.firstName("Esteban").lastName("Cortez")
                         .withDegree("Bachelors in Computer Science").from("Ball State University")
                         .bio("Esteban worked in a factory until he was 33, then he went to college and decided to get involved in software development."),
-                imageCache.ESTEBAN);
+                assets.getTile(GameAssets.ImageKey.ESTEBAN));
         builder.put(EmployeeProfile.firstName("Nancy").lastName("Stevens")
                         .withDegree("Bachelors in English").from("Georgetown University")
                         .withDegree("Masters in Computer Security").from("Purdue University")
                         .bio("Nancy has a popular podcast about being a woman in technology."),
-                imageCache.NANCY);
+                assets.getTile(GameAssets.ImageKey.NANCY));
         builder.put(EmployeeProfile.firstName("Jerry").lastName("Chen")
                         .withDegree("Bachelors in Computer Science").from("University of Hong Kong")
                         .bio("Jerry interned at a local company in high school and has been working as a software developer ever since."),
-                imageCache.JERRY);
+                assets.getTile(GameAssets.ImageKey.JERRY));
         builder.put(EmployeeProfile.firstName("Vani").lastName("Mishra")
                         .withDegree("Bachelors in Computer Engineering").from("Indian Institute of Science")
                         .withDegree("Masters in Software Engineering").from("Ball State University")
                         .bio("Vani was born in India and came to the United States for graduate school. She loves music, dancing, and PHP."),
-                imageCache.VANI);
+                assets.getTile(GameAssets.ImageKey.VANI));
         builder.put(EmployeeProfile.firstName("Abdullah").lastName("Nasr")
                         .withDegree("Bachelors in Electrical Engineering").from("Iowa State University")
                         .bio("Abdullah used to work for a larger social media company, but he prefers the excitement of a small startup."),
-                imageCache.ABDULLAH);
+                assets.getTile(GameAssets.ImageKey.ABDULLAH));
         builder.put(EmployeeProfile.firstName("Janine").lastName("Palmer")
                         .withDegree("Bachelors in Computer Science").from("Virginia Tech")
                         .bio("Janine is especially talented at meeting with customers and understanding what they want from a product."),
-                imageCache.JANINE);
+                assets.getTile(GameAssets.ImageKey.JANINE));
         return builder.build();
     }
 
-    public static EmployeePool create(ImageCache cache) {
+    public static EmployeePool create(GameAssets cache) {
         return new EmployeePool(cache);
     }
 
-    private final ImageCache cache;
+    private final GameAssets cache;
 
-    private EmployeePool(ImageCache cache) {
+    private EmployeePool(GameAssets cache) {
         this.cache = checkNotNull(cache);
     }
 
     public Set<Employee> recruit(int numberOfEmployees) {
         checkArgument(numberOfEmployees >= 0);
-        Map<EmployeeProfile, Image> map = makeDeveloperMap(cache);
+        Map<EmployeeProfile, Tile> map = makeDeveloperMap(cache);
         Set<Employee> result = Sets.newHashSet();
         List<EmployeeProfile> employeePool = Lists.newLinkedList(map.keySet());
         for (int i = 0; i < numberOfEmployees; i++) {

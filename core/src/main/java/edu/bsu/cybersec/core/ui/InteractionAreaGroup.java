@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.SimGame;
 import playn.core.Tile;
 import react.Value;
 import react.ValueView;
@@ -28,7 +29,7 @@ import tripleplay.ui.Layout;
 import tripleplay.ui.Style;
 
 public class InteractionAreaGroup extends Group {
-    private static final Tile COMPANY_LOGO = ImageCache.instance().COMPANY_LOGO_WITH_ALPHA.tile();
+    private static final Tile COMPANY_LOGO = SimGame.game.assets.getTile(GameAssets.ImageKey.COMPANY_LOGO_WITH_ALPHA);
 
     protected Value<Boolean> needsAttention = Value.create(false);
 

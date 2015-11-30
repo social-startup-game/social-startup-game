@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Font;
-import playn.core.Image;
+import playn.core.Tile;
 import react.Slot;
 import react.Value;
 import react.ValueView;
@@ -44,10 +44,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class MainUIGroup extends Group {
     private static final float TRANSPARENT_AREA_WEIGHT = 1.0f;
     private static final float CONTROLS_AREA_WEIGHT = 1.0f;
-    private static final List<Image> BACKGROUNDS = ImmutableList.of(
-            ImageCache.instance().EMPLOYEE_BG_1,
-            ImageCache.instance().EMPLOYEE_BG_2,
-            ImageCache.instance().EMPLOYEE_BG_4);
+    private static final List<Tile> BACKGROUNDS = ImmutableList.of(
+            SimGame.game.assets.getTile(GameAssets.ImageKey.BACKGROUND_1),
+            SimGame.game.assets.getTile(GameAssets.ImageKey.BACKGROUND_2),
+            SimGame.game.assets.getTile(GameAssets.ImageKey.BACKGROUND_4));
 
     private final Interface iface;
     private final GameWorld gameWorld;
@@ -69,7 +69,7 @@ public class MainUIGroup extends Group {
     }
 
     private void configureUI(Root root) {
-        Iterator<Image> backgroundIterator = BACKGROUNDS.iterator();
+        Iterator<Tile> backgroundIterator = BACKGROUNDS.iterator();
         for (Entity e : gameWorld.workers) {
             final int id = e.id;
             EmployeeView employeeView = new EmployeeView(id, root, backgroundIterator.next());
@@ -151,14 +151,14 @@ public class MainUIGroup extends Group {
         private final Value<Integer> developmentSkill = Value.create(0);
         private final Value<Integer> maintenanceSkill = Value.create(0);
 
-        EmployeeView(int id, Root root, Image background) {
+        EmployeeView(int id, Root root, Tile background) {
             super(AxisLayout.horizontal().offStretch());
             this.id = id;
             checkNotNull(root);
 
-            final Image image = gameWorld.image.get(id);
+            final Tile image = gameWorld.image.get(id);
             addStyles(Style.BACKGROUND.is(
-                    ExpandableParallaxBackground.foreground(image).background(background.tile())))
+                    ExpandableParallaxBackground.foreground(image).background(background)))
                     .setConstraint(AxisLayout.stretched());
             add(createTransparentClickableArea(),
                     createControlsAndBioGroup(root));
@@ -380,21 +380,20 @@ public class MainUIGroup extends Group {
 }
 
 final class TaskIconFactory {
-    private final ImageCache imageCache = ImageCache.instance();
-    private Map<Task, Image> iconMap = ImmutableMap.of(
-            Task.MAINTENANCE, imageCache.MAINTENANCE,
-            Task.DEVELOPMENT, imageCache.DEVELOPMENT);
+    private Map<Task, Tile> iconMap = ImmutableMap.of(
+            Task.MAINTENANCE, SimGame.game.assets.getTile(GameAssets.ImageKey.MAINTENANCE),
+            Task.DEVELOPMENT, SimGame.game.assets.getTile(GameAssets.ImageKey.DEVELOPMENT));
 
     public Icon getIcon(Task task) {
         if (!iconMap.containsKey(task)) {
             return null;
         } else {
-            final Image image = iconMap.get(task);
-            final float imageHeight = image.height();
+            final Tile tile = iconMap.get(task);
+            final float imageHeight = tile.height();
             final float viewHeight = SimGame.game.plat.graphics().viewSize.height();
             final float percentOfScreenHeight = 0.04f;
             final float scale = (viewHeight * percentOfScreenHeight) / imageHeight;
-            return Icons.scaled(Icons.image(image), scale);
+            return Icons.scaled(Icons.image(tile), scale);
         }
     }
 }

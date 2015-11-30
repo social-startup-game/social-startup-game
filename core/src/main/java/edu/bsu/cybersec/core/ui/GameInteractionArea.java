@@ -21,7 +21,7 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Image;
+import playn.core.Tile;
 import react.Slot;
 import react.ValueView;
 import tripleplay.anim.AnimGroup;
@@ -57,12 +57,12 @@ public final class GameInteractionArea extends Group {
     }
 
     private Element makeButtonArea() {
-        ImageCache images = ImageCache.instance();
+        GameAssets assets = SimGame.game.assets;
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(images.DOLLAR_SIGN, "Status", statusGroup),
-                        new ChangeViewButton(images.DEVELOPMENT, "Features", new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(images.MAINTENANCE, "Exploits", new ExploitsGroup(gameWorld)),
-                        new ChangeViewButton(images.ENVELOPE, "News & Events", new EventsGroup(gameWorld)));
+                .add(new ChangeViewButton(assets.getTile(GameAssets.ImageKey.DOLLAR_SIGN), "Status", statusGroup),
+                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.DEVELOPMENT), "Features", new FeatureGroup(gameWorld)),
+                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.MAINTENANCE), "Exploits", new ExploitsGroup(gameWorld)),
+                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.ENVELOPE), "News & Events", new EventsGroup(gameWorld)));
     }
 
     private final class ChangeViewButton extends Button {
@@ -114,7 +114,7 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
 
-        ChangeViewButton(Image iconImage, String text, final InteractionAreaGroup view) {
+        ChangeViewButton(Tile iconImage, String text, final InteractionAreaGroup view) {
             super(text);
             addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             final Icon icon = makeIconFromImage(iconImage);
@@ -158,7 +158,7 @@ public final class GameInteractionArea extends Group {
             return group.toAnim();
         }
 
-        private Icon makeIconFromImage(Image iconImage) {
+        private Icon makeIconFromImage(Tile iconImage) {
             final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
             final float scale = desiredHeight / iconImage.height();
             return Icons.scaled(Icons.image(iconImage), scale);

@@ -22,7 +22,7 @@ package edu.bsu.cybersec.core;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.systems.*;
-import playn.core.Image;
+import playn.core.Tile;
 import react.Signal;
 import react.UnitSignal;
 import react.Value;
@@ -53,7 +53,7 @@ public class GameWorld extends World {
     public final Component.IScalar goal = register("goal", new Component.IScalar(this));
     public final Component.FScalar usersPerHour = register("usersPerHour", new Component.FScalar(this));
     public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
-    public final Component.Generic<Image> image = register("image", new Component.Generic<Image>(this));
+    public final Component.Generic<Tile> image = register("image", new Component.Generic<Tile>(this));
     public final Component.Generic<Updatable> onUpdate = register("onUpdate", new Component.Generic<Updatable>(this));
     public final Component.IScalar timeTrigger = register("timeTrigger", new Component.IScalar(this));
     public final Component.Generic<Runnable> event = register("event", new Component.Generic<Runnable>(this));

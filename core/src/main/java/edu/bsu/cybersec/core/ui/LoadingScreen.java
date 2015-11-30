@@ -22,8 +22,8 @@ package edu.bsu.cybersec.core.ui;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
-import playn.core.Image;
 import playn.core.Sound;
+import playn.core.Tile;
 import react.RFuture;
 import react.Slot;
 import react.Try;
@@ -42,7 +42,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class LoadingScreen extends ScreenStack.UIScreen {
 
     private final ScreenStack screenStack;
-    private int countdown = 2;
+    private int assetTypesYetToCache = 2; // images, sounds
     private ProgressBar progressBar;
 
     public LoadingScreen(ScreenStack screenStack) {
@@ -58,7 +58,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     }
 
     private void initializeProgressBar() {
-        final int max = ImageCache.instance().all().size()
+        final int max = GameAssets.ImageKey.values().length
                 + MusicCache.instance().all().size();
         final float width = size().width();
         final float height = size().height();
@@ -67,24 +67,25 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     }
 
     private void startLoadingImages() {
-        List<RFuture<Image>> futures = Lists.newArrayList();
-        for (Image image : ImageCache.instance().all()) {
-            futures.add(image.state);
-            image.state.onComplete(new Slot<Try<Image>>() {
+        List<RFuture<Tile>> futures = SimGame.game.assets.cache(GameAssets.ImageKey.values());
+        for (RFuture<Tile> future : futures) {
+            future.onSuccess(new Slot<Tile>() {
                 @Override
-                public void onEmit(Try<Image> event) {
+                public void onEmit(Tile tile) {
                     progressBar.increment();
                 }
             });
-        }
-        RFuture.collect(futures).onComplete(new Slot<Try<Collection<Image>>>() {
-            @Override
-            public void onEmit(Try<Collection<Image>> event) {
-                if (event.isFailure()) {
-                    game().plat.log().warn("Failed to load some images: " + event);
-                } else {
-                    countDown();
+            future.onFailure(new Slot<Throwable>() {
+                @Override
+                public void onEmit(Throwable throwable) {
+                    SimGame.game.plat.log().error("Failed to load tile", throwable);
                 }
+            });
+        }
+        RFuture.collect(futures).onSuccess(new Slot<Collection<Tile>>() {
+            @Override
+            public void onEmit(Collection<Tile> tiles) {
+                countDown();
             }
         });
     }
@@ -113,8 +114,8 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     }
 
     private void countDown() {
-        countdown--;
-        if (countdown == 0) {
+        assetTypesYetToCache--;
+        if (assetTypesYetToCache == 0) {
             startGame();
         }
     }

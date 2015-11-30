@@ -19,13 +19,13 @@
 
 package edu.bsu.cybersec.core.intro;
 
-import playn.core.Image;
+import playn.core.Tile;
 
 public class IntroSlideInformation {
     public final String text;
-    public final Image background;
+    public final Tile background;
 
-    public IntroSlideInformation(String text, Image background) {
+    public IntroSlideInformation(String text, Tile background) {
         this.text = text;
         this.background = background;
     }

@@ -25,7 +25,7 @@ import edu.bsu.cybersec.core.intro.IntroScreen;
 import edu.bsu.cybersec.core.intro.IntroSlideInformation;
 import playn.core.Font;
 import playn.core.Game;
-import playn.core.Image;
+import playn.core.Tile;
 import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
@@ -37,11 +37,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
     private final ImmutableList<IntroSlideInformation> narrativeInfoList = ImmutableList.of(
-            new IntroSlideInformation("Social Jam is an up and coming social media service, and they have hired you as their chief security advisor.", ImageCache.instance().NARRATIVE_BACKGROUND_1),
-            new IntroSlideInformation("You were hired to manage a team of developers and protect the company from hackers! ", ImageCache.instance().NARRATIVE_BACKGROUND_2),
-            new IntroSlideInformation("You have three employees. Assign them to develop features or maintain your current system.", ImageCache.instance().NARRATIVE_BACKGROUND_3),
-            new IntroSlideInformation("You have a job review in two weeks. Do you have what it takes?", ImageCache.instance().NARRATIVE_BACKGROUND_4)
-    );
+            new IntroSlideInformation("Social Jam is an up and coming social media service, and they have hired you as their chief security advisor.",
+                    SimGame.game.assets.getTile(GameAssets.ImageKey.NARRATIVE_BACKGROUND_1)),
+            new IntroSlideInformation("You were hired to manage a team of developers and protect the company from hackers! ",
+                    SimGame.game.assets.getTile(GameAssets.ImageKey.NARRATIVE_BACKGROUND_2)),
+            new IntroSlideInformation("You have three employees. Assign them to develop features or maintain your current system.",
+                    SimGame.game.assets.getTile(GameAssets.ImageKey.NARRATIVE_BACKGROUND_3)),
+            new IntroSlideInformation("You have a job review in two weeks. Do you have what it takes?",
+                    SimGame.game.assets.getTile(GameAssets.ImageKey.NARRATIVE_BACKGROUND_4)));
 
     public StartingScreen(ScreenStack screenStack) {
         this.screenStack = checkNotNull(screenStack);
@@ -52,7 +55,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
     protected Root createRoot() {
         Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()))
                 .setSize(size());
-        Image logo = ImageCache.instance().LOGO;
+        Tile logo = SimGame.game.assets.getTile(GameAssets.ImageKey.LOGO);
         Icon iconLogo = Icons.image(logo.tile());
         final float buttonFontSize = percentOfViewHeight(0.04f);
         final Font font = FontCache.instance().REGULAR.derive(buttonFontSize);
