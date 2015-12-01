@@ -26,6 +26,8 @@ import playn.java.LWJGLPlatform;
 import pythagoras.i.Dimension;
 import pythagoras.i.IDimension;
 
+import java.awt.*;
+
 public class SimGameJava {
 
     private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
@@ -35,7 +37,7 @@ public class SimGameJava {
     public static void main(String[] args) {
         new Parser().process(args);
         LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
-        plat.graphics().registerFont("Lato-Regular", "fonts/Lato-Regular.ttf");
+        registerFont(plat);
         new SimGame(plat, gameConfig);
         plat.start();
     }
@@ -45,6 +47,16 @@ public class SimGameJava {
         config.width = size.width();
         config.height = size.height();
         return config;
+    }
+
+
+    private static void registerFont(JavaPlatform plat) {
+        try {
+            Font font = plat.assets().getFont("fonts/Lato-Regular.ttf");
+            plat.graphics().registerFont("Lato-Regular", font);
+        } catch (Exception e) {
+            plat.log().error("Failed to load font", e);
+        }
     }
 
     private static final class Parser extends BasicParser {

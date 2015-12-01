@@ -47,17 +47,22 @@ public class CreditScreen extends ScreenStack.UIScreen {
     private final ScreenStack.UIScreen creditScreen = this;
 
     public CreditScreen(ScreenStack screenStack) {
+        super(SimGame.game.plat);
         this.screenStack = screenStack;
         new Pointer(game().plat, layer, true);
     }
 
     @Override
-    protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()))
+    public void wasShown() {
+        super.wasShown();
+        createUI();
+    }
+
+    private void createUI() {
+        Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size());
         root.add(createContentArea())
                 .setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
-        return root;
     }
 
     private Group createContentArea() {

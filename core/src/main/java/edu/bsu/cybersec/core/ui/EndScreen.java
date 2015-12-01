@@ -35,13 +35,19 @@ public class EndScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
 
     public EndScreen(ScreenStack screenStack, GameWorld gameWorld) {
+        super(SimGame.game.plat);
         this.gameWorld = gameWorld;
         this.screenStack = screenStack;
         new Pointer(game().plat, layer, true);
     }
 
     @Override
-    protected Root createRoot() {
+    public void wasShown() {
+        super.wasShown();
+        createUI();
+    }
+
+    private void createUI() {
         Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size())
                 .add(new Label("The game is over")
@@ -56,7 +62,6 @@ public class EndScreen extends ScreenStack.UIScreen {
                         screenStack.push(new StartingScreen(screenStack));
                     }
                 }));
-        return root;
     }
 
     private String determineOutcomeText() {

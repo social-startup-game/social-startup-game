@@ -47,13 +47,13 @@ public class StartingScreen extends ScreenStack.UIScreen {
                     SimGame.game.assets.getTile(GameAssets.ImageKey.NARRATIVE_BACKGROUND_4)));
 
     public StartingScreen(ScreenStack screenStack) {
+        super(SimGame.game.plat);
         this.screenStack = checkNotNull(screenStack);
         new Pointer(game().plat, layer, true);
     }
 
-    @Override
-    protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()))
+    private void createUI() {
+        Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size());
         Tile logo = SimGame.game.assets.getTile(GameAssets.ImageKey.LOGO);
         Icon iconLogo = Icons.image(logo.tile());
@@ -78,7 +78,6 @@ public class StartingScreen extends ScreenStack.UIScreen {
                                     }
                                 }));
         root.setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
-        return root;
     }
 
     private float percentOfViewHeight(float v) {
@@ -88,6 +87,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
     @Override
     public void wasShown() {
         super.wasShown();
+        createUI();
         Jukebox.instance().loop(MusicCache.instance().INTRO_THEME);
     }
 

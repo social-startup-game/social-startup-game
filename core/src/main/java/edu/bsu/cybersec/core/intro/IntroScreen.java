@@ -44,6 +44,7 @@ public class IntroScreen extends ScreenStack.UIScreen {
     private final List<Connection> connections = Lists.newArrayList();
 
     public IntroScreen(ScreenStack screenStack, Iterator<IntroSlideInformation> iterator) {
+        super(SimGame.game.plat);
         this.screenStack = screenStack;
         this.iterator = iterator;
         connections.add(game().plat.input().mouseEvents.connect(new Slot<Mouse.Event>() {
@@ -76,8 +77,14 @@ public class IntroScreen extends ScreenStack.UIScreen {
     }
 
     @Override
-    protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
+    public void wasShown() {
+        super.wasShown();
+        createUI();
+    }
+
+    private void createUI() {
+        Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
+                .setSize(size());
         IntroSlideInformation info = iterator.next();
         root.add(new Label(info.text, Icons.image(info.background))
                 .addStyles(Style.TEXT_WRAP.on,
@@ -86,7 +93,6 @@ public class IntroScreen extends ScreenStack.UIScreen {
                         Style.ICON_GAP.is(percentOfScreenHeight(0.04f))));
         root.addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
         root.add(createTransparentClickableArea());
-        return root;
     }
 
     private int percentOfScreenHeight(float percent) {
