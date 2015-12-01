@@ -21,17 +21,14 @@ package edu.bsu.cybersec.java;
 
 import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
+import react.Value;
 
-public class JavaGameConfig implements GameConfig {
+public final class JavaGameConfig extends GameConfig.Default {
 
     private final Java7DateFormatter formatter = new Java7DateFormatter();
-    private final boolean skipIntro;
-    private final boolean skipWelcome;
-
-    public JavaGameConfig(boolean skipIntro, boolean skipWelcome) {
-        this.skipIntro = skipIntro;
-        this.skipWelcome = skipWelcome;
-    }
+    Value<Boolean> skipIntro = Value.create(super.skipIntro());
+    Value<Boolean> skipWelcome = Value.create(super.skipWelcome());
+    Value<Boolean> useNarrativeEvents = Value.create(super.useNarrativeEvents());
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
@@ -40,11 +37,16 @@ public class JavaGameConfig implements GameConfig {
 
     @Override
     public boolean skipIntro() {
-        return skipIntro;
+        return skipIntro.get();
     }
 
     @Override
     public boolean skipWelcome() {
-        return skipWelcome;
+        return skipWelcome.get();
+    }
+
+    @Override
+    public boolean useNarrativeEvents() {
+        return useNarrativeEvents.get();
     }
 }

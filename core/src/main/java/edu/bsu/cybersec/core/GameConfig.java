@@ -29,6 +29,8 @@ public interface GameConfig {
 
     boolean skipWelcome();
 
+    boolean useNarrativeEvents();
+
     abstract class Default implements GameConfig {
         @Override
         public boolean skipIntro() {
@@ -38,6 +40,11 @@ public interface GameConfig {
         @Override
         public boolean skipWelcome() {
             return false;
+        }
+
+        @Override
+        public boolean useNarrativeEvents() {
+            return true;
         }
     }
 

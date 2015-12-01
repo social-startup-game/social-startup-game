@@ -29,15 +29,14 @@ import pythagoras.i.IDimension;
 public class SimGameJava {
 
     private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
-    private static boolean skipIntro = false;
-    private static boolean skipWelcome = false;
     private static Dimension size = new Dimension(DEFAULT_SIZE.width(), DEFAULT_SIZE.height());
+    private static JavaGameConfig gameConfig = new JavaGameConfig();
 
     public static void main(String[] args) {
         new Parser().process(args);
         LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
         plat.graphics().registerFont("Lato-Regular", "fonts/Lato-Regular.ttf");
-        new SimGame(plat, new JavaGameConfig(skipIntro, skipWelcome));
+        new SimGame(plat, gameConfig);
         plat.start();
     }
 
@@ -52,29 +51,26 @@ public class SimGameJava {
         private static final String SIZE_OPTION_NAME = "size";
         private static final String SKIP_INTRO_OPTION = "skipIntro";
         private static final String SKIP_WELCOME_OPTION = "skipWelcome";
-        private CommandLine line;
+        private static final String SKIP_NARRATIVE = "skipNarrative";
         private Options options = createOptions();
 
         @SuppressWarnings("static-access") // Static access required through CLI API
         private static Options createOptions() {
-            Option sizeOption = OptionBuilder.withArgName(SIZE_OPTION_NAME)
-                    .hasArg()
-                    .withDescription("specify game screen size")
-                    .create(SIZE_OPTION_NAME);
-            Option skipIntroOption = OptionBuilder.withArgName(SKIP_INTRO_OPTION)
-                    .withDescription("skip the game introduction")
-                    .create(SKIP_INTRO_OPTION);
-            Option skipWelcomeOption = OptionBuilder.withArgName(SKIP_WELCOME_OPTION)
-                    .withDescription("skip the administrative coordinator's welcome event")
-                    .create(SKIP_WELCOME_OPTION);
             Options options = new Options();
-            options.addOption(sizeOption);
-            options.addOption(skipIntroOption);
-            options.addOption(skipWelcomeOption);
+            options.addOption(OptionBuilder
+                    .withLongOpt(SIZE_OPTION_NAME)
+                    .withDescription("window size")
+                    .hasArg()
+                    .withArgName("<w>x<h>")
+                    .create());
+            options.addOption(SKIP_INTRO_OPTION, false, "skip introduction");
+            options.addOption(SKIP_WELCOME_OPTION, false, "skip Frieda's welcome narrative");
+            options.addOption(SKIP_NARRATIVE, false, "skip all narrative events");
             return options;
         }
 
         public void process(String[] args) {
+            CommandLine line;
             try {
                 line = parse(options, args);
             } catch (ParseException e) {
@@ -85,10 +81,13 @@ public class SimGameJava {
                 processSizeOption(line);
             }
             if (line.hasOption(SKIP_INTRO_OPTION)) {
-                skipIntro = true;
+                gameConfig.skipIntro.update(true);
             }
             if (line.hasOption(SKIP_WELCOME_OPTION)) {
-                skipWelcome = true;
+                gameConfig.skipWelcome.update(true);
+            }
+            if (line.hasOption(SKIP_NARRATIVE)) {
+                gameConfig.useNarrativeEvents.update(false);
             }
         }
 

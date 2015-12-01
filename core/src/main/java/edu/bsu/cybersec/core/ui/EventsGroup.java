@@ -57,12 +57,14 @@ public class EventsGroup extends InteractionAreaGroup {
         super(AxisLayout.horizontal().offStretch());
         add(noEventsLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.CENTER)));
         this.gameWorld = gameWorld;
-        gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
-            @Override
-            public void onEmit(NarrativeEvent event) {
-                post(event);
-            }
-        });
+        if (SimGame.game.config.useNarrativeEvents()) {
+            gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
+                @Override
+                public void onEmit(NarrativeEvent event) {
+                    post(event);
+                }
+            });
+        }
     }
 
     @Override

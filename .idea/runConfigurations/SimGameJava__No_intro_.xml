@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SimGameJava Skip" type="Application" factoryName="Application">
+  <configuration default="false" name="SimGameJava (No intro)" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
       <pattern>
         <option name="PATTERN" value="edu.bsu.cybersec.java.*" />
@@ -8,7 +8,7 @@
     </extension>
     <option name="MAIN_CLASS_NAME" value="edu.bsu.cybersec.java.SimGameJava" />
     <option name="VM_PARAMETERS" value="" />
-    <option name="PROGRAM_PARAMETERS" value="-size 400x711 -skipIntro -skipWelcome" />
+    <option name="PROGRAM_PARAMETERS" value="-size 400x711 -skipIntro" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" />
