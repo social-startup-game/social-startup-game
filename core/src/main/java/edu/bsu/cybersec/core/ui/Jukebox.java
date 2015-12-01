@@ -32,6 +32,7 @@ public final class Jukebox {
     }
 
     private Sound currentTrack;
+    private boolean muted = false;
 
     public void loop(Sound track) {
         checkNotNull(track);
@@ -41,12 +42,18 @@ public final class Jukebox {
             currentTrack.stop();
             startPlaying(track);
         }
-
     }
 
     private void startPlaying(Sound track) {
-        track.setLooping(true);
-        track.play();
-        currentTrack = track;
+        if (!muted) {
+            track.setLooping(true);
+            track.play();
+            currentTrack = track;
+        }
+    }
+
+    public Jukebox mute() {
+        this.muted = true;
+        return this;
     }
 }

@@ -19,10 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
-import edu.bsu.cybersec.core.ui.FontCache;
-import edu.bsu.cybersec.core.ui.GameAssets;
-import edu.bsu.cybersec.core.ui.LoadingScreen;
-import edu.bsu.cybersec.core.ui.MusicCache;
+import edu.bsu.cybersec.core.ui.*;
 import playn.core.Platform;
 import playn.scene.SceneGame;
 import tripleplay.game.ScreenStack;
@@ -44,10 +41,24 @@ public class SimGame extends SceneGame {
         assets = new GameAssets(plat.assets());
         game = this;
         this.config = checkNotNull(config);
+        handleMusicMute();
+        initializeAssetCaches();
+        pushFirstScreen();
+    }
+
+    private void handleMusicMute() {
+        if (config.muteMusic()) {
+            Jukebox.instance().mute();
+        }
+    }
+
+    private void initializeAssetCaches() {
         MusicCache.initialize(plat.assets());
         FontCache.initialize(plat.graphics());
+    }
+
+    private void pushFirstScreen() {
         ScreenStack screenStack = new ScreenStack(this, rootLayer);
         screenStack.push(new LoadingScreen(screenStack));
     }
-
 }

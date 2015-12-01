@@ -31,6 +31,8 @@ public interface GameConfig {
 
     boolean useNarrativeEvents();
 
+    boolean muteMusic();
+
     abstract class Default implements GameConfig {
         @Override
         public boolean skipIntro() {
@@ -45,6 +47,11 @@ public interface GameConfig {
         @Override
         public boolean useNarrativeEvents() {
             return true;
+        }
+
+        @Override
+        public boolean muteMusic() {
+            return false;
         }
     }
 

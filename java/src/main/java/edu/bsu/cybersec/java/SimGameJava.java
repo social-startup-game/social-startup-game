@@ -52,6 +52,7 @@ public class SimGameJava {
         private static final String SKIP_INTRO_OPTION = "skipIntro";
         private static final String SKIP_WELCOME_OPTION = "skipWelcome";
         private static final String SKIP_NARRATIVE = "skipNarrative";
+        private static final String MUTE_MUSIC = "mute";
         private Options options = createOptions();
 
         @SuppressWarnings("static-access") // Static access required through CLI API
@@ -66,6 +67,7 @@ public class SimGameJava {
             options.addOption(SKIP_INTRO_OPTION, false, "skip introduction");
             options.addOption(SKIP_WELCOME_OPTION, false, "skip Frieda's welcome narrative");
             options.addOption(SKIP_NARRATIVE, false, "skip all narrative events");
+            options.addOption(MUTE_MUSIC, false, "mute music");
             return options;
         }
 
@@ -88,6 +90,9 @@ public class SimGameJava {
             }
             if (line.hasOption(SKIP_NARRATIVE)) {
                 gameConfig.useNarrativeEvents.update(false);
+            }
+            if (line.hasOption(MUTE_MUSIC)) {
+                gameConfig.muteMusic.update(true);
             }
         }
 

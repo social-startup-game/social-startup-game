@@ -29,6 +29,7 @@ public final class JavaGameConfig extends GameConfig.Default {
     Value<Boolean> skipIntro = Value.create(super.skipIntro());
     Value<Boolean> skipWelcome = Value.create(super.skipWelcome());
     Value<Boolean> useNarrativeEvents = Value.create(super.useNarrativeEvents());
+    Value<Boolean> muteMusic = Value.create(super.muteMusic());
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
@@ -48,5 +49,10 @@ public final class JavaGameConfig extends GameConfig.Default {
     @Override
     public boolean useNarrativeEvents() {
         return useNarrativeEvents.get();
+    }
+
+    @Override
+    public boolean muteMusic() {
+        return muteMusic.get();
     }
 }
