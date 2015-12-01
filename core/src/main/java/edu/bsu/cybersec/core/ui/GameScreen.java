@@ -132,12 +132,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     @Override
     public void wasShown() {
         super.wasShown();
-        playBackgroundMusic();
-    }
-
-    private void playBackgroundMusic() {
-        MusicCache.instance().INTRO_THEME.stop();
-        MusicCache.instance().GAME_THEME.play();
+        Jukebox.instance().loop(MusicCache.instance().GAME_THEME);
     }
 
     @Override
