@@ -24,14 +24,37 @@ import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import edu.bsu.cybersec.core.UsersPerHourState;
 import playn.core.Clock;
+import react.UnitSlot;
 import tripleplay.entity.Entity;
 
 public class UserGenerationSystem extends tripleplay.entity.System {
     private final GameWorld world;
+    private boolean canGainUsers = true;
 
     public UserGenerationSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = world;
+        connectServerDownSlot();
+        connectServerBackUpSlot();
+    }
+
+
+    private void connectServerDownSlot() {
+        world.onServerDownEvent.connect(new UnitSlot() {
+            @Override
+            public void onEmit() {
+                canGainUsers = false;
+            }
+        });
+    }
+
+    private void connectServerBackUpSlot() {
+        world.onServerBackUpEvent.connect(new UnitSlot() {
+            @Override
+            public void onEmit() {
+                canGainUsers = true;
+            }
+        });
     }
 
     @Override
@@ -41,7 +64,10 @@ public class UserGenerationSystem extends tripleplay.entity.System {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             int id = entities.get(i);
             float usersPerHour = world.usersPerHour.get(id);
-            float additionalUsers = usersPerHour * delta / ClockUtils.SECONDS_PER_HOUR;
+            float additionalUsers = 0;
+            if (canGainUsers) {
+                additionalUsers = usersPerHour * delta / ClockUtils.SECONDS_PER_HOUR;
+            }
             addUsers(additionalUsers);
         }
     }

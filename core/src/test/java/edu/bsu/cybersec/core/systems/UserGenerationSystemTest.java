@@ -81,4 +81,25 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
         whenOneHourOfGameTimeElapses();
         assertIntegerNumberOfUsersIs(0);
     }
+
+    @Test
+    public void testOnServerDownSignal_someTimePasses_noUsersGained() {
+        createEntityGeneratingUsersPerHour(10);
+        whenOneHourOfGameTimeElapses();
+        int usersBeforeServerDown = world.users.get().intValue();
+        world.onServerDownEvent.emit();
+        whenOneHourOfGameTimeElapses();
+        int usersAfterServerDownAndTimeElapsed = world.users.get().intValue();
+        assertEquals(usersBeforeServerDown, usersAfterServerDownAndTimeElapsed);
+    }
+
+    @Test
+    public void testOnServerBackUp_oneHourElapses_gainsTenUsers() {
+        createEntityGeneratingUsersPerHour(10);
+        world.onServerDownEvent.emit();
+        whenOneHourOfGameTimeElapses();
+        world.onServerBackUpEvent.emit();
+        whenOneHourOfGameTimeElapses();
+        assertIntegerNumberOfUsersIs(10);
+    }
 }
