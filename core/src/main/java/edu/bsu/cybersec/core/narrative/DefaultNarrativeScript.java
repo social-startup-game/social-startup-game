@@ -39,6 +39,7 @@ public final class DefaultNarrativeScript {
         hour(2).runEvent(new ScriptKiddieAttackEvent(world));
         hour(4).runEvent(new SecurityConferenceEvent(world));
         hour(6).runEvent(new DataStolenNotifyChoiceEvent(world));
+        hour(8).runEvent(new InputSanitizationEvent(world));
     }
 
     private TimedEventBuilder now() {
