@@ -26,12 +26,9 @@ import playn.scene.Layer;
 import pythagoras.f.IDimension;
 import react.Value;
 import react.ValueView;
-import tripleplay.ui.Background;
-import tripleplay.ui.Group;
-import tripleplay.ui.Layout;
-import tripleplay.ui.Style;
+import tripleplay.ui.*;
 
-public class InteractionAreaGroup extends Group {
+public abstract class InteractionAreaGroup extends Group {
     private static final Tile COMPANY_LOGO = SimGame.game.assets.getTile(GameAssets.ImageKey.COMPANY_LOGO_WITH_ALPHA);
 
     protected Value<Boolean> needsAttention = Value.create(false);
@@ -63,5 +60,42 @@ public class InteractionAreaGroup extends Group {
 
     protected Background applyInsets(Background b) {
         return b;
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+    }
+
+    public static abstract class Scrolling extends InteractionAreaGroup {
+
+        protected Scroller scroller;
+
+        public Scrolling(Layout layout) {
+            super(layout);
+        }
+
+        @Override
+        protected void validate() {
+            super.validate();
+            updateScrollerConstraints();
+        }
+
+        private void updateScrollerConstraints() {
+            final IDimension parentSize = _parent.size();
+            scroller.setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
+        }
+
+        @Override
+        protected void wasParented(Container<?> parent) {
+            super.wasParented(parent);
+            updateScrollerConstraints();
+        }
+
+        @Override
+        protected Background applyInsets(Background b) {
+            float horizontal = SimGame.game.plat.graphics().viewSize.height() * 0.02f;
+            return b.inset(horizontal, 0f);
+        }
     }
 }

@@ -65,6 +65,13 @@ public final class GameInteractionArea extends Group {
                         new ChangeViewButton(assets.getTile(GameAssets.ImageKey.ENVELOPE), "News & Events", new EventsGroup(gameWorld)));
     }
 
+    @Override
+    public Group setConstraint(Layout.Constraint constraint) {
+        super.setConstraint(constraint);
+        ((InteractionAreaGroup) shown.childAt(0)).invalidate();
+        return this;
+    }
+
     private final class ChangeViewButton extends Button {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
         private static final float FLASH_PERIOD = 300f;
