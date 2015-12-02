@@ -59,10 +59,10 @@ public final class GameInteractionArea extends Group {
     private Element makeButtonArea() {
         GameAssets assets = SimGame.game.assets;
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(assets.getTile(GameAssets.ImageKey.DOLLAR_SIGN), "Status", statusGroup),
+                .add(new ChangeViewButton(assets.getTile(GameAssets.ImageKey.STATUS), "Status", statusGroup),
                         new ChangeViewButton(assets.getTile(GameAssets.ImageKey.DEVELOPMENT), "Features", new FeatureGroup(gameWorld)),
                         new ChangeViewButton(assets.getTile(GameAssets.ImageKey.MAINTENANCE), "Exploits", new ExploitsGroup(gameWorld)),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.ENVELOPE), "News & Events", new EventsGroup(gameWorld)));
+                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.NEWS), "News & Events", new EventsGroup(gameWorld)));
     }
 
     @Override
