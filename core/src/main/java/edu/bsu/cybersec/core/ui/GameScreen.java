@@ -98,6 +98,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
 
     public GameScreen(ScreenStack screenStack) {
+        super(SimGame.game.plat);
         this.screenStack = screenStack;
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
@@ -132,19 +133,16 @@ public class GameScreen extends ScreenStack.UIScreen {
     @Override
     public void wasShown() {
         super.wasShown();
+        createUI();
         Jukebox.instance().loop(MusicCache.instance().GAME_THEME);
     }
 
-    @Override
-    protected Root createRoot() {
+    private void createUI() {
         Rectangle contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(size());
-        debug("contentBounds " + contentBounds);
-        debug("size " + size());
-        Root root = new Root(iface, new AbsoluteLayout(), makeStyleSheet());
+        Root root = iface.createRoot(new AbsoluteLayout(), makeStyleSheet(), layer);
         Group content = createContentGroup(root);
-        return root
-                .add(AbsoluteLayout.at(content,
-                        contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
+        root.add(AbsoluteLayout.at(content,
+                contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Palette.UNUSED_SPACE)))
                 .setSize(size());
     }

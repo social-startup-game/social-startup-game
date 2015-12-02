@@ -46,12 +46,14 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     private ProgressBar progressBar;
 
     public LoadingScreen(ScreenStack screenStack) {
+        super(SimGame.game.plat);
         this.screenStack = checkNotNull(screenStack);
     }
 
     @Override
     public void wasShown() {
         super.wasShown();
+        createUI();
         initializeProgressBar();
         startLoadingImages();
         startLoadingSounds();
@@ -128,12 +130,11 @@ public class LoadingScreen extends ScreenStack.UIScreen {
         }
     }
 
-    @Override
-    protected Root createRoot() {
-        Root root = new Root(iface, AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics())).setSize(size());
+    private void createUI() {
+        Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
+                .setSize(size());
         root.add(new Label("Loading...").addStyles(Style.COLOR.is(Palette.FOREGROUND)));
         root.addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
-        return root;
     }
 
     @Override

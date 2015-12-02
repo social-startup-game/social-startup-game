@@ -10,27 +10,27 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="sim-core" />
-    <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-rc1" level="project" />
-    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava-gwt:18.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:18.0" level="project" />
     <orderEntry type="module" module-name="sim-core" />
     <orderEntry type="module" module-name="sim-assets" />
-    <orderEntry type="library" name="Maven: io.playn:playn-scene:sources:2.0-rc1" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-scene:sources:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.samskivert:pythagoras:1.4.1" level="project" />
-    <orderEntry type="library" name="Maven: com.threerings:react:1.5.1" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-html:2.0-rc1" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-core:sources:2.0-rc1" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-webgl:2.0-rc1" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-webgl:sources:2.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:react:1.5.2" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-html:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-core:sources:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-webgl:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-webgl:sources:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.google.gwt:gwt-user:2.7.0" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:sources:1.0.0.GA" level="project" />
     <orderEntry type="library" name="Maven: com.allen-sauer.gwt.voices:gwt-voices:3.3.2" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-html:sources:2.0-rc1" level="project" />
-    <orderEntry type="library" name="Maven: com.threerings:tripleplay:sources:2.0-rc1" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-html:sources:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:tripleplay:sources:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
