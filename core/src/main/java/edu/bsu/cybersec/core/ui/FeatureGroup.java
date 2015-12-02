@@ -21,13 +21,14 @@ package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
-import pythagoras.f.IDimension;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
-import tripleplay.ui.*;
+import tripleplay.ui.Group;
+import tripleplay.ui.Label;
+import tripleplay.ui.Scroller;
+import tripleplay.ui.Style;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.TableLayout;
 
@@ -35,7 +36,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class FeatureGroup extends InteractionAreaGroup {
+public final class FeatureGroup extends InteractionAreaGroup.Scrolling {
 
     private static class ExposedColumn extends TableLayout.Column {
         protected ExposedColumn(Style.HAlign halign, boolean stretch, float weight, float minWidth) {
@@ -58,6 +59,9 @@ public final class FeatureGroup extends InteractionAreaGroup {
         content.add(new Label("FEATURE"),
                 new Label("PROGRESS"),
                 new Label("USERS PER HOUR"));
+        scroller = new Scroller(content)
+                .setBehavior(Scroller.Behavior.VERTICAL);
+        add(scroller);
         this.world = checkNotNull(gameWorld);
         new tripleplay.entity.System(world, SystemPriority.UI_LEVEL.value) {
             @Override
@@ -84,29 +88,6 @@ public final class FeatureGroup extends InteractionAreaGroup {
             }
         };
     }
-
-    @Override
-    protected Background applyInsets(Background b) {
-        float horizontal = SimGame.game.plat.graphics().viewSize.height() * 0.02f;
-        return b.inset(horizontal, 0f);
-    }
-
-    @Override
-    protected void wasParented(Container<?> parent) {
-        super.wasParented(parent);
-        if (isThisTheFirstParenting()) {
-            final IDimension parentSize = parent.size();
-            Scroller scroller = new Scroller(content)
-                    .setBehavior(Scroller.Behavior.VERTICAL)
-                    .setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
-            add(scroller);
-        }
-    }
-
-    private boolean isThisTheFirstParenting() {
-        return childCount() == 0;
-    }
-
 
     private final class ProgressLabel extends Label {
 
