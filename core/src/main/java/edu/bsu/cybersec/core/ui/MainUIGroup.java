@@ -54,7 +54,6 @@ public class MainUIGroup extends Group {
     private final Value<Group> focus = Value.create(null);
     private final GameInteractionArea gameInteractionArea;
     private final Map<Integer, EmployeeView> developerViews = Maps.newTreeMap();
-    private Group contentGroup;
     private EmployeeViewUpdateSystem employeeViewUpdateSystem;
     private TaskIconFactory taskIconFactory = new TaskIconFactory();
 
@@ -76,10 +75,8 @@ public class MainUIGroup extends Group {
             developerViews.put(id, employeeView);
             add(employeeView);
         }
-        contentGroup = new Group(AxisLayout.horizontal().offStretch().stretchByDefault())
-                .add(gameInteractionArea)
-                .setConstraint(AxisLayout.stretched(2));
-        add(contentGroup);
+        gameInteractionArea.setConstraint(AxisLayout.stretched(2));
+        add(gameInteractionArea);
     }
 
     private void animateFocusChanges() {
@@ -117,12 +114,12 @@ public class MainUIGroup extends Group {
             }
 
             private void expandContentArea() {
-                iface.anim.tween(new AxisLayoutWeightAnimationValue(contentGroup))
+                iface.anim.tween(new AxisLayoutWeightAnimationValue(gameInteractionArea))
                         .from(INVISIBLE_CONTENT_GROUP_WEIGHT).to(DEFAULT_CONTENT_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
             }
 
             private void shrinkContentArea() {
-                iface.anim.tween(new AxisLayoutWeightAnimationValue(contentGroup))
+                iface.anim.tween(new AxisLayoutWeightAnimationValue(gameInteractionArea))
                         .from(DEFAULT_CONTENT_GROUP_WEIGHT).to(INVISIBLE_CONTENT_GROUP_WEIGHT).in(ANIMATION_DURATION).easeOut();
             }
         });
