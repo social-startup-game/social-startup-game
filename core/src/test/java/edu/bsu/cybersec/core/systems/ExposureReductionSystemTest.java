@@ -23,16 +23,17 @@ import edu.bsu.cybersec.core.Task;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public final class MaintenanceSystemTest extends AbstractSystemTest {
+public final class ExposureReductionSystemTest extends AbstractSystemTest {
 
     private static final float ARBITRARY_SKILL = 1f;
 
     @Override
     public void setUp() {
         super.setUp();
-        new MaintenanceSystem(world);
+        new ExposureReductionSystem(world);
     }
 
     @Test
@@ -117,5 +118,4 @@ public final class MaintenanceSystemTest extends AbstractSystemTest {
         whenOneHourOfGameTimeElapses();
         assertEquals(initialSurface - integerSkill / 10f, currentExposure(), EPSILON);
     }
-
 }

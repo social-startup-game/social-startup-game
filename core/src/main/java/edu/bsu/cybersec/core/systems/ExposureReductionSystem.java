@@ -26,13 +26,14 @@ import edu.bsu.cybersec.core.Task;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
-public final class MaintenanceSystem extends tripleplay.entity.System {
+public final class ExposureReductionSystem extends tripleplay.entity.System {
 
     private final GameWorld world;
 
-    public MaintenanceSystem(GameWorld world) {
+    public ExposureReductionSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
     }

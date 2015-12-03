@@ -62,8 +62,9 @@ public class GameWorld extends World {
     public final Component.IScalar featureNumber = register("featureNumber", new Component.IScalar(this));
     public final Component.IScalar exploitNumber = register("exploitNumber", new Component.IScalar(this));
     public final Component.FScalar userAttrition = register("userAttrition", new Component.FScalar(this));
-    public final Component.IScalar lostUsers = register("lostUsers", new Component.IScalar(this));
+    public final Component.FScalar lostUsers = register("lostUsers", new Component.FScalar(this));
     public final Component.Generic<EmployeeProfile> profile = register("profile", new Component.Generic<EmployeeProfile>(this));
+    public final Component.FScalar maintenanceProgress = register("maintenanceProgress", new Component.FScalar(this));
 
     private <T extends Component> T register(String name, T component) {
         components.put(name, component);
@@ -82,10 +83,12 @@ public class GameWorld extends World {
 
         private void initializeSystemsThatAreNeverDirectlyReferenced() {
             new UpdatingSystem(this);
-            new MaintenanceSystem(this);
+            new ExposureReductionSystem(this);
             new ExpirySystem(this);
             new EventTriggerSystem(this);
             new LearningSystem(this);
+            new ExploitMaintenanceSystem(this);
+            new UserAttritionSystem(this);
         }
 
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
