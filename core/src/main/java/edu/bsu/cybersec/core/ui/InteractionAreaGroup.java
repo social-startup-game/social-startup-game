@@ -29,7 +29,7 @@ import react.ValueView;
 import tripleplay.ui.*;
 
 public abstract class InteractionAreaGroup extends Group {
-    private static final Tile COMPANY_LOGO = SimGame.game.assets.getTile(GameAssets.ImageKey.COMPANY_LOGO_WITH_ALPHA);
+    private static final Tile COMPANY_LOGO = SimGame.game.assets.getTile(GameAssets.TileKey.COMPANY_LOGO_WITH_ALPHA);
 
     protected Value<Boolean> needsAttention = Value.create(false);
 

@@ -52,29 +52,29 @@ public final class EmployeePool {
         builder.put(EmployeeProfile.firstName("Esteban").lastName("Cortez")
                         .withDegree("Bachelors in Computer Science").from("Ball State University")
                         .bio("Esteban worked in a factory until he was 33, then he went to college and decided to get involved in software development."),
-                assets.getTile(GameAssets.ImageKey.ESTEBAN));
+                assets.getTile(GameAssets.TileKey.ESTEBAN));
         builder.put(EmployeeProfile.firstName("Nancy").lastName("Stevens")
                         .withDegree("Bachelors in English").from("Georgetown University")
                         .withDegree("Masters in Computer Security").from("Purdue University")
                         .bio("Nancy has a popular podcast about being a woman in technology."),
-                assets.getTile(GameAssets.ImageKey.NANCY));
+                assets.getTile(GameAssets.TileKey.NANCY));
         builder.put(EmployeeProfile.firstName("Jerry").lastName("Chen")
                         .withDegree("Bachelors in Computer Science").from("University of Hong Kong")
                         .bio("Jerry interned at a local company in high school and has been working as a software developer ever since."),
-                assets.getTile(GameAssets.ImageKey.JERRY));
+                assets.getTile(GameAssets.TileKey.JERRY));
         builder.put(EmployeeProfile.firstName("Vani").lastName("Mishra")
                         .withDegree("Bachelors in Computer Engineering").from("Indian Institute of Science")
                         .withDegree("Masters in Software Engineering").from("Ball State University")
                         .bio("Vani was born in India and came to the United States for graduate school. She loves music, dancing, and PHP."),
-                assets.getTile(GameAssets.ImageKey.VANI));
+                assets.getTile(GameAssets.TileKey.VANI));
         builder.put(EmployeeProfile.firstName("Abdullah").lastName("Nasr")
                         .withDegree("Bachelors in Electrical Engineering").from("Iowa State University")
                         .bio("Abdullah used to work for a larger social media company, but he prefers the excitement of a small startup."),
-                assets.getTile(GameAssets.ImageKey.ABDULLAH));
+                assets.getTile(GameAssets.TileKey.ABDULLAH));
         builder.put(EmployeeProfile.firstName("Janine").lastName("Palmer")
                         .withDegree("Bachelors in Computer Science").from("Virginia Tech")
                         .bio("Janine is especially talented at meeting with customers and understanding what they want from a product."),
-                assets.getTile(GameAssets.ImageKey.JANINE));
+                assets.getTile(GameAssets.TileKey.JANINE));
         return builder.build();
     }
 

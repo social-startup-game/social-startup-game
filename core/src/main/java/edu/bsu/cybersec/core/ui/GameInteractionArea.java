@@ -21,7 +21,8 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Tile;
+import playn.core.Image;
+import playn.core.TileSource;
 import react.Signal;
 import react.Slot;
 import react.ValueView;
@@ -59,12 +60,11 @@ public final class GameInteractionArea extends Group {
     }
 
     private Element makeButtonArea() {
-        GameAssets assets = SimGame.game.assets;
         return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(assets.getTile(GameAssets.ImageKey.STATUS), "Status", statusGroup),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.DEVELOPMENT), "Features", new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.MAINTENANCE), "Exploits", new ExploitsGroup(gameWorld)),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.NEWS), "News & Events", new EventsGroup(gameWorld)));
+                .add(new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup),
+                        new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", new FeatureGroup(gameWorld)),
+                        new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", new ExploitsGroup(gameWorld)),
+                        new ChangeViewButton(GameAssets.ImageKey.NEWS, "News & Events", new EventsGroup(gameWorld)));
     }
 
     @Override
@@ -123,8 +123,9 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
 
-        ChangeViewButton(Tile iconImage, String text, final InteractionAreaGroup view) {
+        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
             super(text);
+            Image iconImage = SimGame.game.assets.getImage(imageKey);
             addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             final Icon icon = makeIconFromImage(iconImage);
             super.icon.update(icon);
@@ -174,9 +175,9 @@ public final class GameInteractionArea extends Group {
             return group.toAnim();
         }
 
-        private Icon makeIconFromImage(Tile iconImage) {
+        private Icon makeIconFromImage(TileSource iconImage) {
             final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
-            final float scale = desiredHeight / iconImage.height();
+            final float scale = desiredHeight / iconImage.tile().height();
             return Icons.scaled(Icons.image(iconImage), scale);
         }
 

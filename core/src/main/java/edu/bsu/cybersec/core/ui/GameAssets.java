@@ -35,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class GameAssets {
 
-    public enum ImageKey {
+    public enum TileKey {
         BACKGROUND_1("employee_bg_1.png"),
         BACKGROUND_2("employee_bg_2.png"),
         BACKGROUND_4("employee_bg_4.png"),
@@ -43,19 +43,29 @@ public class GameAssets {
         NARRATIVE_BACKGROUND_2("crop-2.png"),
         NARRATIVE_BACKGROUND_3("crop-3.png"),
         NARRATIVE_BACKGROUND_4("crop-4.png"),
+        COMPANY_LOGO_WITH_ALPHA("company_logo.png"),
         ESTEBAN("Esteban.png"),
         NANCY("Nancy.png"),
         JERRY("Jerry.png"),
         VANI("Vani.png"),
         ABDULLAH("Abdullah.png"),
-        JANINE("Janine.png"),
+        JANINE("Janine.png");
+
+        private final String path;
+
+        TileKey(String name) {
+            this.path = "images/" + checkNotNull(name);
+        }
+    }
+
+    public enum ImageKey {
         ADMIN("admin.png"),
         STATUS("status.png"),
         NEWS("news.png"),
         DEVELOPMENT("development.png"),
         MAINTENANCE("maintenance.png"),
-        LOGO("logo.png"),
-        COMPANY_LOGO_WITH_ALPHA("company_logo.png");
+        LOGO("logo.png");
+
         private final String path;
 
         ImageKey(String name) {
@@ -65,15 +75,39 @@ public class GameAssets {
 
     private final Assets assets;
 
-    private Map<ImageKey, Tile> tileCache = Maps.newEnumMap(ImageKey.class);
+    private Map<TileKey, Tile> tileCache = Maps.newEnumMap(TileKey.class);
+    private Map<ImageKey, Image> imageCache = Maps.newEnumMap(ImageKey.class);
 
     public GameAssets(Assets assets) {
         this.assets = checkNotNull(assets);
     }
 
-    public List<RFuture<Tile>> cache(ImageKey... keys) {
-        final List<RFuture<Tile>> list = Lists.newArrayListWithCapacity(ImageKey.values().length);
+    public List<RFuture<Image>> cache(ImageKey... keys) {
+        final List<RFuture<Image>> list = Lists.newArrayListWithCapacity(ImageKey.values().length);
         for (final ImageKey key : keys) {
+            final RPromise<Image> promise = RPromise.create();
+            Image image = assets.getImage(key.path);
+            image.state.onSuccess(new Slot<Image>() {
+                @Override
+                public void onEmit(Image image) {
+                    imageCache.put(key, image);
+                    promise.succeed(image);
+                }
+            });
+            image.state.onFailure(new Slot<Throwable>() {
+                @Override
+                public void onEmit(Throwable throwable) {
+                    promise.fail(throwable);
+                }
+            });
+            list.add(promise);
+        }
+        return list;
+    }
+
+    public List<RFuture<Tile>> cache(TileKey... keys) {
+        final List<RFuture<Tile>> list = Lists.newArrayListWithCapacity(TileKey.values().length);
+        for (final TileKey key : keys) {
             final RPromise<Tile> promise = RPromise.create();
             Image image = assets.getImage(key.path);
             image.state.onSuccess(new Slot<Image>() {
@@ -106,12 +140,20 @@ public class GameAssets {
         return list;
     }
 
-    public Tile getTile(ImageKey key) {
+    public Tile getTile(TileKey key) {
         Tile tile = tileCache.get(key);
         if (tile == null) {
             throw new UnsupportedOperationException("Cannot currently get tiles that are not cached (attempted to get " + key + ")");
         }
         return tile;
+    }
+
+    public Image getImage(ImageKey key) {
+        Image image = imageCache.get(key);
+        if (image == null) {
+            throw new UnsupportedOperationException("Cannot currently get images that are not cached (attempted to get " + key + ")");
+        }
+        return image;
     }
 
 }

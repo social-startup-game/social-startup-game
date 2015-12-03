@@ -23,7 +23,7 @@ import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Graphics;
-import playn.core.Tile;
+import playn.core.Image;
 import pythagoras.f.IDimension;
 import react.Slot;
 import tripleplay.ui.*;
@@ -45,7 +45,7 @@ public class EventsGroup extends InteractionAreaGroup {
     }
 
     private final GameWorld gameWorld;
-    private final Tile eventSpeakerImage = SimGame.game.assets.getTile(GameAssets.ImageKey.ADMIN);
+    private final Image eventSpeakerImage = SimGame.game.assets.getImage(GameAssets.ImageKey.ADMIN);
     private NarrativeEvent currentEvent;
     private Scroller scroller;
     private Group content;
