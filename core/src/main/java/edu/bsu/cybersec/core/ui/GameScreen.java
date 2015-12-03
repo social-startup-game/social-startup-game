@@ -20,12 +20,11 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.*;
-import edu.bsu.cybersec.core.systems.WorldLogSystem;
-import playn.core.*;
+import playn.core.Clock;
+import playn.core.Game;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
 import pythagoras.f.IRectangle;
-import react.Slot;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
@@ -101,31 +100,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
         gameWorld.connect(update, paint);
-        registerDebugHooks();
-    }
-
-    private void registerDebugHooks() {
-        registerWorldLogSystemHook();
-    }
-
-    private void registerWorldLogSystemHook() {
-        final WorldLogSystem worldLogSystem = new WorldLogSystem(gameWorld);
-        worldLogSystem.setEnabled(false);
-        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
-            @Override
-            public void onEmit(Keyboard.Event event) {
-                if (isDebugTrigger(event)) {
-                    worldLogSystem.setEnabled(true);
-                }
-            }
-
-            private boolean isDebugTrigger(Event event) {
-                if (event instanceof Keyboard.KeyEvent) {
-                    Keyboard.KeyEvent keyEvent = (Keyboard.KeyEvent) event;
-                    return keyEvent.down && keyEvent.key == Key.L;
-                } else return false;
-            }
-        });
+        game().plat.input().keyboardEvents.connect(new DebugMode(gameWorld));
     }
 
     @Override

@@ -86,12 +86,12 @@ public class GameWorld extends World {
             new ExpirySystem(this);
             new EventTriggerSystem(this);
             new LearningSystem(this);
-            new ExploitSystem(this);
         }
 
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
         public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
         public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
         public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
+        public final ExploitSystem exploitSystem = new ExploitSystem(this);
     }
 }
