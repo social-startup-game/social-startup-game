@@ -24,7 +24,7 @@ import edu.bsu.cybersec.core.systems.WorldLogSystem;
 import playn.core.*;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
-import pythagoras.f.Rectangle;
+import pythagoras.f.IRectangle;
 import react.Slot;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
@@ -35,8 +35,6 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 
 public class GameScreen extends ScreenStack.UIScreen {
-    private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
-
     private final GameWorld.Systematized gameWorld;
 
     {
@@ -138,11 +136,11 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void createUI() {
-        Rectangle contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(size());
+        IRectangle contentBounds = SimGame.game.contentBounds;
         Root root = iface.createRoot(new AbsoluteLayout(), makeStyleSheet(), layer);
         Group content = createContentGroup(root);
         root.add(AbsoluteLayout.at(content,
-                contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
+                contentBounds.x(), contentBounds.y(), contentBounds.width(), contentBounds.height()))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Palette.UNUSED_SPACE)))
                 .setSize(size());
     }

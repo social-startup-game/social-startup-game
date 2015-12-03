@@ -22,11 +22,14 @@ package edu.bsu.cybersec.core;
 import edu.bsu.cybersec.core.ui.*;
 import playn.core.Platform;
 import playn.scene.SceneGame;
+import pythagoras.f.IRectangle;
 import tripleplay.game.ScreenStack;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class SimGame extends SceneGame {
+
+    private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
 
     // This is required for ScreenStack.UIScreen's game() method, which is called before the constructor.
     // See https://github.com/threerings/tripleplay/blob/master/demo/core/src/main/java/tripleplay/demo/TripleDemo.java#L19
@@ -36,11 +39,14 @@ public class SimGame extends SceneGame {
 
     public final GameAssets assets;
 
+    public final IRectangle contentBounds;
+
     public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);
         assets = new GameAssets(plat.assets());
         game = this;
         this.config = checkNotNull(config);
+        contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(plat.graphics().viewSize);
         handleMusicMute();
         initializeAssetCaches();
         pushFirstScreen();
