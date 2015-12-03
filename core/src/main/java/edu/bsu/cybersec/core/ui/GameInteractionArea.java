@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Tile;
+import react.Signal;
 import react.Slot;
 import react.ValueView;
 import tripleplay.anim.AnimGroup;
@@ -38,6 +39,7 @@ public final class GameInteractionArea extends Group {
     private final Interface iface;
     private Group shown = new Group(AxisLayout.vertical().stretchByDefault().offStretch())
             .setConstraint(AxisLayout.stretched());
+    private final Signal<ChangeViewButton> shownChanged = Signal.create();
     private final InteractionAreaGroup statusGroup;
 
     public GameInteractionArea(GameWorld gameWorld, Interface iface) {
@@ -142,6 +144,13 @@ public final class GameInteractionArea extends Group {
                 public void onEmit(Button event) {
                     shown.removeAll();
                     shown.add(view.setConstraint(AxisLayout.stretched()));
+                    shownChanged.emit(ChangeViewButton.this);
+                }
+            });
+            shownChanged.connect(new Slot<ChangeViewButton>() {
+                @Override
+                public void onEmit(ChangeViewButton changeViewButton) {
+                    ChangeViewButton.this.setEnabled(changeViewButton != ChangeViewButton.this);
                 }
             });
         }
