@@ -46,10 +46,14 @@ public class StartingScreen extends ScreenStack.UIScreen {
             new IntroSlideInformation("You have a job review in two weeks. Do you have what it takes?",
                     SimGame.game.assets.getTile(GameAssets.TileKey.NARRATIVE_BACKGROUND_4)));
 
+    private Button playButton;
+    private Button creditsButton;
+
     public StartingScreen(ScreenStack screenStack) {
         super(SimGame.game.plat);
         this.screenStack = checkNotNull(screenStack);
         new Pointer(game().plat, layer, true);
+        createUI();
     }
 
     private void createUI() {
@@ -59,25 +63,40 @@ public class StartingScreen extends ScreenStack.UIScreen {
         Icon iconLogo = Icons.image(logo);
         final float buttonFontSize = percentOfViewHeight(0.04f);
         final Font font = FontCache.instance().REGULAR.derive(buttonFontSize);
-        root.add(new Label(iconLogo))
-                .add(new Button("Start the Game!")
-                                .addStyles(Style.FONT.is(font))
-                                .onClick(new Slot<Button>() {
-                                    @Override
-                                    public void onEmit(Button button) {
-                                        screenStack.push(new IntroScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
-                                    }
-                                }),
-                        new Shim(0, buttonFontSize / 2),
-                        new Button("Credits")
-                                .addStyles(Style.FONT.is(font))
-                                .onClick(new Slot<Button>() {
-                                    @Override
-                                    public void onEmit(Button button) {
-                                        screenStack.push(new CreditScreen(screenStack), screenStack.slide());
-                                    }
-                                }));
+        final Button[] buttons = new Button[]{
+                playButton = new Button("Start the Game!")
+                        .addStyles(Style.FONT.is(font))
+                        .onClick(new Slot<Button>() {
+                            @Override
+                            public void onEmit(Button button) {
+                                disableButtons();
+                                screenStack.push(new IntroScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
+                            }
+                        }),
+                creditsButton = new Button("Credits")
+                        .addStyles(Style.FONT.is(font))
+                        .onClick(new Slot<Button>() {
+                            @Override
+                            public void onEmit(Button button) {
+                                screenStack.push(new CreditScreen(screenStack), screenStack.slide());
+                            }
+                        })
+        };
+        root.add(new Label(iconLogo),
+                buttons[0],
+                new Shim(0, buttonFontSize / 2),
+                buttons[1]);
         root.setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
+    }
+
+    private void disableButtons() {
+        playButton.setEnabled(false);
+        creditsButton.setEnabled(false);
+    }
+
+    private void enableButtons() {
+        playButton.setEnabled(true);
+        creditsButton.setEnabled(true);
     }
 
     private float percentOfViewHeight(float v) {
@@ -85,15 +104,15 @@ public class StartingScreen extends ScreenStack.UIScreen {
     }
 
     @Override
-    public void wasShown() {
-        super.wasShown();
-        createUI();
-        Jukebox.instance().loop(MusicCache.instance().INTRO_THEME);
+    public Game game() {
+        return SimGame.game;
     }
 
     @Override
-    public Game game() {
-        return SimGame.game;
+    public void wasShown() {
+        super.wasShown();
+        enableButtons();
+        Jukebox.instance().loop(MusicCache.instance().INTRO_THEME);
     }
 
 }
