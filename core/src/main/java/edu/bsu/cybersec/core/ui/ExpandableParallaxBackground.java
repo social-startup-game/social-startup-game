@@ -28,6 +28,7 @@ import tripleplay.ui.Background;
 import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class ExpandableParallaxBackground extends Background {
 
@@ -60,6 +61,7 @@ public final class ExpandableParallaxBackground extends Background {
     @Override
     protected Instance instantiate(final IDimension size) {
         return new LayerInstance(size, new Layer() {
+            private final float backgroundAspectRatio = background.tile().width() / background.tile().height();
             private final float foregroundAspectRatio = foreground.tile().width() / foreground.tile().height();
             private final float characterWidthPercentOfScreen = 0.60f;
 
@@ -71,15 +73,16 @@ public final class ExpandableParallaxBackground extends Background {
             }
 
             private void paintBackground(Surface surf) {
+                checkState(backgroundAspectRatio <= 1, "Current approach assumes background image taller than wide");
                 final Tile tile = background.tile();
                 final float destinationX = 0;
                 final float destinationY = 0;
                 final float destinationWidth = size.width();
-                final float destinationHeight = size.height();
+                final float destinationHeight = destinationWidth / backgroundAspectRatio;
                 final float sourceX = 0;
                 final float sourceY = 0;
                 final float sourceWidth = tile.width();
-                final float sourceHeight = size.height();
+                final float sourceHeight = tile.height();
                 surf.draw(tile,
                         destinationX, destinationY, destinationWidth, destinationHeight,
                         sourceX, sourceY, sourceWidth, sourceHeight);
