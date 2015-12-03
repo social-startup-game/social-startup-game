@@ -147,10 +147,6 @@ public class GameScreen extends ScreenStack.UIScreen {
                 .setSize(size());
     }
 
-    private void debug(String mesg) {
-        game().plat.log().debug(mesg);
-    }
-
     private Group createContentGroup(Root root) {
         final Group content = new Group(AxisLayout.vertical().gap(0).offStretch());
         content.add(new TopStatusBar()
