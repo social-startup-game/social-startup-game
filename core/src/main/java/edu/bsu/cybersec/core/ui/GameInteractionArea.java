@@ -51,14 +51,9 @@ public final class GameInteractionArea extends Group {
         this.iface = checkNotNull(iface);
         statusGroup = new CompanyStatusGroup(gameWorld);
 
-        showDefaultView();
         add(shown);
         add(new ButtonArea().setConstraint(AxisLayout.fixed()));
         addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
-    }
-
-    private void showDefaultView() {
-        shown.add(statusGroup);
     }
 
 
@@ -85,6 +80,11 @@ public final class GameInteractionArea extends Group {
             for (ChangeViewButton button : allButtons) {
                 add(button);
             }
+            setDefaultViewTo(statusButton);
+        }
+
+        private void setDefaultViewTo(ChangeViewButton button) {
+            button.click();
         }
     }
 
