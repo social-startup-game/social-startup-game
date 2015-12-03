@@ -19,12 +19,14 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Image;
 import playn.core.TileSource;
 import react.Signal;
 import react.Slot;
+import react.UnitSlot;
 import react.ValueView;
 import tripleplay.anim.AnimGroup;
 import tripleplay.anim.Animation;
@@ -51,7 +53,7 @@ public final class GameInteractionArea extends Group {
 
         showDefaultView();
         add(shown);
-        add(makeButtonArea().setConstraint(AxisLayout.fixed()));
+        add(new ButtonArea().setConstraint(AxisLayout.fixed()));
         addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
     }
 
@@ -59,12 +61,31 @@ public final class GameInteractionArea extends Group {
         shown.add(statusGroup);
     }
 
-    private Element makeButtonArea() {
-        return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup),
-                        new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", new ExploitsGroup(gameWorld)),
-                        new ChangeViewButton(GameAssets.ImageKey.NEWS, "News & Events", new EventsGroup(gameWorld)));
+
+    private final class ButtonArea extends Group {
+        private final FeatureGroup featureGroup = new FeatureGroup(gameWorld);
+        private final ExploitsGroup exploitsGroup = new ExploitsGroup(gameWorld);
+        private final EventsGroup eventsGroup = new EventsGroup(gameWorld);
+
+        private final ChangeViewButton statusButton = new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup);
+        private final ChangeViewButton featureButton = new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup);
+        private final ChangeViewButton exploitsButton = new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup);
+        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, "News & Events", eventsGroup);
+
+        private final ImmutableList<ChangeViewButton> allButtons = ImmutableList.of(statusButton, featureButton, exploitsButton, eventsButton);
+
+        ButtonArea() {
+            super(AxisLayout.horizontal());
+            eventsGroup.onEventCompletion().connect(new UnitSlot() {
+                @Override
+                public void onEmit() {
+                    statusButton.click();
+                }
+            });
+            for (ChangeViewButton button : allButtons) {
+                add(button);
+            }
+        }
     }
 
     @Override

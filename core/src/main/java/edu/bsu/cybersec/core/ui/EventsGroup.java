@@ -25,7 +25,9 @@ import edu.bsu.cybersec.core.SimGame;
 import playn.core.Graphics;
 import playn.core.Image;
 import pythagoras.f.IDimension;
+import react.SignalView;
 import react.Slot;
+import react.UnitSignal;
 import tripleplay.ui.*;
 import tripleplay.ui.bgs.RoundRectBackground;
 import tripleplay.ui.layout.AxisLayout;
@@ -44,6 +46,7 @@ public class EventsGroup extends InteractionAreaGroup {
         return graphics.viewSize.height() * percent;
     }
 
+    private final UnitSignal onEventCompletion = new UnitSignal();
     private final GameWorld gameWorld;
     private final Image eventSpeakerImage = SimGame.game.assets.getImage(GameAssets.ImageKey.ADMIN);
     private NarrativeEvent currentEvent;
@@ -67,6 +70,10 @@ public class EventsGroup extends InteractionAreaGroup {
                 }
             });
         }
+    }
+
+    public SignalView<Void> onEventCompletion() {
+        return onEventCompletion;
     }
 
     @Override
@@ -135,6 +142,7 @@ public class EventsGroup extends InteractionAreaGroup {
                     needsAttention.update(false);
                     updateContent();
                     invalidate();
+                    onEventCompletion.emit();
                 }
             }));
         }
