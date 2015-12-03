@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.ImmutableList;
+import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Image;
@@ -81,10 +82,25 @@ public final class GameInteractionArea extends Group {
                 add(button);
             }
             setDefaultViewTo(statusButton);
+            configureTableValidationOnClockTick();
         }
 
         private void setDefaultViewTo(ChangeViewButton button) {
             button.click();
+        }
+
+        private void configureTableValidationOnClockTick() {
+            gameWorld.gameTime.connect(new Slot<GameTime>() {
+                @Override
+                public void onEmit(GameTime gameTime) {
+                    if (shown.childAt(0) == exploitsGroup) {
+                        exploitsGroup.validate();
+                    }
+                    if (shown.childAt(0) == featureGroup) {
+                        featureGroup.validate();
+                    }
+                }
+            });
         }
     }
 
