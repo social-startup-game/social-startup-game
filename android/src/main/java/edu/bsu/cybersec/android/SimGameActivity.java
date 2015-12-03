@@ -42,10 +42,6 @@ public class SimGameActivity extends GameActivity {
         }
     }
 
-    @Override
-    protected boolean usePortraitOrientation() {
-        return true;
-    }
 }
 
 class AndroidDateFormatter implements PlatformSpecificDateFormatter {
