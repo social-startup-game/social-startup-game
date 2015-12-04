@@ -33,7 +33,6 @@ import tripleplay.anim.AnimGroup;
 import tripleplay.anim.Animation;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -93,10 +92,10 @@ public final class GameInteractionArea extends Group {
             gameWorld.gameTime.connect(new Slot<GameTime>() {
                 @Override
                 public void onEmit(GameTime gameTime) {
-                    if (shown.childAt(0) == exploitsGroup) {
+                    if (currentViewIs(exploitsGroup)) {
                         exploitsGroup.validate();
                     }
-                    if (shown.childAt(0) == featureGroup) {
+                    if (currentViewIs(featureGroup)) {
                         featureGroup.validate();
                     }
                 }
@@ -115,65 +114,14 @@ public final class GameInteractionArea extends Group {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
         private static final float FLASH_PERIOD = 300f;
 
-        //this come from triplePlay simpeStyles class: https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/ui/SimpleStyles.java#L27
-        //Once we make our own styles, we can replace this.
-        private final Background ATTENTION_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
-                Colors.BLACK, 5, 0xFFEEEEEE, 2)
-                .inset(5, 6, 2, 6);
-        private final Background REGULAR_BACKGROUND = Background.roundRect(SimGame.game.plat.graphics(),
-                0xFFCCCCCC, 5, 0xFFEEEEEE, 2).inset(5, 6, 2, 6);
-
-        /**
-         * Tag a continued animation onto the end of this one.
-         * <p/>
-         * It's not clear from the TriplePlay documentation, but you cannot put an Action animation
-         * inside of a Repeat animation. The reason for this, as of TP-2.0-rc1, is that Action
-         * nulls its reference to its runnable. Hence, to get repeating Action animations (as required
-         * here to change label styles), we have to manually append new animations to the end of the
-         * current animation when they are done.
-         *
-         * @see <a href="https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/anim/Animation.java">
-         * TriplePlay Animation</a>
-         */
-        private final Runnable animationContinuer = new Runnable() {
-            @Override
-            public void run() {
-                loopAnimation();
-            }
-        };
-
-        private final Runnable attentionThemer = new Runnable() {
-            @Override
-            public void run() {
-                addStyles(Style.BACKGROUND.is(ATTENTION_BACKGROUND));
-            }
-        };
-
-        private final Runnable regularThemer = new Runnable() {
-            @Override
-            public void run() {
-                addStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
-            }
-        };
-
         private Animation.Handle animationHandle;
+        private final InteractionAreaGroup view;
 
-        private ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
+        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
             super(text);
+            this.view = checkNotNull(view);
             Image iconImage = SimGame.game.assets.getImage(imageKey);
-            final Icon icon = makeIconFromImage(iconImage);
-            super.icon.update(icon);
-            view.onAttention().connect(new ValueView.Listener<Boolean>() {
-                @Override
-                public void onChange(Boolean needsAttention, Boolean oldValue) {
-                    if (needsAttention) {
-                        loopAnimation();
-                    } else {
-                        animationHandle.cancel();
-                        regularThemer.run();
-                    }
-                }
-            });
+            super.icon.update(makeIconFromImage(iconImage));
             onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button event) {
@@ -188,25 +136,91 @@ public final class GameInteractionArea extends Group {
                     ChangeViewButton.this.setEnabled(changeViewButton != ChangeViewButton.this);
                 }
             });
+            new AttentionAnimator(view);
         }
 
-        private void loopAnimation() {
-            animationHandle = iface.anim.add(makeFlashOnceAnimation())
-                    .then()
-                    .action(animationContinuer)
-                    .handle();
-        }
+        private class AttentionAnimator {
 
-        private Animation makeFlashOnceAnimation() {
-            AnimGroup group = new AnimGroup();
-            group.action(attentionThemer)
-                    .then()
-                    .delay(FLASH_PERIOD)
-                    .then()
-                    .action(regularThemer)
-                    .then()
-                    .delay(FLASH_PERIOD);
-            return group.toAnim();
+            private final Runnable attentionThemer = new Runnable() {
+                @Override
+                public void run() {
+                    addStyles(Style.COLOR.is(Palette.BACKGROUND));
+                }
+            };
+
+            private final Runnable regularThemer = new Runnable() {
+                @Override
+                public void run() {
+                    addStyles(Style.COLOR.is(Palette.FOREGROUND));
+                }
+            };
+
+            /**
+             * Tag a continued animation onto the end of this one.
+             * <p/>
+             * It's not clear from the TriplePlay documentation, but you cannot put an Action animation
+             * inside of a Repeat animation. The reason for this, as of TP-2.0-rc1, is that Action
+             * nulls its reference to its runnable. Hence, to get repeating Action animations (as required
+             * here to change label styles), we have to manually append new animations to the end of the
+             * current animation when they are done.
+             *
+             * @see <a href="https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/anim/Animation.java">
+             * TriplePlay Animation</a>
+             */
+            private final Runnable animationContinuer = new Runnable() {
+                @Override
+                public void run() {
+                    loopAnimation();
+                }
+            };
+
+            AttentionAnimator(InteractionAreaGroup view) {
+                view.onAttention().connect(new ValueView.Listener<Boolean>() {
+                    @Override
+                    public void onChange(Boolean needsAttention, Boolean oldValue) {
+                        if (needsAttention) {
+                            loopAnimation();
+                        } else {
+                            animationHandle.cancel();
+                            regularThemer.run();
+                        }
+                    }
+                });
+            }
+
+            private void loopAnimation() {
+                if (currentViewIs(view)) {
+                    waitBecauseThisViewIsCurrentlyShown();
+                } else {
+                    flash();
+                }
+            }
+
+            private void waitBecauseThisViewIsCurrentlyShown() {
+                animationHandle = iface.anim.delay(FLASH_PERIOD * 2)
+                        .then()
+                        .action(animationContinuer)
+                        .handle();
+            }
+
+            private void flash() {
+                animationHandle = iface.anim.add(makeFlashOnceAnimation())
+                        .then()
+                        .action(animationContinuer)
+                        .handle();
+            }
+
+            private Animation makeFlashOnceAnimation() {
+                AnimGroup group = new AnimGroup();
+                group.action(attentionThemer)
+                        .then()
+                        .delay(FLASH_PERIOD)
+                        .then()
+                        .action(regularThemer)
+                        .then()
+                        .delay(FLASH_PERIOD);
+                return group.toAnim();
+            }
         }
 
         private Icon makeIconFromImage(TileSource iconImage) {
@@ -219,6 +233,10 @@ public final class GameInteractionArea extends Group {
         protected Class<?> getStyleClass() {
             return ChangeViewButton.class;
         }
+    }
+
+    private boolean currentViewIs(InteractionAreaGroup view) {
+        return shown.childAt(0) == view;
     }
 
     private static float percentOfViewHeight(float percent) {
