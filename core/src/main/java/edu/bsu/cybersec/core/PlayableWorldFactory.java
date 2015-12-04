@@ -26,8 +26,7 @@ import tripleplay.entity.Entity;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class PlayableWorldFactory {
 
@@ -56,7 +55,9 @@ public class PlayableWorldFactory {
         makeExistingFeature();
         makeDevelopers(3);
         setEndTime();
-        new DefaultNarrativeScript().createIn(world, config);
+        if (SimGame.game.config.useNarrativeEvents()) {
+            new DefaultNarrativeScript().createIn(world, config);
+        }
     }
 
     private void setEndTime() {

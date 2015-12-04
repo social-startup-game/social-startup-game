@@ -54,20 +54,18 @@ public class EventsGroup extends InteractionAreaGroup {
     public EventsGroup(final GameWorld gameWorld) {
         super(AxisLayout.horizontal().offStretch());
         this.gameWorld = gameWorld;
-        if (SimGame.game.config.useNarrativeEvents()) {
-            gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
-                @Override
-                public void onEmit(NarrativeEvent event) {
-                    needsAttention.update(true);
-                    ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
-                    currentEvent = checkNotNull(event);
-                    if (content != null) {
-                        updateContent();
-                    }
-                    invalidate();
+        gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
+            @Override
+            public void onEmit(NarrativeEvent event) {
+                needsAttention.update(true);
+                ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
+                currentEvent = checkNotNull(event);
+                if (content != null) {
+                    updateContent();
                 }
-            });
-        }
+                invalidate();
+            }
+        });
     }
 
     public SignalView<Void> onEventCompletion() {
