@@ -24,7 +24,6 @@ import playn.core.Clock;
 import playn.core.Game;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
-import pythagoras.f.IRectangle;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
@@ -111,7 +110,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void createUI() {
-        IRectangle contentBounds = SimGame.game.contentBounds;
+        GameBounds contentBounds = SimGame.game.bounds;
         Root root = iface.createRoot(new AbsoluteLayout(), makeStyleSheet(), layer);
         Group content = createContentGroup(root);
         root.add(AbsoluteLayout.at(content,

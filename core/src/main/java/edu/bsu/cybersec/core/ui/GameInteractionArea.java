@@ -228,7 +228,7 @@ public final class GameInteractionArea extends Group {
 
 
     private static float percentOfViewHeight(float percent) {
-        return percent * SimGame.game.plat.graphics().viewSize.height();
+        return SimGame.game.bounds.percentOfHeight(percent);
     }
 }
 

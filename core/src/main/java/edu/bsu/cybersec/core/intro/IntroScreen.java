@@ -86,22 +86,18 @@ public class IntroScreen extends ScreenStack.UIScreen {
                 .setSize(size());
         IntroSlideInformation info = iterator.next();
         Group display = createDisplayGroup(info)
-                .setConstraint(Constraints.fixedSize(SimGame.game.contentBounds.width(), SimGame.game.contentBounds.height()));
+                .setConstraint(Constraints.fixedSize(SimGame.game.bounds.width(), SimGame.game.bounds.height()));
         root.add(display);
         root.addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
     }
 
     private Group createDisplayGroup(IntroSlideInformation info) {
-        return new SizableGroup(AxisLayout.vertical(), SimGame.game.contentBounds.width(), SimGame.game.contentBounds.height())
+        return new SizableGroup(AxisLayout.vertical(), SimGame.game.bounds.width(), SimGame.game.bounds.height())
                 .add(new Label(info.text, Icons.image(info.background))
                         .addStyles(Style.TEXT_WRAP.on,
                                 Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
                                 Style.ICON_POS.below,
-                                Style.ICON_GAP.is(percentOfScreenHeight(0.04f))));
-    }
-
-    private int percentOfScreenHeight(float percent) {
-        return (int) (SimGame.game.plat.graphics().viewSize.height() * percent);
+                                Style.ICON_GAP.is((int) SimGame.game.bounds.percentOfHeight(0.04f))));
     }
 
     private void advance() {
@@ -119,6 +115,5 @@ public class IntroScreen extends ScreenStack.UIScreen {
     public Game game() {
         return SimGame.game;
     }
-
 
 }

@@ -39,14 +39,16 @@ public class SimGame extends SceneGame {
 
     public final GameAssets assets;
 
-    public final IRectangle contentBounds;
+    public final GameBounds bounds;
 
     public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);
         assets = new GameAssets(plat.assets());
         game = this;
         this.config = checkNotNull(config);
-        contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(plat.graphics().viewSize);
+        IRectangle box = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO)
+                .createBoundingBoxWithin(plat.graphics().viewSize);
+        this.bounds = new GameBounds(box);
         handleMusicMute();
         initializeAssetCaches();
         pushFirstScreen();

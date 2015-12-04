@@ -22,7 +22,6 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Graphics;
 import playn.core.Image;
 import pythagoras.f.IDimension;
 import react.SignalView;
@@ -36,14 +35,13 @@ import tripleplay.util.Colors;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class EventsGroup extends InteractionAreaGroup {
-    private static final Graphics graphics = SimGame.game.plat.graphics();
-    private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(graphics,
+    private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(SimGame.game.plat.graphics(),
             Colors.WHITE, percentOfScreenHeight(0.05f), Palette.DIALOG_BORDER, percentOfScreenHeight(0.01f));
     private static final float TEXTBOX_WIDTH_PERCENT = 0.85f;
     private static final float SPEAKER_WIDTH_PERCENT = 0.12f;
 
     private static float percentOfScreenHeight(float percent) {
-        return graphics.viewSize.height() * percent;
+        return SimGame.game.bounds.percentOfHeight(percent);
     }
 
     private final UnitSignal onEventCompletion = new UnitSignal();

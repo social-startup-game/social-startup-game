@@ -238,8 +238,8 @@ public class MainUIGroup extends Group {
                             Style.HALIGN.left);
         }
 
-        private float percentOfViewHeight(float v) {
-            return SimGame.game.plat.graphics().viewSize.height() * v;
+        private float percentOfViewHeight(float percent) {
+            return SimGame.game.bounds.percentOfHeight(percent);
         }
 
         void update() {
@@ -382,7 +382,7 @@ final class TaskIconFactory {
         } else {
             final Tile tile = iconMap.get(task).tile();
             final float imageHeight = tile.height();
-            final float viewHeight = SimGame.game.plat.graphics().viewSize.height();
+            final float viewHeight = SimGame.game.bounds.height();
             final float percentOfScreenHeight = 0.04f;
             final float scale = (viewHeight * percentOfScreenHeight) / imageHeight;
             return Icons.scaled(Icons.image(tile), scale);

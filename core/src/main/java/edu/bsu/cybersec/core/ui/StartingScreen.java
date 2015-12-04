@@ -99,8 +99,8 @@ public class StartingScreen extends ScreenStack.UIScreen {
         creditsButton.setEnabled(true);
     }
 
-    private float percentOfViewHeight(float v) {
-        return SimGame.game.plat.graphics().viewSize.height() * v;
+    private float percentOfViewHeight(float percent) {
+        return SimGame.game.bounds.percentOfHeight(percent);
     }
 
     @Override

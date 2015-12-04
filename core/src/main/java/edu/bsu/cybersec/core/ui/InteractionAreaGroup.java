@@ -94,7 +94,7 @@ public abstract class InteractionAreaGroup extends Group {
 
         @Override
         protected Background applyInsets(Background b) {
-            float horizontal = SimGame.game.plat.graphics().viewSize.height() * 0.02f;
+            float horizontal = SimGame.game.bounds.percentOfHeight(0.02f);
             return b.inset(horizontal, 0f);
         }
     }
