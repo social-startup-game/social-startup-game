@@ -59,7 +59,7 @@ public class EndScreen extends ScreenStack.UIScreen {
 
                     @Override
                     public void onEmit(Button button) {
-                        screenStack.push(new StartingScreen(screenStack));
+                        screenStack.remove(EndScreen.this, screenStack.slide().right());
                     }
                 }));
     }
@@ -70,7 +70,6 @@ public class EndScreen extends ScreenStack.UIScreen {
         } else {
             return "You made poor security decisions. You're fired.";
         }
-
     }
 
     @Override

@@ -19,30 +19,42 @@
 
 package edu.bsu.cybersec.core;
 
-import tripleplay.entity.Entity;
+import com.google.common.base.MoreObjects;
+import pythagoras.f.IRectangle;
+import pythagoras.f.Rectangle;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+public final class GameBounds {
 
-public class ExploitFactory {
+    private final IRectangle bounds;
 
-    private final GameWorld world;
-    private int nextNumber = 1;
-
-    public ExploitFactory(GameWorld world) {
-        this.world = checkNotNull(world);
+    public GameBounds(IRectangle box) {
+        this.bounds = new Rectangle(box);
     }
 
-    public Entity generate() {
-        Entity e = world.create(true).add(
-                world.exploitNumber,
-                world.name,
-                world.userAttrition,
-                world.maintenanceProgress,
-                world.lostUsers);
-        world.exploitNumber.set(e.id, nextNumber++);
-        world.name.set(e.id, "Generic Exploit");
-        world.userAttrition.set(e.id, 0.002f);
-        world.maintenanceProgress.set(e.id, 0);
-        return e;
+    public float percentOfHeight(float percent) {
+        return bounds.height() * percent;
+    }
+
+    public float x() {
+        return bounds.x();
+    }
+
+    public float y() {
+        return bounds.y();
+    }
+
+    public float width() {
+        return bounds.width();
+    }
+
+    public float height() {
+        return bounds.height();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("bounds", bounds)
+                .toString();
     }
 }

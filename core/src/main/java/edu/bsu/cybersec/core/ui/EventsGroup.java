@@ -22,131 +22,152 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Graphics;
-import playn.core.Tile;
-import pythagoras.f.Dimension;
+import playn.core.Image;
 import pythagoras.f.IDimension;
+import react.SignalView;
 import react.Slot;
+import react.UnitSignal;
 import tripleplay.ui.*;
 import tripleplay.ui.bgs.RoundRectBackground;
-import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.ui.util.BoxPoint;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public class EventsGroup extends InteractionAreaGroup {
-    private static final Graphics graphics = SimGame.game.plat.graphics();
-    private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(graphics,
+    private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(SimGame.game.plat.graphics(),
             Colors.WHITE, percentOfScreenHeight(0.05f), Palette.DIALOG_BORDER, percentOfScreenHeight(0.01f));
     private static final float TEXTBOX_WIDTH_PERCENT = 0.85f;
     private static final float SPEAKER_WIDTH_PERCENT = 0.12f;
 
     private static float percentOfScreenHeight(float percent) {
-        return graphics.viewSize.height() * percent;
+        return SimGame.game.bounds.percentOfHeight(percent);
     }
 
+    private final UnitSignal onEventCompletion = new UnitSignal();
     private final GameWorld gameWorld;
-    private final Label noEventsLabel = new Label("No current events.").addStyles(Style.COLOR.is(Palette.FOREGROUND));
-    private final Tile eventSpeakerImage = SimGame.game.assets.getTile(GameAssets.ImageKey.ADMIN);
-    private IDimension parentSize;
-    private Runnable onParented;
+    private final Image eventSpeakerImage = SimGame.game.assets.getImage(GameAssets.ImageKey.ADMIN);
+    private NarrativeEvent currentEvent;
+    private Scroller scroller;
+    private Group content;
 
-    public EventsGroup(GameWorld gameWorld) {
+    public EventsGroup(final GameWorld gameWorld) {
         super(AxisLayout.horizontal().offStretch());
-        add(noEventsLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.CENTER)));
         this.gameWorld = gameWorld;
         if (SimGame.game.config.useNarrativeEvents()) {
             gameWorld.onNarrativeEvent.connect(new Slot<NarrativeEvent>() {
                 @Override
                 public void onEmit(NarrativeEvent event) {
-                    post(event);
+                    needsAttention.update(true);
+                    ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
+                    currentEvent = checkNotNull(event);
+                    if (content != null) {
+                        updateContent();
+                    }
+                    invalidate();
                 }
             });
         }
     }
 
+    public SignalView<Void> onEventCompletion() {
+        return onEventCompletion;
+    }
+
     @Override
     protected void wasParented(Container<?> parent) {
         super.wasParented(parent);
-        parentSize = new Dimension(parent.size());
-        checkState(!parent.size().equals(new Dimension(0, 0)),
-                "I expect parent to have non-zero size so I can lay out my content.");
-        if (onParented != null) {
-            onParented.run();
-            onParented = null;
+        if (childCount() == 0) {
+            layoutUI();
+            validate();
         }
     }
 
-    private void post(final NarrativeEvent narrativeEvent) {
-        needsAttention.update(true);
-        ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(false);
-        Runnable constructEventUI = new Runnable() {
-            @Override
-            public void run() {
-                removeAll();
-                setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
-                Group textBox = makeTextBox(narrativeEvent);
-                add(textBox,
-                        new Group(AxisLayout.vertical())
-                                .add(new Shim(0, 0).setConstraint(AxisLayout.stretched()),
-                                        new Label(makeSpeakerIcon()),
-                                        new Shim(0, percentOfScreenHeight(0.01f)))
-                                .setConstraint(AxisLayout.stretched()));
-            }
-
-            private Icon makeSpeakerIcon() {
-                float imageWidth = eventSpeakerImage.width();
-                float proportion = SPEAKER_WIDTH_PERCENT;
-                float desiredWidth = parentSize.width() * proportion;
-                float scale = desiredWidth / imageWidth;
-                return Icons.scaled(Icons.image(eventSpeakerImage), scale);
-            }
-        };
-        if (parentSize != null) {
-            constructEventUI.run();
-        } else {
-            checkState(onParented == null, "There is already a UI construction queued");
-            onParented = constructEventUI;
-        }
+    private void layoutUI() {
+        final IDimension parentSize = _parent.size();
+        setConstraint(Constraints.fixedSize(parentSize.width(), parentSize.height()));
+        Group textBox = makeTextBox(parentSize);
+        add(textBox,
+                new Group(AxisLayout.vertical())
+                        .add(new Shim(0, 0).setConstraint(AxisLayout.stretched()),
+                                new Label(makeSpeakerIcon(parentSize)),
+                                new Shim(0, percentOfScreenHeight(0.01f)))
+                        .setConstraint(AxisLayout.stretched()));
     }
 
-    private Group makeTextBox(NarrativeEvent narrativeEvent) {
+    private Group makeTextBox(IDimension parentSize) {
         final float width = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
-        final float shimSize = percentOfScreenHeight(0.01f);
-        final float inset = percentOfScreenHeight(0.02f);
-        Label label = new Label(narrativeEvent.text())
-                .addStyles(Style.TEXT_WRAP.on,
-                        Style.COLOR.is(Colors.BLACK),
-                        Style.BACKGROUND.is(Background.blank().inset(inset, inset)));
-        Group buttonGroup = makeButtonGroup(narrativeEvent);
-        Group content = new Group(AxisLayout.vertical().offStretch())
-                .add(new Shim(0, shimSize),
-                        label,
-                        buttonGroup,
-                        new Shim(0, shimSize));
-        Scroller scroller = new Scroller(content).setBehavior(Scroller.Behavior.VERTICAL)
+        content = new Group(AxisLayout.vertical());
+        updateContent();
+        scroller = new Scroller(content).setBehavior(Scroller.Behavior.VERTICAL)
                 .setConstraint(Constraints.fixedSize(width, parentSize.height()));
         return new SizableGroup(AxisLayout.vertical().offStretch(), width, parentSize.height())
                 .add(scroller)
                 .addStyles(Style.BACKGROUND.is(CALLOUT_BACKGROUND));
     }
 
-    private Group makeButtonGroup(NarrativeEvent narrativeEvent) {
+    private void updateContent() {
+        content.removeAll();
+        if (currentEvent == null) {
+            content.add(makeSpeakerTextLabel("I don't need your attention right now. Good luck!"));
+        } else {
+            final float shimSize = percentOfScreenHeight(0.01f);
+            Label speakerText = makeSpeakerTextLabel(currentEvent.text());
+            Group buttonGroup = makeButtonGroup();
+            content.add(new Shim(0, shimSize),
+                    speakerText,
+                    buttonGroup,
+                    new Shim(0, shimSize));
+        }
+    }
+
+    private Label makeSpeakerTextLabel(String message) {
+        final float inset = percentOfScreenHeight(0.02f);
+        return new Label(message)
+                .addStyles(Style.TEXT_WRAP.on,
+                        Style.COLOR.is(Colors.BLACK),
+                        Style.BACKGROUND.is(Background.blank().inset(inset, inset)));
+    }
+
+    private Group makeButtonGroup() {
         Group buttonGroup = new Group(AxisLayout.horizontal());
-        for (final NarrativeEvent.Option option : narrativeEvent.options()) {
+        for (final NarrativeEvent.Option option : currentEvent.options()) {
             buttonGroup.add(new Button(option.text()).onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button button) {
+                    currentEvent = null;
                     option.onSelected();
-                    ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(true);
-                    removeAll();
-                    needsAttention.update(false);
-                    add(noEventsLabel);
+                    if (option.hasSubsequentPage()) {
+                        currentEvent = option.subsequentPage();
+                    } else {
+                        ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(true);
+                        needsAttention.update(false);
+                        onEventCompletion.emit();
+                    }
+                    updateContent();
+                    invalidate();
                 }
             }));
         }
         return buttonGroup;
+    }
+
+    private Icon makeSpeakerIcon(IDimension parentSize) {
+        float imageWidth = eventSpeakerImage.width();
+        float proportion = SPEAKER_WIDTH_PERCENT;
+        float desiredWidth = parentSize.width() * proportion;
+        float scale = desiredWidth / imageWidth;
+        return Icons.scaled(Icons.image(eventSpeakerImage), scale);
+    }
+
+    @Override
+    protected void validate() {
+        if (scroller != null) {
+            final IDimension parentSize = _parent.size();
+            final float textBoxWidth = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
+            scroller.setConstraint(Constraints.fixedSize(textBoxWidth, parentSize.height()));
+            scroller.content.setConstraint(Constraints.fixedSize(textBoxWidth, parentSize.height()));
+        }
+        super.validate();
     }
 }

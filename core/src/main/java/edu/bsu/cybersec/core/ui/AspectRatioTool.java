@@ -17,7 +17,7 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core;
+package edu.bsu.cybersec.core.ui;
 
 import pythagoras.f.IDimension;
 import pythagoras.f.Rectangle;

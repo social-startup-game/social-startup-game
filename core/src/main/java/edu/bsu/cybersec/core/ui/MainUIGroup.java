@@ -26,6 +26,7 @@ import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Font;
 import playn.core.Tile;
+import playn.core.TileSource;
 import react.Slot;
 import react.Value;
 import react.ValueView;
@@ -45,9 +46,9 @@ public class MainUIGroup extends Group {
     private static final float TRANSPARENT_AREA_WEIGHT = 1.0f;
     private static final float CONTROLS_AREA_WEIGHT = 1.0f;
     private static final List<Tile> BACKGROUNDS = ImmutableList.of(
-            SimGame.game.assets.getTile(GameAssets.ImageKey.BACKGROUND_1),
-            SimGame.game.assets.getTile(GameAssets.ImageKey.BACKGROUND_2),
-            SimGame.game.assets.getTile(GameAssets.ImageKey.BACKGROUND_4));
+            SimGame.game.assets.getTile(GameAssets.TileKey.BACKGROUND_1),
+            SimGame.game.assets.getTile(GameAssets.TileKey.BACKGROUND_2),
+            SimGame.game.assets.getTile(GameAssets.TileKey.BACKGROUND_4));
 
     private final Interface iface;
     private final GameWorld gameWorld;
@@ -237,8 +238,8 @@ public class MainUIGroup extends Group {
                             Style.HALIGN.left);
         }
 
-        private float percentOfViewHeight(float v) {
-            return SimGame.game.plat.graphics().viewSize.height() * v;
+        private float percentOfViewHeight(float percent) {
+            return SimGame.game.bounds.percentOfHeight(percent);
         }
 
         void update() {
@@ -371,17 +372,17 @@ public class MainUIGroup extends Group {
 }
 
 final class TaskIconFactory {
-    private Map<Task, Tile> iconMap = ImmutableMap.of(
-            Task.MAINTENANCE, SimGame.game.assets.getTile(GameAssets.ImageKey.MAINTENANCE),
-            Task.DEVELOPMENT, SimGame.game.assets.getTile(GameAssets.ImageKey.DEVELOPMENT));
+    private Map<Task, ? extends TileSource> iconMap = ImmutableMap.of(
+            Task.MAINTENANCE, SimGame.game.assets.getImage(GameAssets.ImageKey.MAINTENANCE),
+            Task.DEVELOPMENT, SimGame.game.assets.getImage(GameAssets.ImageKey.DEVELOPMENT));
 
     public Icon getIcon(Task task) {
         if (!iconMap.containsKey(task)) {
             return null;
         } else {
-            final Tile tile = iconMap.get(task);
+            final Tile tile = iconMap.get(task).tile();
             final float imageHeight = tile.height();
-            final float viewHeight = SimGame.game.plat.graphics().viewSize.height();
+            final float viewHeight = SimGame.game.bounds.height();
             final float percentOfScreenHeight = 0.04f;
             final float scale = (viewHeight * percentOfScreenHeight) / imageHeight;
             return Icons.scaled(Icons.image(tile), scale);

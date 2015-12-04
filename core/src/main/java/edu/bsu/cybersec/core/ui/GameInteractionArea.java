@@ -19,10 +19,15 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.ImmutableList;
+import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Tile;
+import playn.core.Image;
+import playn.core.TileSource;
+import react.Signal;
 import react.Slot;
+import react.UnitSlot;
 import react.ValueView;
 import tripleplay.anim.AnimGroup;
 import tripleplay.anim.Animation;
@@ -38,6 +43,7 @@ public final class GameInteractionArea extends Group {
     private final Interface iface;
     private Group shown = new Group(AxisLayout.vertical().stretchByDefault().offStretch())
             .setConstraint(AxisLayout.stretched());
+    private final Signal<ChangeViewButton> shownChanged = Signal.create();
     private final InteractionAreaGroup statusGroup;
 
     public GameInteractionArea(GameWorld gameWorld, Interface iface) {
@@ -46,23 +52,56 @@ public final class GameInteractionArea extends Group {
         this.iface = checkNotNull(iface);
         statusGroup = new CompanyStatusGroup(gameWorld);
 
-        showDefaultView();
         add(shown);
-        add(makeButtonArea().setConstraint(AxisLayout.fixed()));
+        add(new ButtonArea().setConstraint(AxisLayout.fixed()));
         addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
     }
 
-    private void showDefaultView() {
-        shown.add(statusGroup);
-    }
 
-    private Element makeButtonArea() {
-        GameAssets assets = SimGame.game.assets;
-        return new Group(AxisLayout.horizontal())
-                .add(new ChangeViewButton(assets.getTile(GameAssets.ImageKey.STATUS), "Status", statusGroup),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.DEVELOPMENT), "Features", new FeatureGroup(gameWorld)),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.MAINTENANCE), "Exploits", new ExploitsGroup(gameWorld)),
-                        new ChangeViewButton(assets.getTile(GameAssets.ImageKey.NEWS), "News & Events", new EventsGroup(gameWorld)));
+    private final class ButtonArea extends Group {
+        private final FeatureGroup featureGroup = new FeatureGroup(gameWorld);
+        private final ExploitsGroup exploitsGroup = new ExploitsGroup(gameWorld);
+        private final EventsGroup eventsGroup = new EventsGroup(gameWorld);
+
+        private final ChangeViewButton statusButton = new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup);
+        private final ChangeViewButton featureButton = new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup);
+        private final ChangeViewButton exploitsButton = new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup);
+        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, "News & Events", eventsGroup);
+
+        private final ImmutableList<ChangeViewButton> allButtons = ImmutableList.of(statusButton, featureButton, exploitsButton, eventsButton);
+
+        ButtonArea() {
+            super(AxisLayout.horizontal());
+            eventsGroup.onEventCompletion().connect(new UnitSlot() {
+                @Override
+                public void onEmit() {
+                    statusButton.click();
+                }
+            });
+            for (ChangeViewButton button : allButtons) {
+                add(button);
+            }
+            setDefaultViewTo(statusButton);
+            configureTableValidationOnClockTick();
+        }
+
+        private void setDefaultViewTo(ChangeViewButton button) {
+            button.click();
+        }
+
+        private void configureTableValidationOnClockTick() {
+            gameWorld.gameTime.connect(new Slot<GameTime>() {
+                @Override
+                public void onEmit(GameTime gameTime) {
+                    if (shown.childAt(0) == exploitsGroup) {
+                        exploitsGroup.validate();
+                    }
+                    if (shown.childAt(0) == featureGroup) {
+                        featureGroup.validate();
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -121,8 +160,9 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
 
-        ChangeViewButton(Tile iconImage, String text, final InteractionAreaGroup view) {
+        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
             super(text);
+            Image iconImage = SimGame.game.assets.getImage(imageKey);
             addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             final Icon icon = makeIconFromImage(iconImage);
             super.icon.update(icon);
@@ -141,7 +181,14 @@ public final class GameInteractionArea extends Group {
                 @Override
                 public void onEmit(Button event) {
                     shown.removeAll();
-                    shown.add(view.setConstraint(AxisLayout.stretched()));
+                    shown.add(view);
+                    shownChanged.emit(ChangeViewButton.this);
+                }
+            });
+            shownChanged.connect(new Slot<ChangeViewButton>() {
+                @Override
+                public void onEmit(ChangeViewButton changeViewButton) {
+                    ChangeViewButton.this.setEnabled(changeViewButton != ChangeViewButton.this);
                 }
             });
         }
@@ -165,9 +212,9 @@ public final class GameInteractionArea extends Group {
             return group.toAnim();
         }
 
-        private Icon makeIconFromImage(Tile iconImage) {
+        private Icon makeIconFromImage(TileSource iconImage) {
             final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
-            final float scale = desiredHeight / iconImage.height();
+            final float scale = desiredHeight / iconImage.tile().height();
             return Icons.scaled(Icons.image(iconImage), scale);
         }
 
@@ -181,7 +228,7 @@ public final class GameInteractionArea extends Group {
 
 
     private static float percentOfViewHeight(float percent) {
-        return percent * SimGame.game.plat.graphics().viewSize.height();
+        return SimGame.game.bounds.percentOfHeight(percent);
     }
 }
 

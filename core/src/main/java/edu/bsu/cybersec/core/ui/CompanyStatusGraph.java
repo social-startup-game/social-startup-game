@@ -37,6 +37,7 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
     private static final int BACKGROUND_COLOR = Colors.WHITE;
     private static final int FOREGROUND_COLOR = GameColors.HUNTER_GREEN;
     private static final int POLL_INTERVAL = ClockUtils.SECONDS_PER_HOUR / 6;
+    private static final int MINIMUM_X_UNITS = 100;
     private static final float BORDER_WIDTH_PERCENT = 0.01f;
     private static final float THICKNESS = 1f;
 
@@ -63,10 +64,12 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
                 surface.fillRect(borderSize, borderSize, _size.width - twiceBorderSize, _size.height - twiceBorderSize);
             }
 
+
             private void drawData(Surface surface) {
+                final float minXPerUnit = _size.width / MINIMUM_X_UNITS;
                 surface.setFillColor(FOREGROUND_COLOR);
                 final float yPerUnit = _size.height / max;
-                final float xPerUnit = _size.width / (data.size() - 1);
+                final float xPerUnit = Math.min(minXPerUnit, _size.width / (data.size() - 1));
 
                 float prevX = 0;
                 float prevY = yPerUnit * data.get(0);

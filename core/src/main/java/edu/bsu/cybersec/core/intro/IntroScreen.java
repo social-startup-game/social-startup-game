@@ -21,7 +21,6 @@ package edu.bsu.cybersec.core.intro;
 
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.ui.ClickableLabel;
 import edu.bsu.cybersec.core.ui.FontCache;
 import edu.bsu.cybersec.core.ui.GameScreen;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
@@ -86,31 +85,19 @@ public class IntroScreen extends ScreenStack.UIScreen {
         Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size());
         IntroSlideInformation info = iterator.next();
-        root.add(new Label(info.text, Icons.image(info.background))
-                .addStyles(Style.TEXT_WRAP.on,
-                        Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
-                        Style.ICON_POS.below,
-                        Style.ICON_GAP.is(percentOfScreenHeight(0.04f))));
+        Group display = createDisplayGroup(info)
+                .setConstraint(Constraints.fixedSize(SimGame.game.bounds.width(), SimGame.game.bounds.height()));
+        root.add(display);
         root.addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
-        root.add(createTransparentClickableArea());
     }
 
-    private int percentOfScreenHeight(float percent) {
-        return (int) (SimGame.game.plat.graphics().viewSize.height() * percent);
-    }
-
-    private Element createTransparentClickableArea() {
-        return new ClickableLabel("")
-                .onClick(new Slot<ClickableLabel>() {
-                    @Override
-                    public void onEmit(ClickableLabel event) {
-                        if (iterator.hasNext()) {
-                            screenStack.replace(new IntroScreen(screenStack, iterator), screenStack.slide());
-                        } else {
-                            screenStack.replace(new GameScreen(screenStack), screenStack.slide());
-                        }
-                    }
-                });
+    private Group createDisplayGroup(IntroSlideInformation info) {
+        return new SizableGroup(AxisLayout.vertical(), SimGame.game.bounds.width(), SimGame.game.bounds.height())
+                .add(new Label(info.text, Icons.image(info.background))
+                        .addStyles(Style.TEXT_WRAP.on,
+                                Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
+                                Style.ICON_POS.below,
+                                Style.ICON_GAP.is((int) SimGame.game.bounds.percentOfHeight(0.04f))));
     }
 
     private void advance() {
@@ -128,6 +115,5 @@ public class IntroScreen extends ScreenStack.UIScreen {
     public Game game() {
         return SimGame.game;
     }
-
 
 }

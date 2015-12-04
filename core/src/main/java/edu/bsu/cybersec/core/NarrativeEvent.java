@@ -27,7 +27,7 @@ import tripleplay.entity.Entity;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public abstract class NarrativeEvent implements Runnable {
 
@@ -36,7 +36,26 @@ public abstract class NarrativeEvent implements Runnable {
 
         void onSelected();
 
-        final class DoNothingOption implements Option {
+        boolean hasSubsequentPage();
+
+        /**
+         * @throws UnsupportedOperationException if {@link #hasSubsequentPage()} is false
+         */
+        NarrativeEvent subsequentPage();
+
+        abstract class Terminal implements Option {
+            @Override
+            public final boolean hasSubsequentPage() {
+                return false;
+            }
+
+            @Override
+            public final NarrativeEvent subsequentPage() {
+                throw new UnsupportedOperationException("No subsequent event");
+            }
+        }
+
+        final class DoNothingOption extends Terminal {
             private final String text;
 
             public DoNothingOption(String text) {

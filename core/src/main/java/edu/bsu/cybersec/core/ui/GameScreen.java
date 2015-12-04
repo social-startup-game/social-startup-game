@@ -20,12 +20,10 @@
 package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.*;
-import edu.bsu.cybersec.core.systems.WorldLogSystem;
-import playn.core.*;
+import playn.core.Clock;
+import playn.core.Game;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
-import pythagoras.f.Rectangle;
-import react.Slot;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
@@ -35,8 +33,6 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 
 public class GameScreen extends ScreenStack.UIScreen {
-    private static final float IPHONE5_VERTICAL_ASPECT_RATIO = 9f / 16f;
-
     private final GameWorld.Systematized gameWorld;
 
     {
@@ -103,31 +99,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
         gameWorld.connect(update, paint);
-        registerDebugHooks();
-    }
-
-    private void registerDebugHooks() {
-        registerWorldLogSystemHook();
-    }
-
-    private void registerWorldLogSystemHook() {
-        final WorldLogSystem worldLogSystem = new WorldLogSystem(gameWorld);
-        worldLogSystem.setEnabled(false);
-        game().plat.input().keyboardEvents.connect(new Slot<Keyboard.Event>() {
-            @Override
-            public void onEmit(Keyboard.Event event) {
-                if (isDebugTrigger(event)) {
-                    worldLogSystem.setEnabled(true);
-                }
-            }
-
-            private boolean isDebugTrigger(Event event) {
-                if (event instanceof Keyboard.KeyEvent) {
-                    Keyboard.KeyEvent keyEvent = (Keyboard.KeyEvent) event;
-                    return keyEvent.down && keyEvent.key == Key.L;
-                } else return false;
-            }
-        });
+        game().plat.input().keyboardEvents.connect(new DebugMode(gameWorld));
     }
 
     @Override
@@ -138,17 +110,13 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void createUI() {
-        Rectangle contentBounds = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO).createBoundingBoxWithin(size());
+        GameBounds contentBounds = SimGame.game.bounds;
         Root root = iface.createRoot(new AbsoluteLayout(), makeStyleSheet(), layer);
         Group content = createContentGroup(root);
         root.add(AbsoluteLayout.at(content,
-                contentBounds.x, contentBounds.y, contentBounds.width(), contentBounds.height()))
+                contentBounds.x(), contentBounds.y(), contentBounds.width(), contentBounds.height()))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Palette.UNUSED_SPACE)))
                 .setSize(size());
-    }
-
-    private void debug(String mesg) {
-        game().plat.log().debug(mesg);
     }
 
     private Group createContentGroup(Root root) {

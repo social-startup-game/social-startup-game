@@ -30,13 +30,11 @@ import java.util.List;
 
 public class InputSanitizationEvent extends NarrativeEvent {
     private static final int HOURS_FOR_SANITIZATION = 16;
-    private static final int HOURS_UNTIL_IGNORE_NOTIFICATION = 10;
     private static final float PERCENT_LOSS_ON_SANITIZATION = .10f;
     private static final float PERCENT_LOSS_ON_IGNORE = .35f;
 
     public InputSanitizationEvent(GameWorld world) {
         super(world);
-        final float initialNumberOfUsers = world.users.get();
     }
 
     @Override
@@ -54,7 +52,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
         return options;
     }
 
-    private final class EmployeeAssignmentOption implements Option {
+    private final class EmployeeAssignmentOption extends Option.Terminal {
         private final int id;
         private String text = null;
 
@@ -94,7 +92,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
         }
     }
 
-    private final class IgnoreOption implements Option {
+    private final class IgnoreOption extends Option.Terminal {
         @Override
         public String text() {
             return "Nobody";
@@ -102,7 +100,6 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            final int endOfSanitizationPeriod = world.gameTime.get().now + HOURS_UNTIL_IGNORE_NOTIFICATION * ClockUtils.SECONDS_PER_HOUR;
             after(HOURS_FOR_SANITIZATION).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
                 @Override
                 public String text() {

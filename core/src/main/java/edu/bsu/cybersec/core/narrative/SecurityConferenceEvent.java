@@ -55,7 +55,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
     }
 
 
-    private final class SendWorkerToConferenceOption implements Option {
+    private final class SendWorkerToConferenceOption extends Option.Terminal {
         private final int id;
 
         SendWorkerToConferenceOption(int id) {

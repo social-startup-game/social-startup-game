@@ -19,30 +19,19 @@
 
 package edu.bsu.cybersec.core;
 
-import tripleplay.entity.Entity;
+import org.junit.Test;
+import pythagoras.f.Rectangle;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.junit.Assert.assertEquals;
 
-public class ExploitFactory {
+public final class GameBoundsTest {
+    private static final float EPSILON = 0.001f;
 
-    private final GameWorld world;
-    private int nextNumber = 1;
-
-    public ExploitFactory(GameWorld world) {
-        this.world = checkNotNull(world);
-    }
-
-    public Entity generate() {
-        Entity e = world.create(true).add(
-                world.exploitNumber,
-                world.name,
-                world.userAttrition,
-                world.maintenanceProgress,
-                world.lostUsers);
-        world.exploitNumber.set(e.id, nextNumber++);
-        world.name.set(e.id, "Generic Exploit");
-        world.userAttrition.set(e.id, 0.002f);
-        world.maintenanceProgress.set(e.id, 0);
-        return e;
+    @Test
+    public void testPercentOfHeight() {
+        Rectangle box = new Rectangle(0, 0, 10, 10);
+        GameBounds gameBounds = new GameBounds(box);
+        float actual = gameBounds.percentOfHeight(0.5f);
+        assertEquals(5, actual, EPSILON);
     }
 }

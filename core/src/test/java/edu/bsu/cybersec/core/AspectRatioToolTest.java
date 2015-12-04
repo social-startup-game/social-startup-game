@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
+import edu.bsu.cybersec.core.ui.AspectRatioTool;
 import org.junit.After;
 import org.junit.Test;
 import pythagoras.f.Dimension;

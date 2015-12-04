@@ -49,7 +49,7 @@ public class DDOSEvent extends NarrativeEvent {
         super.run();
     }
 
-    private class PressReleaseOption implements Option {
+    private class PressReleaseOption extends Option.Terminal {
         @Override
         public String text() {
             return "PressRelease";
@@ -72,7 +72,7 @@ public class DDOSEvent extends NarrativeEvent {
         }
     }
 
-    private class IgnoreOption implements Option {
+    private class IgnoreOption extends Option.Terminal {
         @Override
         public String text() {
             return "Just Wait";

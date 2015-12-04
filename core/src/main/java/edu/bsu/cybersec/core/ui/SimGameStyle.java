@@ -45,12 +45,15 @@ public class SimGameStyle {
         int bgColor = 0xFFCCCCCC, ulColor = 0xFFEEEEEE, brColor = 0xFFAAAAAA;
         Background butBg = Background.roundRect(gfx, bgColor, 5, ulColor, 2).inset(5, 6, 2, 6);
         Background butSelBg = Background.roundRect(gfx, bgColor, 5, brColor, 2).inset(6, 5, 1, 7);
+        Background disabledButtonBackground = Background.roundRect(gfx, Palette.DIALOG_BACKGROUND, 5, ulColor, 2).inset(5, 6, 2, 6);
         return Stylesheet.builder().
                 add(Button.class,
                         Style.BACKGROUND.is(butBg),
                         Style.FONT.is(font)).
                 add(Button.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(butSelBg)).
+                add(Button.class, Style.Mode.DISABLED,
+                        Style.BACKGROUND.is(disabledButtonBackground)).
                 add(ToggleButton.class,
                         Style.BACKGROUND.is(butBg)).
                 add(ToggleButton.class, Style.Mode.SELECTED,
