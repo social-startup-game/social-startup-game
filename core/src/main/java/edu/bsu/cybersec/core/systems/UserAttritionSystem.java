@@ -19,13 +19,14 @@
 
 package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public final class UserAttritionSystem extends System {
 
@@ -45,7 +46,7 @@ public final class UserAttritionSystem extends System {
     protected void update(Clock clock, Entities entities) {
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
-            float attrition = world.userAttrition.get(id);
+            float attrition = world.userAttrition.get(id) * world.gameTime.get().delta() / ClockUtils.SECONDS_PER_HOUR;
             float initialUsers = world.users.get();
             float lostUsers = initialUsers * attrition;
             float totalUsers = Math.max(0, initialUsers - lostUsers);

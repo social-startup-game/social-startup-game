@@ -22,7 +22,7 @@ package edu.bsu.cybersec.core.systems;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public final class UserAttritionSystemTest extends AbstractSystemTest {
 
@@ -35,9 +35,13 @@ public final class UserAttritionSystemTest extends AbstractSystemTest {
     @Test
     public void testUpdate_oneExploit_loseUsersAtAttritionRatePerHour() {
         givenAWorldWithUsers(10);
-        Entity attritionSource = createAttritionSource(0.5f);
+        createAttritionSource(0.5f);
         whenOneHourOfGameTimeElapses();
-        assertEquals(5, world.users.get(), EPSILON);
+        thenTheNumberOfUsersIs(5);
+    }
+
+    private void thenTheNumberOfUsersIs(int expected) {
+        assertEquals(expected, world.users.get(), EPSILON);
     }
 
     private Entity createAttritionSource(float attrition) {
@@ -56,5 +60,13 @@ public final class UserAttritionSystemTest extends AbstractSystemTest {
         Entity attritionSource = createAttritionSource(0.3f);
         whenOneHourOfGameTimeElapses();
         assertEquals(3, world.lostUsers.get(attritionSource.id), EPSILON);
+    }
+
+    @Test
+    public void testUpdate_noGameTimeElapses_noAttrition() {
+        givenAWorldWithUsers(100);
+        createAttritionSource(0.5f);
+        advancePlayNClockOneDay();
+        thenTheNumberOfUsersIs(100);
     }
 }
