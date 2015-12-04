@@ -67,6 +67,7 @@ public class CreditScreen extends ScreenStack.UIScreen {
 
     private Group createContentArea() {
         Group group = new Group(AxisLayout.vertical());
+        group.add(new Label(Icons.image(SimGame.game.assets.getImage(GameAssets.ImageKey.LOGO))));
         for (String s : CREDITS) {
             group.add(new Label(s)
                     .setStyles(
