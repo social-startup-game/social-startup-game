@@ -37,8 +37,6 @@ public class GameWorld extends World {
     public final Map<String, Component> components = Maps.newHashMap();
 
     public final Signal<NarrativeEvent> onNarrativeEvent = Signal.create();
-    public final UnitSignal onServerDownEvent = new UnitSignal();
-    public final UnitSignal onServerBackUpEvent = new UnitSignal();
     public final UnitSignal onGameEnd = new UnitSignal();
     public final Value<GameTime> gameTime = Value.create(new GameTime(0, 0));
     public final Value<Float> exposure = Value.create(0f);

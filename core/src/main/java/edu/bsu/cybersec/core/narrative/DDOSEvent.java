@@ -45,8 +45,8 @@ public class DDOSEvent extends NarrativeEvent {
 
     @Override
     public void run() {
-        world.onServerDownEvent.emit();
         super.run();
+        ((GameWorld.Systematized) world).userGenerationSystem.userGenerationEnabled.update(false);
     }
 
     private class PressReleaseOption extends Option.Terminal {
@@ -65,7 +65,7 @@ public class DDOSEvent extends NarrativeEvent {
 
                 @Override
                 public void run() {
-                    world.onServerBackUpEvent.emit();
+                    ((GameWorld.Systematized) world).userGenerationSystem.userGenerationEnabled.update(true);
                     super.run();
                 }
             });
@@ -88,7 +88,7 @@ public class DDOSEvent extends NarrativeEvent {
 
                 @Override
                 public void run() {
-                    world.onServerBackUpEvent.emit();
+                    ((GameWorld.Systematized) world).userGenerationSystem.userGenerationEnabled.update(true);
                     super.run();
                 }
             });

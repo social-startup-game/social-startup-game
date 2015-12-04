@@ -27,10 +27,12 @@ import static org.junit.Assert.*;
 
 public class UserGenerationSystemTest extends AbstractSystemTest {
 
+    private UserGenerationSystem system;
+
     @Override
     public void setUp() {
         super.setUp();
-        new UserGenerationSystem(world);
+        system = new UserGenerationSystem(world);
     }
 
     @Test
@@ -83,23 +85,20 @@ public class UserGenerationSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testOnServerDownSignal_someTimePasses_noUsersGained() {
+    public void testUpdate_userGenerationDisabled_noChange() {
         createEntityGeneratingUsersPerHour(10);
+        system.userGenerationEnabled.update(false);
         whenOneHourOfGameTimeElapses();
-        int usersBeforeServerDown = world.users.get().intValue();
-        world.onServerDownEvent.emit();
-        whenOneHourOfGameTimeElapses();
-        int usersAfterServerDownAndTimeElapsed = world.users.get().intValue();
-        assertEquals(usersBeforeServerDown, usersAfterServerDownAndTimeElapsed);
+        assertIntegerNumberOfUsersIs(0);
     }
 
     @Test
-    public void testOnServerBackUp_oneHourElapses_gainsTenUsers() {
+    public void testUpdate_userGenerationReEnabled_usersChange() {
         createEntityGeneratingUsersPerHour(10);
-        world.onServerDownEvent.emit();
+        system.userGenerationEnabled.update(false);
+        whenOneDayOfGameTimeElapses();
+        system.userGenerationEnabled.update(true);
         whenOneHourOfGameTimeElapses();
-        world.onServerBackUpEvent.emit();
-        whenOneHourOfGameTimeElapses();
-        assertIntegerNumberOfUsersIs(10);
+        assertTrue(world.users.get() > 0);
     }
 }
