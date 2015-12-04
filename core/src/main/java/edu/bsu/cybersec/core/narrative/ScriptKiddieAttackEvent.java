@@ -53,7 +53,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
         return "You were attacked by a script kiddie\u2014an amateur who copied some code from the Internet to attack our site. The attack was not successful, but we have to keep our guard up against future attacks.\n\nWould you like to try to find the attackers and strike back? Who should do it?";
     }
 
-    private final class RetaliateOption implements Option {
+    private final class RetaliateOption extends Option.Terminal {
 
         private final int id;
 

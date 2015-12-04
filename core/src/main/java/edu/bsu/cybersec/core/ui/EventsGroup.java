@@ -32,7 +32,7 @@ import tripleplay.ui.bgs.RoundRectBackground;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class EventsGroup extends InteractionAreaGroup {
     private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(SimGame.game.plat.graphics(),
@@ -79,6 +79,7 @@ public class EventsGroup extends InteractionAreaGroup {
         super.wasParented(parent);
         if (childCount() == 0) {
             layoutUI();
+            validate();
         }
     }
 
@@ -136,11 +137,15 @@ public class EventsGroup extends InteractionAreaGroup {
                 public void onEmit(Button button) {
                     currentEvent = null;
                     option.onSelected();
-                    ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(true);
-                    needsAttention.update(false);
+                    if (option.hasSubsequentPage()) {
+                        currentEvent = option.subsequentPage();
+                    } else {
+                        ((GameWorld.Systematized) gameWorld).gameTimeSystem.setEnabled(true);
+                        needsAttention.update(false);
+                        onEventCompletion.emit();
+                    }
                     updateContent();
                     invalidate();
-                    onEventCompletion.emit();
                 }
             }));
         }
@@ -157,10 +162,12 @@ public class EventsGroup extends InteractionAreaGroup {
 
     @Override
     protected void validate() {
-        final IDimension parentSize = _parent.size();
-        final float textBoxWidth = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
-        scroller.setConstraint(Constraints.fixedSize(textBoxWidth, parentSize.height()));
-        scroller.content.setConstraint(Constraints.fixedSize(textBoxWidth, parentSize.height()));
+        if (scroller != null) {
+            final IDimension parentSize = _parent.size();
+            final float textBoxWidth = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
+            scroller.setConstraint(Constraints.fixedSize(textBoxWidth, parentSize.height()));
+            scroller.content.setConstraint(Constraints.fixedSize(textBoxWidth, parentSize.height()));
+        }
         super.validate();
     }
 }

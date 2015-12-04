@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.EmployeeProfile;
 import edu.bsu.cybersec.core.GameWorld;
@@ -35,10 +36,50 @@ public class WelcomeEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        ListStringifier stringifier = new ListStringifier();
         return "Hello! I am Frieda, your administrative assistant.\n\n"
-                + stringifier.stringify(employeeNames())
-                + " are currently maintaining our software. You can tap them to find out more about them.\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!";
+                + "Would you like me to tell you more about your responsibilities?";
+    }
+
+    @Override
+    public List<? extends Option> options() {
+        return ImmutableList.of(
+                new Option() {
+                    @Override
+                    public String text() {
+                        return "Yes, please!";
+                    }
+
+                    @Override
+                    public void onSelected() {
+                        // Do nothing
+                    }
+
+                    @Override
+                    public boolean hasSubsequentPage() {
+                        return true;
+                    }
+
+                    @Override
+                    public NarrativeEvent subsequentPage() {
+                        return new TutorialEvent(world);
+                    }
+                },
+                new Option.DoNothingOption("No, thanks! I'm ready!"));
+    }
+}
+
+final class TutorialEvent extends NarrativeEvent {
+
+    public TutorialEvent(GameWorld world) {
+        super(world);
+    }
+
+    @Override
+    public String text() {
+        ListStringifier stringifier = new ListStringifier();
+        return stringifier.stringify(employeeNames())
+                + " are currently maintaining our software. You can tap them to find out more about them."
+                + "\n\nYou may reassign any number of them to new feature development at any time. Go ahead and try that now, and let me know when you are ready!";
     }
 
     private List<String> employeeNames() {
@@ -51,4 +92,44 @@ public class WelcomeEvent extends NarrativeEvent {
         }
         return list;
     }
+
+    @Override
+    public List<? extends Option> options() {
+        return ImmutableList.of(new Option() {
+
+            @Override
+            public String text() {
+                return "Got it";
+            }
+
+            @Override
+            public void onSelected() {
+                // Do nothing
+            }
+
+            @Override
+            public boolean hasSubsequentPage() {
+                return true;
+            }
+
+            @Override
+            public NarrativeEvent subsequentPage() {
+                return new NextTutorialEvent(world);
+            }
+        });
+    }
+}
+
+final class NextTutorialEvent extends NarrativeEvent {
+
+    public NextTutorialEvent(GameWorld world) {
+        super(world);
+    }
+
+    @Override
+    public String text() {
+        return "Developing features will attract new users. However, each feature also increases our exposure, meaning that it might be easier to be hacked. Keeping some workers maintaining our systems will limit our exposure."
+                + "\n\nI think that's everything you need to know. Good luck!";
+    }
+
 }

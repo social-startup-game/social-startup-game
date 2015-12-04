@@ -47,7 +47,7 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
         return ImmutableList.of(new NotifyOption(), new IgnoreOption());
     }
 
-    private class NotifyOption implements Option {
+    private class NotifyOption extends Option.Terminal {
         @Override
         public String text() {
             return "Notify our users";
@@ -64,7 +64,7 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
         }
     }
 
-    private class IgnoreOption implements Option {
+    private class IgnoreOption extends Option.Terminal {
         @Override
         public String text() {
             return "Ignore it";
