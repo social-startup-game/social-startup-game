@@ -38,7 +38,7 @@ import tripleplay.ui.layout.AxisLayout;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class LoadingScreen extends ScreenStack.UIScreen {
 
@@ -152,9 +152,9 @@ public class LoadingScreen extends ScreenStack.UIScreen {
 
     private void startGame() {
         if (((SimGame) game()).config.skipIntro()) {
-            screenStack.push(new GameScreen(screenStack), screenStack.slide());
+            screenStack.replace(new GameScreen(screenStack), screenStack.slide());
         } else {
-            screenStack.push(new StartingScreen(screenStack), screenStack.slide());
+            screenStack.replace(new StartingScreen(screenStack), screenStack.slide());
         }
     }
 
