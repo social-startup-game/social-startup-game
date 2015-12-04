@@ -96,7 +96,7 @@ public class EventsGroup extends InteractionAreaGroup {
 
     private Group makeTextBox(IDimension parentSize) {
         final float width = parentSize.width() * TEXTBOX_WIDTH_PERCENT;
-        content = new Group(AxisLayout.vertical().offStretch());
+        content = new Group(AxisLayout.vertical());
         updateContent();
         scroller = new Scroller(content).setBehavior(Scroller.Behavior.VERTICAL)
                 .setConstraint(Constraints.fixedSize(width, parentSize.height()));

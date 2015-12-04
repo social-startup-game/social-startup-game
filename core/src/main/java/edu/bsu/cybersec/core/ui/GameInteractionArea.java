@@ -181,7 +181,7 @@ public final class GameInteractionArea extends Group {
                 @Override
                 public void onEmit(Button event) {
                     shown.removeAll();
-                    shown.add(view.setConstraint(AxisLayout.stretched()));
+                    shown.add(view);
                     shownChanged.emit(ChangeViewButton.this);
                 }
             });
