@@ -26,7 +26,8 @@ import tripleplay.entity.Entity;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PlayableWorldFactory {
 
@@ -47,7 +48,6 @@ public class PlayableWorldFactory {
     }
 
     private void initializeWorld() {
-        world.gameTimeSystem.setGameTimeUnitsPerRealClockUnits(ClockUtils.SECONDS_PER_HOUR * 2);
         world.featureGenerationSystem.nextFeatureNumber(1);
         world.featureDevelopmentSystem.inefficiencyFactor.update(1 / 3f);
         world.exposure.update(0.10f);
