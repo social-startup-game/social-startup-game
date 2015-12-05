@@ -19,28 +19,37 @@
 
 package edu.bsu.cybersec.core.narrative;
 
-import edu.bsu.cybersec.core.ClockUtils;
-import edu.bsu.cybersec.core.GameConfig;
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.*;
 import tripleplay.entity.Entity;
+
+import java.util.ArrayList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class DefaultNarrativeScript {
 
     private GameWorld world;
+    private ArrayList<NarrativeEvent> events = new ArrayList<>();
 
     public void createIn(GameWorld world, GameConfig config) {
         this.world = checkNotNull(world);
         if (!config.skipWelcome()) {
             now().runEvent(new WelcomeEvent(world));
         }
-        hour(2).runEvent(new ScriptKiddieAttackEvent(world));
-        hour(4).runEvent(new SecurityConferenceEvent(world));
-        hour(6).runEvent(new DataStolenNotifyChoiceEvent(world));
-        hour(8).runEvent(new InputSanitizationEvent(world));
-        hour(10).runEvent(new DDOSEvent(world));
+        populateEvents();
+        hour(2).runEvent(getRandomEvent());
+        hour(4).runEvent(getRandomEvent());
+        hour(6).runEvent(getRandomEvent());
+        hour(8).runEvent(getRandomEvent());
+        hour(10).runEvent(getRandomEvent());
+    }
+
+    private void populateEvents() {
+        events.add(new ScriptKiddieAttackEvent(world));
+        events.add(new SecurityConferenceEvent(world));
+        events.add(new DataStolenNotifyChoiceEvent(world));
+        events.add(new InputSanitizationEvent(world));
+        events.add(new DDOSEvent(world));
     }
 
     private TimedEventBuilder now() {
@@ -49,6 +58,11 @@ public final class DefaultNarrativeScript {
 
     private TimedEventBuilder hour(int hour) {
         return new TimedEventBuilder(world.gameTime.get().now).addHours(hour);
+    }
+
+    public NarrativeEvent getRandomEvent() {
+        int index = new RandomInRange(0, events.size() - 1).nextInt();
+        return events.get(index);
     }
 
     private final class TimedEventBuilder {
@@ -69,5 +83,4 @@ public final class DefaultNarrativeScript {
             return this;
         }
     }
-
 }
