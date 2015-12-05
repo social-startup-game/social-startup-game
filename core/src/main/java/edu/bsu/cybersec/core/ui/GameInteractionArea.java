@@ -111,7 +111,7 @@ public final class GameInteractionArea extends Group {
         return this;
     }
 
-    private final class ChangeViewButton extends Button {
+    final class ChangeViewButton extends Button {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
         private static final float FLASH_PERIOD = 300f;
 
@@ -145,25 +145,22 @@ public final class GameInteractionArea extends Group {
         private final Runnable attentionThemer = new Runnable() {
             @Override
             public void run() {
-                setStyles(Style.BACKGROUND.is(ATTENTION_BACKGROUND));
-                addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
+                addStyles(Style.BACKGROUND.is(ATTENTION_BACKGROUND));
             }
         };
 
         private final Runnable regularThemer = new Runnable() {
             @Override
             public void run() {
-                setStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
-                addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
+                addStyles(Style.BACKGROUND.is(REGULAR_BACKGROUND));
             }
         };
 
         private Animation.Handle animationHandle;
 
-        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
+        private ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
             super(text);
             Image iconImage = SimGame.game.assets.getImage(imageKey);
-            addStyles(COMMON_CHANGE_VIEW_BUTTON_STYLES);
             final Icon icon = makeIconFromImage(iconImage);
             super.icon.update(icon);
             view.onAttention().connect(new ValueView.Listener<Boolean>() {
@@ -218,14 +215,11 @@ public final class GameInteractionArea extends Group {
             return Icons.scaled(Icons.image(iconImage), scale);
         }
 
+        @Override
+        protected Class<?> getStyleClass() {
+            return ChangeViewButton.class;
+        }
     }
-
-    private static final Styles COMMON_CHANGE_VIEW_BUTTON_STYLES = Styles.make(Style.ICON_CUDDLE.on,
-            Style.ICON_GAP.is(-(int) percentOfViewHeight(0.04f)),
-            Style.TEXT_EFFECT.pixelOutline,
-            Style.HIGHLIGHT.is(Palette.UNUSED_SPACE),
-            Style.COLOR.is(Palette.FOREGROUND));
-
 
     private static float percentOfViewHeight(float percent) {
         return SimGame.game.bounds.percentOfHeight(percent);

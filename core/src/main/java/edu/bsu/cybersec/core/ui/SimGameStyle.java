@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.SimGame;
 import playn.core.Font;
 import playn.core.Graphics;
 import tripleplay.ui.*;
@@ -45,43 +46,56 @@ public class SimGameStyle {
         int bgColor = 0xFFCCCCCC, ulColor = 0xFFEEEEEE, brColor = 0xFFAAAAAA;
         Background butBg = Background.roundRect(gfx, bgColor, 5, ulColor, 2).inset(5, 6, 2, 6);
         Background butSelBg = Background.roundRect(gfx, bgColor, 5, brColor, 2).inset(6, 5, 1, 7);
-        Background disabledButtonBackground = Background.roundRect(gfx, Palette.DIALOG_BACKGROUND, 5, ulColor, 2).inset(5, 6, 2, 6);
-        return Stylesheet.builder().
-                add(Button.class,
+        Background disabledChangeViewButtonBackground = Background.roundRect(gfx, Palette.DIALOG_BACKGROUND, 5, ulColor, 2)
+                .inset(5, 6, 2, 6);
+        return Stylesheet.builder()
+                .add(Button.class,
                         Style.BACKGROUND.is(butBg),
-                        Style.FONT.is(font)).
-                add(Button.class, Style.Mode.SELECTED,
-                        Style.BACKGROUND.is(butSelBg)).
-                add(Button.class, Style.Mode.DISABLED,
-                        Style.BACKGROUND.is(disabledButtonBackground)).
-                add(ToggleButton.class,
-                        Style.BACKGROUND.is(butBg)).
-                add(ToggleButton.class, Style.Mode.SELECTED,
-                        Style.BACKGROUND.is(butSelBg)).
-                add(CheckBox.class,
+                        Style.FONT.is(font))
+                .add(Button.class, Style.Mode.SELECTED,
+                        Style.BACKGROUND.is(butSelBg))
+                .add(ToggleButton.class,
+                        Style.BACKGROUND.is(butBg))
+                .add(ToggleButton.class, Style.Mode.SELECTED,
+                        Style.BACKGROUND.is(butSelBg))
+                .add(CheckBox.class,
                         Style.BACKGROUND.is(Background.roundRect(gfx, bgColor, 5, ulColor, 2).
-                                inset(3, 2, 0, 3))).
-                add(CheckBox.class, Style.Mode.SELECTED,
+                                inset(3, 2, 0, 3)))
+                .add(CheckBox.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(Background.roundRect(gfx, bgColor, 5, brColor, 2).
-                                inset(3, 2, 0, 3))).
+                                inset(3, 2, 0, 3)))
                 // flip ul and br to make Field appear recessed
-                        add(Field.class,
+                .add(Field.class,
                         Style.BACKGROUND.is(Background.beveled(0xFFFFFFFF, brColor, ulColor).inset(5)),
-                        Style.HALIGN.left).
-                add(Field.class, Style.Mode.DISABLED,
-                        Style.BACKGROUND.is(Background.beveled(0xFFCCCCCC, brColor, ulColor).inset(5))).
-                add(Menu.class,
-                        Style.BACKGROUND.is(Background.bordered(0xFFFFFFFF, 0x00000000, 1).inset(6))).
-                add(MenuItem.class,
+                        Style.HALIGN.left)
+                .add(Field.class, Style.Mode.DISABLED,
+                        Style.BACKGROUND.is(Background.beveled(0xFFCCCCCC, brColor, ulColor).inset(5)))
+                .add(Menu.class,
+                        Style.BACKGROUND.is(Background.bordered(0xFFFFFFFF, 0x00000000, 1).inset(6)))
+                .add(MenuItem.class,
                         Style.BACKGROUND.is(Background.solid(0xFFFFFFFF)),
                         Style.HALIGN.left,
-                        Style.FONT.is(font)).
-                add(MenuItem.class, Style.Mode.SELECTED,
+                        Style.FONT.is(font))
+                .add(MenuItem.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(Background.solid(0xFF000000)),
-                        Style.COLOR.is(0xFFFFFFFF)).
-                add(Tabs.class,
-                        Tabs.HIGHLIGHTER.is(Tabs.textColorHighlighter(0xFF000000, 0xFFFFFFFF))).
-                add(Label.class,
-                        Style.FONT.is(font));
+                        Style.COLOR.is(0xFFFFFFFF))
+                .add(Tabs.class,
+                        Tabs.HIGHLIGHTER.is(Tabs.textColorHighlighter(0xFF000000, 0xFFFFFFFF)))
+                .add(Label.class,
+                        Style.FONT.is(font))
+                .add(GameInteractionArea.ChangeViewButton.class,
+                        Style.BACKGROUND.is(butBg),
+                        Style.FONT.is(font))
+                .add(GameInteractionArea.ChangeViewButton.class, Style.Mode.SELECTED,
+                        Style.BACKGROUND.is(butSelBg))
+                .add(GameInteractionArea.ChangeViewButton.class, Style.Mode.DISABLED,
+                        Style.BACKGROUND.is(disabledChangeViewButtonBackground))
+                .add(GameInteractionArea.ChangeViewButton.class, Style.ICON_CUDDLE.on)
+                .add(GameInteractionArea.ChangeViewButton.class,
+                        Style.ICON_GAP.is((-(int) SimGame.game.bounds.percentOfHeight(0.04f))))
+                .add(GameInteractionArea.ChangeViewButton.class, Style.TEXT_EFFECT.pixelOutline)
+                .add(GameInteractionArea.ChangeViewButton.class, Style.HIGHLIGHT.is(Palette.UNUSED_SPACE))
+                .add(GameInteractionArea.ChangeViewButton.class, Style.COLOR.is(Palette.FOREGROUND));
+
     }
 }
