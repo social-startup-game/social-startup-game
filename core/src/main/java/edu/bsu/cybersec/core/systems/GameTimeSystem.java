@@ -19,19 +19,20 @@
 
 package edu.bsu.cybersec.core.systems;
 
+import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 public final class GameTimeSystem extends tripleplay.entity.System {
 
-    private static final int MILLISECONDS_PER_SECOND = 1000;
+    private static final float DEFAULT_SCALE = ClockUtils.SECONDS_PER_HOUR * 2;
     private final GameWorld gameWorld;
-    private float scale = 1f;
+    private float scale = DEFAULT_SCALE;
 
     public GameTimeSystem(GameWorld world) {
         super(world, SystemPriority.CLOCK_LEVEL.value);
@@ -46,7 +47,7 @@ public final class GameTimeSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        int elapsedGameTime = (int) (clock.dt * scale / MILLISECONDS_PER_SECOND);
+        int elapsedGameTime = (int) (clock.dt * scale / ClockUtils.MS_PER_SECOND);
         gameWorld.advanceGameTime(elapsedGameTime);
     }
 
