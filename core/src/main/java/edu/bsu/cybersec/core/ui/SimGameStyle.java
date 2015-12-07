@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.SimGame;
 import playn.core.Font;
 import playn.core.Graphics;
 import tripleplay.ui.*;
@@ -33,6 +32,8 @@ import tripleplay.ui.*;
  */
 public class SimGameStyle {
 
+    public static final int UL_COLOR = 0xFFEEEEEE;
+
     public static Stylesheet newSheet(Graphics gfx) {
         return newSheetBuilder(gfx).create();
     }
@@ -43,7 +44,7 @@ public class SimGameStyle {
      */
     public static Stylesheet.Builder newSheetBuilder(Graphics gfx) {
         final Font font = FontCache.instance().REGULAR;
-        int bgColor = 0xFFCCCCCC, ulColor = 0xFFEEEEEE, brColor = 0xFFAAAAAA;
+        int bgColor = 0xFFCCCCCC, ulColor = UL_COLOR, brColor = 0xFFAAAAAA;
         Background butBg = Background.roundRect(gfx, bgColor, 5, ulColor, 2).inset(5, 6, 2, 6);
         Background butSelBg = Background.roundRect(gfx, bgColor, 5, brColor, 2).inset(6, 5, 1, 7);
         Background disabledChangeViewButtonBackground = Background.roundRect(gfx, Palette.DIALOG_BACKGROUND, 5, ulColor, 2)
@@ -90,9 +91,6 @@ public class SimGameStyle {
                         Style.BACKGROUND.is(butSelBg))
                 .add(GameInteractionArea.ChangeViewButton.class, Style.Mode.DISABLED,
                         Style.BACKGROUND.is(disabledChangeViewButtonBackground))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.ICON_CUDDLE.on)
-                .add(GameInteractionArea.ChangeViewButton.class,
-                        Style.ICON_GAP.is((-(int) SimGame.game.bounds.percentOfHeight(0.04f))))
                 .add(GameInteractionArea.ChangeViewButton.class, Style.TEXT_EFFECT.pixelOutline)
                 .add(GameInteractionArea.ChangeViewButton.class, Style.HIGHLIGHT.is(Palette.UNUSED_SPACE))
                 .add(GameInteractionArea.ChangeViewButton.class, Style.COLOR.is(Palette.FOREGROUND));

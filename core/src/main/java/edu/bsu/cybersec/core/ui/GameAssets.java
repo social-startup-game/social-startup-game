@@ -62,6 +62,7 @@ public class GameAssets {
         ADMIN("admin.png"),
         STATUS("status.png"),
         NEWS("news.png"),
+        NEWS_ATTENTION("news-attention.png"),
         DEVELOPMENT("development.png"),
         MAINTENANCE("maintenance.png"),
         LOGO("logo.png");

@@ -23,8 +23,11 @@ import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
+import playn.core.Canvas;
 import playn.core.Image;
-import playn.core.TileSource;
+import playn.core.Surface;
+import playn.scene.Layer;
+import pythagoras.f.IDimension;
 import react.Signal;
 import react.Slot;
 import react.UnitSlot;
@@ -65,7 +68,7 @@ public final class GameInteractionArea extends Group {
         private final ChangeViewButton statusButton = new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup);
         private final ChangeViewButton featureButton = new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup);
         private final ChangeViewButton exploitsButton = new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup);
-        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, "News & Events", eventsGroup);
+        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, GameAssets.ImageKey.NEWS_ATTENTION, "Alerts", eventsGroup);
 
         private final ImmutableList<ChangeViewButton> allButtons = ImmutableList.of(statusButton, featureButton, exploitsButton, eventsButton);
 
@@ -116,12 +119,53 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
         private final InteractionAreaGroup view;
+        private boolean drawAttentionBackground = false;
 
-        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
+        ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view) {
             super(text);
             this.view = checkNotNull(view);
-            Image iconImage = SimGame.game.assets.getImage(imageKey);
-            super.icon.update(makeIconFromImage(iconImage));
+            final Image iconImage = SimGame.game.assets.getImage(imageKey);
+            final Image attentionImage = SimGame.game.assets.getImage(attentionKey);
+            final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
+            final float desiredWidth = SimGame.game.bounds.width() / 5;
+
+            addStyles(Style.BACKGROUND.is(new Background() {
+                @Override
+                protected Instance instantiate(final IDimension size) {
+                    return new LayerInstance(size, new Layer() {
+                        private final int DEFAULT_BUTTON_BG_COLOR = 0xFFCCCCCC;
+                        private final Canvas canvas = SimGame.game.plat.graphics().createCanvas(size.width(), size.height());
+                        private final float radius = percentOfViewHeight(0.008f);
+                        private final float radiusOffset = percentOfViewHeight(0.005f);
+
+                        @Override
+                        protected void paintImpl(Surface surf) {
+                            canvas.setFillColor(Palette.DIALOG_FOREGROUND);
+                            canvas.fillRoundRect(0, 0, size.width(), size.height(), radius);
+                            if (isSelected()) {
+                                canvas.setFillColor(Palette.DIALOG_FOREGROUND);
+                            } else if (isEnabled()) {
+                                canvas.setFillColor(DEFAULT_BUTTON_BG_COLOR);
+                            } else {
+                                canvas.setFillColor(Palette.DIALOG_BACKGROUND);
+                            }
+                            canvas.fillRoundRect(radius - radiusOffset,
+                                    radius - radiusOffset,
+                                    size.width() - radius,
+                                    size.height() - radius,
+                                    radius);
+                            surf.draw(canvas.toTexture().tile(), 0, 0);
+
+                            final float aspectRatio = iconImage.width() / iconImage.height();
+                            final float imageRenderWidth = Math.min(size.width(), size.height() * aspectRatio);
+                            final float imageRenderHeight = Math.min(size.height(), size.width() / aspectRatio);
+                            surf.draw(drawAttentionBackground ? attentionImage.tile() : iconImage.tile(),
+                                    0, 0, imageRenderWidth, imageRenderHeight);
+                        }
+                    });
+                }
+            }));
+            setConstraint(Constraints.fixedSize(desiredWidth, desiredHeight));
             onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button event) {
@@ -139,19 +183,23 @@ public final class GameInteractionArea extends Group {
             new AttentionAnimator(view);
         }
 
+        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
+            this(imageKey, imageKey, text, view);
+        }
+
         private class AttentionAnimator {
 
             private final Runnable attentionThemer = new Runnable() {
                 @Override
                 public void run() {
-                    addStyles(Style.COLOR.is(Palette.BACKGROUND));
+                    drawAttentionBackground = true;
                 }
             };
 
             private final Runnable regularThemer = new Runnable() {
                 @Override
                 public void run() {
-                    addStyles(Style.COLOR.is(Palette.FOREGROUND));
+                    drawAttentionBackground = false;
                 }
             };
 
@@ -221,12 +269,6 @@ public final class GameInteractionArea extends Group {
                         .delay(FLASH_PERIOD);
                 return group.toAnim();
             }
-        }
-
-        private Icon makeIconFromImage(TileSource iconImage) {
-            final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
-            final float scale = desiredHeight / iconImage.tile().height();
-            return Icons.scaled(Icons.image(iconImage), scale);
         }
 
         @Override
