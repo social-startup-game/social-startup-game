@@ -23,25 +23,32 @@ import edu.bsu.cybersec.core.*;
 import tripleplay.entity.Entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class DefaultNarrativeScript {
 
     private GameWorld world;
-    private ArrayList<NarrativeEvent> events = new ArrayList<>();
+
+    private List<NarrativeEvent> events = new ArrayList<>();
+    private int eventTime = 0;
+    private final int MINIMUM_HOURS_BETWEEN_EVENTS = 12;
+    private final int MAXIMUM_HOURS_BETWEEN_EVENTS = 67;
+    private final RandomInRange delayGenerator = new RandomInRange(MINIMUM_HOURS_BETWEEN_EVENTS, MAXIMUM_HOURS_BETWEEN_EVENTS);
+
 
     public void createIn(GameWorld world, GameConfig config) {
         this.world = checkNotNull(world);
+        int gameDurationInHours = world.gameEnd.get() / ClockUtils.SECONDS_PER_HOUR;
         if (!config.skipWelcome()) {
             now().runEvent(new WelcomeEvent(world));
         }
         populateEvents();
-        hour(2).runEvent(getRandomEvent());
-        hour(4).runEvent(getRandomEvent());
-        hour(6).runEvent(getRandomEvent());
-        hour(8).runEvent(getRandomEvent());
-        hour(10).runEvent(getRandomEvent());
+        int eventTime = 0;
+        while (!events.isEmpty() && eventTime < gameDurationInHours) {
+            hour(determineEventTime()).runEvent(getRandomEvent());
+        }
     }
 
     private void populateEvents() {
@@ -50,6 +57,11 @@ public final class DefaultNarrativeScript {
         events.add(new DataStolenNotifyChoiceEvent(world));
         events.add(new InputSanitizationEvent(world));
         events.add(new DDOSEvent(world));
+    }
+
+    private int determineEventTime() {
+        eventTime += delayGenerator.nextInt();
+        return eventTime;
     }
 
     private TimedEventBuilder now() {
@@ -62,7 +74,7 @@ public final class DefaultNarrativeScript {
 
     public NarrativeEvent getRandomEvent() {
         int index = new RandomInRange(0, events.size() - 1).nextInt();
-        return events.get(index);
+        return events.remove(index);
     }
 
     private final class TimedEventBuilder {
