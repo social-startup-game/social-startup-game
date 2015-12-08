@@ -20,9 +20,12 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableMap;
+import edu.bsu.cybersec.core.narrative.ScriptKiddieAttackEvent;
+import edu.bsu.cybersec.core.narrative.SecurityConferenceEvent;
 import playn.core.Key;
 import playn.core.Keyboard;
 import react.SignalView;
+import tripleplay.entity.Entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,11 +37,32 @@ public class DebugMode implements SignalView.Listener<Keyboard.Event> {
                 public void run() {
                     gameWorld.exploitSystem.addExploit();
                 }
-            });
+            },
+            Key.S, new Runnable() {
+                @Override
+                public void run() {
+                    runEvent(new ScriptKiddieAttackEvent(gameWorld));
+                }
+            },
+            Key.C, new Runnable() {
+                @Override
+                public void run() {
+                    runEvent(new SecurityConferenceEvent(gameWorld));
+                }
+            }
+
+    );
+
     private final GameWorld.Systematized gameWorld;
 
     public DebugMode(GameWorld.Systematized gameWorld) {
         this.gameWorld = checkNotNull(gameWorld);
+    }
+
+    private void runEvent(NarrativeEvent event) {
+        Entity entity = gameWorld.create(true).add(gameWorld.event, gameWorld.timeTrigger);
+        gameWorld.event.set(entity.id, event);
+        gameWorld.timeTrigger.set(entity.id, gameWorld.gameTime.get().now);
     }
 
     @Override
