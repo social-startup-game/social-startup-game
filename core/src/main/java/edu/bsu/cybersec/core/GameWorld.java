@@ -34,8 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 public class GameWorld extends World {
+    private static final long EIGHT_OCLOCK_ON_A_MONDAY_IN_SECONDS = 61410229200L;
+
     public final Map<String, Component> components = Maps.newHashMap();
 
+    public final long startTime = EIGHT_OCLOCK_ON_A_MONDAY_IN_SECONDS;
     public final Signal<NarrativeEvent> onNarrativeEvent = Signal.create();
     public final UnitSignal onGameEnd = new UnitSignal();
     public final Value<GameTime> gameTime = Value.create(new GameTime(0, 0));
@@ -89,6 +92,7 @@ public class GameWorld extends World {
             new LearningSystem(this);
             new ExploitMaintenanceSystem(this);
             new UserAttritionSystem(this);
+            new WorkHoursSystem(this);
         }
 
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);

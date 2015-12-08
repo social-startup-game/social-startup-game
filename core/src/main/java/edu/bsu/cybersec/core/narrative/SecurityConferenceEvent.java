@@ -71,6 +71,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
         public void onSelected() {
             final int conferenceEnd = world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * CONFERENCE_DURATION;
             Task task = Task.createTask("At conference")
+                    .notBoundByWorkday()
                     .expiringAt(conferenceEnd)
                     .inWorld(world)
                     .build();

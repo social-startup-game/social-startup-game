@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import react.Value;
 import react.ValueView;
@@ -27,8 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class Task {
 
-    public static final Task MAINTENANCE = new ReassignableTask("Maintenance");
-    public static final Task DEVELOPMENT = new ReassignableTask("Development");
+    public static final Task MAINTENANCE = new BasicTask("Maintenance");
+    public static final Task DEVELOPMENT = new BasicTask("Development");
     public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(DEVELOPMENT, MAINTENANCE);
 
     public static TaskBuilder createTask(String name) {
@@ -37,6 +38,7 @@ public abstract class Task {
 
     public static final class TaskBuilder {
         private final String name;
+        private boolean boundByWorkday = true;
         private TimedTaskBuilder timed;
 
         private TaskBuilder(String name) {
@@ -47,9 +49,14 @@ public abstract class Task {
             return new TimedTaskBuilder(time);
         }
 
+        public TaskBuilder notBoundByWorkday() {
+            boundByWorkday = false;
+            return this;
+        }
+
         public Task build() {
             if (timed == null) {
-                return new ReassignableTask(name);
+                return new BasicTask(name);
             } else {
                 return new TimedTask(this);
             }
@@ -72,16 +79,29 @@ public abstract class Task {
     }
 
     public final Value<String> name;
+    private final boolean boundByWorkday;
 
-    public Task(String name) {
+    private Task(String name, boolean boundByWorkday) {
         this.name = Value.create(name);
+        this.boundByWorkday = boundByWorkday;
     }
 
     public abstract boolean isReassignable();
 
-    private static final class ReassignableTask extends Task {
-        private ReassignableTask(String name) {
-            super(name);
+    public boolean isBoundByWorkDay() {
+        return boundByWorkday;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .toString();
+    }
+
+    private static final class BasicTask extends Task {
+        private BasicTask(String name) {
+            super(name, true);
         }
 
         @Override
@@ -92,7 +112,7 @@ public abstract class Task {
 
     private static class TimedTask extends Task {
         private TimedTask(final TaskBuilder builder) {
-            super(builder.name);
+            super(builder.name, builder.boundByWorkday);
             final String baseName = builder.name;
             final GameWorld world = builder.timed.world;
             final int completionTime = builder.timed.time;

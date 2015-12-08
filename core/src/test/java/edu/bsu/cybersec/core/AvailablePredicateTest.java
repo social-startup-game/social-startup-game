@@ -25,6 +25,8 @@ import tripleplay.entity.Entity;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AvailablePredicateTest {
     private AvailablePredicate pred;
@@ -50,12 +52,9 @@ public class AvailablePredicateTest {
 
     @Test
     public void testApply_unavailable() {
-        givenAWorkerDoing(new Task("Arbitrary name") {
-            @Override
-            public boolean isReassignable() {
-                return false;
-            }
-        });
+        Task task = mock(Task.class);
+        when(task.isReassignable()).thenReturn(false);
+        givenAWorkerDoing(task);
         assertFalse(pred.apply(worker));
     }
 }

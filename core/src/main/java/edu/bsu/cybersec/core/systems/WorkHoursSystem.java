@@ -1,0 +1,127 @@
+/*
+ * Copyright 2015 Paul Gestwicki
+ *
+ * This file is part of The Social Startup Game
+ *
+ * The Social Startup Game is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Social Startup Game is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package edu.bsu.cybersec.core.systems;
+
+import com.google.common.collect.Maps;
+import edu.bsu.cybersec.core.ClockUtils;
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.SystemPriority;
+import edu.bsu.cybersec.core.Task;
+import playn.core.Clock;
+import tripleplay.entity.Entity;
+import tripleplay.entity.System;
+
+import java.util.HashMap;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+public final class WorkHoursSystem extends System {
+
+    private static final Task NOT_AT_WORK = Task.createTask("Not at work").build();
+
+    private final GameWorld world;
+
+    private float elapsedHours;
+    private HashMap<Integer, Task> previousTasks = Maps.newHashMap();
+
+    public WorkHoursSystem(GameWorld world) {
+        super(world, SystemPriority.MODEL_LEVEL.value);
+        this.world = checkNotNull(world);
+    }
+
+    @Override
+    protected boolean isInterested(Entity entity) {
+        return entity.has(world.tasked);
+    }
+
+    private interface State {
+        void onEnter();
+
+        void update(Entities entities);
+    }
+
+    private final State IN_WORK_HOURS = new State() {
+
+        @Override
+        public void onEnter() {
+            if (thereArePreviousTasksRecorded()) {
+                setWorkersToTheirPreviousTasks();
+                previousTasks.clear();
+            }
+        }
+
+        private boolean thereArePreviousTasksRecorded() {
+            return !previousTasks.isEmpty();
+        }
+
+        private void setWorkersToTheirPreviousTasks() {
+            for (int i = 0, limit = entityCount(); i < limit; i++) {
+                final int id = entityId(i);
+                Task previousTask = previousTasks.get(id);
+                if (previousTask != null) {
+                    world.tasked.set(id, previousTask);
+                }
+            }
+        }
+
+        @Override
+        public void update(Entities entities) {
+            if (elapsedHours > 8) {
+                changeTo(OFF_WORK_HOURS);
+            }
+        }
+    };
+
+    private final State OFF_WORK_HOURS = new State() {
+        @Override
+        public void onEnter() {
+            for (int i = 0, limit = entityCount(); i < limit; i++) {
+                final int id = entityId(i);
+                Task task = world.tasked.get(id);
+                if (task.isBoundByWorkDay()) {
+                    previousTasks.put(id, world.tasked.get(id));
+                    world.tasked.set(id, NOT_AT_WORK);
+                }
+            }
+        }
+
+        @Override
+        public void update(Entities entities) {
+            if (elapsedHours > 24) {
+                changeTo(IN_WORK_HOURS);
+                elapsedHours -= 24;
+            }
+        }
+    };
+
+    private State state = IN_WORK_HOURS;
+
+    private void changeTo(State state) {
+        this.state = state;
+        this.state.onEnter();
+    }
+
+    @Override
+    protected void update(Clock clock, Entities entities) {
+        super.update(clock, entities);
+        elapsedHours += (float) world.gameTime.get().delta() / ClockUtils.SECONDS_PER_HOUR;
+        state.update(entities);
+    }
+}
