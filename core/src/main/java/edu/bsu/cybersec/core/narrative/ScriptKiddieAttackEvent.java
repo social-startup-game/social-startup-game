@@ -28,6 +28,8 @@ import tripleplay.entity.Entity;
 
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkState;
+
 public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
     private static final int HOURS_UNTIL_REPERCUSSION = 24;
@@ -73,6 +75,8 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
         }
 
         private void assignRetaliation() {
+            final Task taskBeforeRetaliation = world.tasked.get(id);
+            checkState(taskBeforeRetaliation.isReassignable());
             final int endOfRetaliation = world.gameTime.get().now + HOURS_FOR_RETALIATION * ClockUtils.SECONDS_PER_HOUR;
             world.tasked.set(id, Task.createTask("Retaliating")
                     .expiringAt(endOfRetaliation)
@@ -86,7 +90,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
                 @Override
                 public void run() {
-                    world.tasked.set(id, Task.DEVELOPMENT);
+                    world.tasked.set(id, taskBeforeRetaliation);
                     super.run();
                 }
             });
