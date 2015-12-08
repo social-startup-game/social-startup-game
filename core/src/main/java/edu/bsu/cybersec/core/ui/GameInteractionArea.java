@@ -74,17 +74,21 @@ public final class GameInteractionArea extends Group {
 
         ButtonArea() {
             super(AxisLayout.horizontal());
+            returnToStatusButtonOnEventCompletion();
+            for (ChangeViewButton button : allButtons) {
+                add(button);
+            }
+            setDefaultViewTo(statusButton);
+            configureTableValidationOnClockTick();
+        }
+
+        private void returnToStatusButtonOnEventCompletion() {
             eventsGroup.onEventCompletion().connect(new UnitSlot() {
                 @Override
                 public void onEmit() {
                     statusButton.click();
                 }
             });
-            for (ChangeViewButton button : allButtons) {
-                add(button);
-            }
-            setDefaultViewTo(statusButton);
-            configureTableValidationOnClockTick();
         }
 
         private void setDefaultViewTo(ChangeViewButton button) {

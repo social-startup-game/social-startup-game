@@ -344,23 +344,16 @@ public class MainUIGroup extends Group {
             super.update(clock, entities);
             for (int i = 0, limit = entities.size(); i < limit; i++) {
                 final int id = entities.get(i);
-                update(id);
+                ensureSelectedTaskMatchesAssignedTask(id);
+                updateDeveloperInfoArea(id);
             }
-            updateDeveloperInfoArea(entities);
         }
 
-        private void update(int id) {
+        private void ensureSelectedTaskMatchesAssignedTask(int id) {
             TaskSelector sel = map.get(id);
             Task task = world.tasked.get(id);
             if (sel.selected != task) {
                 sel.select(task);
-            }
-        }
-
-        private void updateDeveloperInfoArea(tripleplay.entity.System.Entities entities) {
-            for (int i = 0, limit = entities.size(); i < limit; i++) {
-                final int id = entities.get(i);
-                updateDeveloperInfoArea(id);
             }
         }
 
