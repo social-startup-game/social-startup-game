@@ -75,6 +75,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
                     .inWorld(world)
                     .build();
             world.tasked.set(id, task);
+            world.entity(id).didChange();
             after(CONFERENCE_DURATION).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
@@ -85,6 +86,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
                 public void run() {
                     world.maintenanceSkill.add(id, CONFERENCE_SKILL_INCREASE);
                     world.tasked.set(id, Task.MAINTENANCE);
+                    world.entity(id).didChange();
                     super.run();
                 }
             });

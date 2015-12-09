@@ -77,6 +77,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
                     .expiringAt(endOfSanitizationPeriod)
                     .inWorld(world)
                     .build());
+            world.entity(id).didChange();
             after(HOURS_FOR_SANITIZATION).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_SANITIZATION) {
                 @Override
                 public String text() {
@@ -86,6 +87,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
                 @Override
                 public void run() {
                     world.tasked.set(id, Task.MAINTENANCE);
+                    world.entity(id).didChange();
                     super.run();
                 }
             });

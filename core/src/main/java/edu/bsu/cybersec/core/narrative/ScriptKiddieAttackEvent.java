@@ -82,6 +82,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                     .expiringAt(endOfRetaliation)
                     .inWorld(world)
                     .build());
+            world.entity(id).didChange();
             after(HOURS_FOR_RETALIATION).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
@@ -91,6 +92,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                 @Override
                 public void run() {
                     world.tasked.set(id, taskBeforeRetaliation);
+                    world.entity(id).didChange();
                     super.run();
                 }
             });
