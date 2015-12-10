@@ -80,12 +80,6 @@ public class GameWorld extends World {
     }
 
     public static class Systematized extends GameWorld {
-        public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
-        public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
-        public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
-        public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
-        public final ExploitSystem exploitSystem = new ExploitSystem(this);
-
         {
             initializeSystemsThatAreNeverDirectlyReferenced();
         }
@@ -98,7 +92,13 @@ public class GameWorld extends World {
             new LearningSystem(this);
             new ExploitMaintenanceSystem(this);
             new UserAttritionSystem(this);
-            new WorkHoursSystem(this, gameTimeSystem);
         }
+
+        public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);
+        public final UserGenerationSystem userGenerationSystem = new UserGenerationSystem(this);
+        public final FeatureGenerationSystem featureGenerationSystem = new FeatureGenerationSystem(this);
+        public final FeatureDevelopmentSystem featureDevelopmentSystem = new FeatureDevelopmentSystem(this);
+        public final ExploitSystem exploitSystem = new ExploitSystem(this);
+        public final WorkHoursSystem workHoursSystem = new WorkHoursSystem(this, gameTimeSystem);
     }
 }

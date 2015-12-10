@@ -25,6 +25,8 @@ import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import edu.bsu.cybersec.core.Task;
 import playn.core.Clock;
+import react.Value;
+import react.ValueView;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
 
@@ -41,7 +43,8 @@ public final class WorkHoursSystem extends System {
     private final GameTimeSystem gameTimeSystem;
 
     private float elapsedHours;
-    private HashMap<Integer, Task> previousTasks = Maps.newHashMap();
+    private final HashMap<Integer, Task> previousTasks = Maps.newHashMap();
+    private final Value<Boolean> isWorkHours = Value.create(true);
 
     public WorkHoursSystem(GameWorld world, GameTimeSystem gameTimeSystem) {
         super(world, SystemPriority.MODEL_LEVEL.value);
@@ -64,6 +67,7 @@ public final class WorkHoursSystem extends System {
 
         @Override
         public void onEnter() {
+            isWorkHours.update(true);
             if (thereArePreviousTasksRecorded()) {
                 setWorkersToTheirPreviousTasks();
                 previousTasks.clear();
@@ -96,6 +100,7 @@ public final class WorkHoursSystem extends System {
     private final State OFF_WORK_HOURS = new State() {
         @Override
         public void onEnter() {
+            isWorkHours.update(false);
             for (int i = 0, limit = entityCount(); i < limit; i++) {
                 final int id = entityId(i);
                 Task task = world.tasked.get(id);
@@ -128,5 +133,9 @@ public final class WorkHoursSystem extends System {
         super.update(clock, entities);
         elapsedHours += (float) world.gameTime.get().delta() / ClockUtils.SECONDS_PER_HOUR;
         state.update(entities);
+    }
+
+    public ValueView<Boolean> isWorkHours() {
+        return isWorkHours;
     }
 }

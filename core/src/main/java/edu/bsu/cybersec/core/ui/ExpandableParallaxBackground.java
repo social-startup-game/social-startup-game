@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.systems.WorkHoursSystem;
 import playn.core.Surface;
 import playn.core.Tile;
 import playn.core.TileSource;
@@ -39,23 +40,33 @@ public final class ExpandableParallaxBackground extends Background {
     public static final class Builder {
         private final TileSource foreground;
         private TileSource background;
+        private WorkHoursSystem workHoursSystem;
 
         private Builder(TileSource foreground) {
             this.foreground = checkNotNull(foreground);
         }
 
-        public ExpandableParallaxBackground background(TileSource background) {
+        public Builder background(TileSource background) {
             this.background = checkNotNull(background);
+            return this;
+        }
+
+        public ExpandableParallaxBackground withWorkHours(WorkHoursSystem system) {
+            this.workHoursSystem = checkNotNull(system);
+            checkNotNull(foreground);
+            checkNotNull(background);
             return new ExpandableParallaxBackground(this);
         }
     }
 
     private final TileSource foreground;
     private final TileSource background;
+    private final WorkHoursSystem workHoursSystem;
 
     private ExpandableParallaxBackground(Builder builder) {
         this.foreground = builder.foreground;
         this.background = builder.background;
+        this.workHoursSystem = builder.workHoursSystem;
     }
 
     @Override
@@ -68,7 +79,9 @@ public final class ExpandableParallaxBackground extends Background {
             @Override
             protected void paintImpl(Surface surf) {
                 paintBackground(surf);
-                paintForeground(surf);
+                if (workHoursSystem.isWorkHours().get()) {
+                    paintForeground(surf);
+                }
                 paintBorder(surf);
             }
 
@@ -83,6 +96,9 @@ public final class ExpandableParallaxBackground extends Background {
                 final float sourceY = 0;
                 final float sourceWidth = tile.width();
                 final float sourceHeight = tile.height();
+                if (!workHoursSystem.isWorkHours().get()) {
+                    surf.setTint(0xff777777);
+                }
                 surf.draw(tile,
                         destinationX, destinationY, destinationWidth, destinationHeight,
                         sourceX, sourceY, sourceWidth, sourceHeight);

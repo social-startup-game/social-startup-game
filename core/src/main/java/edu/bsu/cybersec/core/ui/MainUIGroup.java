@@ -150,7 +150,8 @@ public class MainUIGroup extends Group {
 
             final Tile image = gameWorld.image.get(id);
             addStyles(Style.BACKGROUND.is(
-                    ExpandableParallaxBackground.foreground(image).background(background)))
+                    ExpandableParallaxBackground.foreground(image).background(background)
+                            .withWorkHours(((GameWorld.Systematized) gameWorld).workHoursSystem)))
                     .setConstraint(AxisLayout.stretched());
             add(createTransparentClickableArea(),
                     createControlsAndBioGroup(root));

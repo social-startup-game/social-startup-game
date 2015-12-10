@@ -25,8 +25,7 @@ import org.junit.Test;
 import react.Value;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,11 +33,12 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
 
     private Entity worker;
     private Task task;
+    private WorkHoursSystem system;
 
     @Override
     public void setUp() {
         super.setUp();
-        new WorkHoursSystem(world, mockGameTimeSystem());
+        system = new WorkHoursSystem(world, mockGameTimeSystem());
     }
 
     private GameTimeSystem mockGameTimeSystem() {
@@ -111,5 +111,16 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
         task = mock(Task.class);
         when(task.isBoundByWorkDay()).thenReturn(false);
         makeWorker();
+    }
+
+    @Test
+    public void testIsWorkHours_startsTrue() {
+        assertTrue(system.isWorkHours().get());
+    }
+
+    @Test
+    public void testIsWorkHours_workDayEnds_isFalse() {
+        advanceHours(12);
+        assertFalse(system.isWorkHours().get());
     }
 }
