@@ -56,7 +56,7 @@ public class SimGame extends SceneGame {
 
     private void handleMusicMute() {
         if (config.muteMusic()) {
-            Jukebox.instance().mute();
+            Jukebox.instance().muted.update(true);
         }
     }
 

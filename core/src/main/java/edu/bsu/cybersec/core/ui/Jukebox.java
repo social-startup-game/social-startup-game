@@ -20,6 +20,8 @@
 package edu.bsu.cybersec.core.ui;
 
 import playn.core.Sound;
+import react.Slot;
+import react.Value;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +34,20 @@ public final class Jukebox {
     }
 
     private Sound currentTrack;
-    private boolean muted = false;
+    public final Value<Boolean> muted = Value.create(false);
+
+    Jukebox() {
+        muted.connect(new Slot<Boolean>() {
+            @Override
+            public void onEmit(Boolean muted) {
+                if (!muted && currentTrack != null) {
+                    currentTrack.play();
+                } else if (muted && currentTrack != null) {
+                    currentTrack.stop();
+                }
+            }
+        });
+    }
 
     public void loop(Sound track) {
         checkNotNull(track);
@@ -45,15 +60,22 @@ public final class Jukebox {
     }
 
     private void startPlaying(Sound track) {
-        if (!muted) {
+        currentTrack = track;
+        if (!muted.get()) {
             track.setLooping(true);
             track.play();
-            currentTrack = track;
         }
     }
 
-    public Jukebox mute() {
-        this.muted = true;
-        return this;
+    public void mute() {
+        muted.update(true);
+    }
+
+    public void unmute() {
+        muted.update(false);
+    }
+
+    public void toggleMute() {
+        muted.update(!muted.get());
     }
 }

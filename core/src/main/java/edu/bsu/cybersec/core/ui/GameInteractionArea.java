@@ -79,6 +79,7 @@ public final class GameInteractionArea extends Group {
             for (ChangeViewButton button : allButtons) {
                 add(button);
             }
+            add(new MuteCheckBox());
             setDefaultViewTo(statusButton);
             configureTableValidationOnClockTick();
         }
@@ -295,6 +296,37 @@ public final class GameInteractionArea extends Group {
     }
 }
 
+final class MuteCheckBox extends Button {
+    private static final Image muteImage = SimGame.game.assets.getImage(GameAssets.ImageKey.MUTE);
+    private static final Image unmuteImage = SimGame.game.assets.getImage(GameAssets.ImageKey.UNMUTE);
+    private final Jukebox jukebox = Jukebox.instance();
+    private final Icon muteIcon;
+    private final Icon unmuteIcon;
 
+    MuteCheckBox() {
+        super();
+        final float desiredWidth = SimGame.game.bounds.percentOfHeight(0.03f);
+        final float scale = desiredWidth / muteImage.width();
+        muteIcon = Icons.scaled(Icons.image(muteImage), scale);
+        unmuteIcon = Icons.scaled(Icons.image(unmuteImage), scale);
+        updateIcon();
+        onClick(new Slot<Button>() {
+            @Override
+            public void onEmit(Button button) {
+                jukebox.toggleMute();
+            }
+        });
+        jukebox.muted.connect(new Slot<Boolean>() {
+            @Override
+            public void onEmit(Boolean aBoolean) {
+                updateIcon();
+            }
+        });
+    }
+
+    private void updateIcon() {
+        icon.update(jukebox.muted.get() ? muteIcon : unmuteIcon);
+    }
+}
 
 

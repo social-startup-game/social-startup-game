@@ -65,7 +65,9 @@ public class GameAssets {
         NEWS_ATTENTION("news-attention.png"),
         DEVELOPMENT("development.png"),
         MAINTENANCE("maintenance.png"),
-        LOGO("logo.png");
+        LOGO("logo.png"),
+        MUTE("mute.png"),
+        UNMUTE("unmute.png");
 
         private final String path;
 
