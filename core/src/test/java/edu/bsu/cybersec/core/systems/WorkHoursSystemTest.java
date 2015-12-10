@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.systems;
 import edu.bsu.cybersec.core.Task;
 import org.junit.After;
 import org.junit.Test;
+import react.Value;
 import tripleplay.entity.Entity;
 
 import static org.junit.Assert.assertEquals;
@@ -37,7 +38,13 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
     @Override
     public void setUp() {
         super.setUp();
-        new WorkHoursSystem(world);
+        new WorkHoursSystem(world, mockGameTimeSystem());
+    }
+
+    private GameTimeSystem mockGameTimeSystem() {
+        GameTimeSystem system = mock(GameTimeSystem.class);
+        when(system.scale()).thenReturn(Value.create(0f));
+        return system;
     }
 
     @After
@@ -86,7 +93,6 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
         assertEquals(task, world.tasked.get(worker.id));
     }
 
-
     @Test
     public void testUpdate_taskChangesAtEndOfSecondWorkday() {
         givenAWorkerDoingANormalTask();
@@ -106,5 +112,4 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
         when(task.isBoundByWorkDay()).thenReturn(false);
         makeWorker();
     }
-
 }

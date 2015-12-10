@@ -21,7 +21,8 @@ package edu.bsu.cybersec.core.systems;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public final class GameTimeSystemTest extends AbstractSystemTest {
 
@@ -35,8 +36,8 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
     }
 
     @Test
-    public void testSetGameTimeUnitsPerRealClockUnit_times10() {
-        system.setGameTimeUnitsPerRealClockUnits(10);
+    public void testScale_measuresGameTimeUnitsPerClockUnits_times10() {
+        system.scale().update(10f);
         advancePlayNClockOneSecond();
         assertEquals(10, now());
     }
@@ -76,6 +77,16 @@ public final class GameTimeSystemTest extends AbstractSystemTest {
         system.setEnabled(false);
         whenSomeTimeElapses();
         assertTrue(now() == previous());
+    }
+
+    @Test
+    public void testScale_doublingScaleDoublesDeltas() {
+        whenOneSecondOfGameTimeElapses();
+        final float delta1 = world.gameTime.get().delta();
+        system.scale().update(system.scale().get() * 2);
+        whenOneSecondOfGameTimeElapses();
+        final float delta2 = world.gameTime.get().delta();
+        assertEquals(delta1 * 2, delta2, EPSILON);
     }
 
 }

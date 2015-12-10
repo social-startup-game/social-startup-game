@@ -24,15 +24,14 @@ import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import playn.core.Clock;
+import react.Value;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-public final class GameTimeSystem extends tripleplay.entity.System {
+public class GameTimeSystem extends tripleplay.entity.System {
 
     private static final float DEFAULT_SCALE = ClockUtils.SECONDS_PER_HOUR * 2;
     private final GameWorld gameWorld;
-    private float scale = DEFAULT_SCALE;
+    private final Value<Float> scale = Value.create(DEFAULT_SCALE);
 
     public GameTimeSystem(GameWorld world) {
         super(world, SystemPriority.CLOCK_LEVEL.value);
@@ -47,14 +46,8 @@ public final class GameTimeSystem extends tripleplay.entity.System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        int elapsedGameTime = (int) (clock.dt * scale / ClockUtils.MS_PER_SECOND);
+        int elapsedGameTime = (int) (clock.dt * scale.get() / ClockUtils.MS_PER_SECOND);
         gameWorld.advanceGameTime(elapsedGameTime);
-    }
-
-    public GameTimeSystem setGameTimeUnitsPerRealClockUnits(float scale) {
-        checkArgument(scale > 0, "Scale must be positive");
-        this.scale = scale;
-        return this;
     }
 
     @Override
@@ -70,5 +63,9 @@ public final class GameTimeSystem extends tripleplay.entity.System {
         if (t.previous != t.now) {
             gameWorld.gameTime.update(new GameTime(t.now, t.now));
         }
+    }
+
+    public Value<Float> scale() {
+        return scale;
     }
 }

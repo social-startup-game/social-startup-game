@@ -34,16 +34,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class WorkHoursSystem extends System {
 
+    private static final float OFF_HOURS_TIME_SCALE_FACTOR = 2.5f;
     private static final Task NOT_AT_WORK = Task.createTask("Not at work").build();
 
     private final GameWorld world;
+    private final GameTimeSystem gameTimeSystem;
 
     private float elapsedHours;
     private HashMap<Integer, Task> previousTasks = Maps.newHashMap();
 
-    public WorkHoursSystem(GameWorld world) {
+    public WorkHoursSystem(GameWorld world, GameTimeSystem gameTimeSystem) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
+        this.gameTimeSystem = checkNotNull(gameTimeSystem);
     }
 
     @Override
@@ -65,6 +68,7 @@ public final class WorkHoursSystem extends System {
                 setWorkersToTheirPreviousTasks();
                 previousTasks.clear();
             }
+            gameTimeSystem.scale().update(gameTimeSystem.scale().get() / OFF_HOURS_TIME_SCALE_FACTOR);
         }
 
         private boolean thereArePreviousTasksRecorded() {
@@ -100,6 +104,7 @@ public final class WorkHoursSystem extends System {
                     world.tasked.set(id, NOT_AT_WORK);
                 }
             }
+            gameTimeSystem.scale().update(gameTimeSystem.scale().get() * OFF_HOURS_TIME_SCALE_FACTOR);
         }
 
         @Override
