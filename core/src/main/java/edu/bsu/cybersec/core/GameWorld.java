@@ -22,7 +22,7 @@ package edu.bsu.cybersec.core;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.systems.*;
-import playn.core.Tile;
+import playn.scene.Layer;
 import react.Signal;
 import react.UnitSignal;
 import react.Value;
@@ -56,7 +56,6 @@ public class GameWorld extends World {
     public final Component.IScalar goal = register("goal", new Component.IScalar(this));
     public final Component.FScalar usersPerHour = register("usersPerHour", new Component.FScalar(this));
     public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
-    public final Component.Generic<Tile> image = register("image", new Component.Generic<Tile>(this));
     public final Component.Generic<Updatable> onUpdate = register("onUpdate", new Component.Generic<Updatable>(this));
     public final Component.IScalar timeTrigger = register("timeTrigger", new Component.IScalar(this));
     public final Component.Generic<Runnable> event = register("event", new Component.Generic<Runnable>(this));
@@ -68,6 +67,8 @@ public class GameWorld extends World {
     public final Component.FScalar lostUsers = register("lostUsers", new Component.FScalar(this));
     public final Component.Generic<EmployeeProfile> profile = register("profile", new Component.Generic<EmployeeProfile>(this));
     public final Component.FScalar maintenanceProgress = register("maintenanceProgress", new Component.FScalar(this));
+    public final Component.Generic<Layer> sprite = register("sprite", new Component.Generic<Layer>(this));
+    public final Component.XY position = register("position", new Component.XY(this));
 
     private <T extends Component> T register(String name, T component) {
         components.put(name, component);
@@ -92,6 +93,7 @@ public class GameWorld extends World {
             new LearningSystem(this);
             new ExploitMaintenanceSystem(this);
             new UserAttritionSystem(this);
+            new LayerPositionSystem(this);
         }
 
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);

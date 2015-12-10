@@ -22,6 +22,9 @@ package edu.bsu.cybersec.core;
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.narrative.DefaultNarrativeScript;
 import edu.bsu.cybersec.core.ui.GameAssets;
+import playn.core.Image;
+import playn.scene.ImageLayer;
+import playn.scene.Layer;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -31,6 +34,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PlayableWorldFactory {
 
+    /**
+     * The factor for scaling sprite images.
+     * This number was empirically determined based on the production size of the character images.
+     */
+    private static final float CHARACTER_SPRITE_SCALE = SimGame.game.bounds.width() / 510f;
     private static final int DAYS_UNTIL_GAME_END = 14;
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
@@ -95,14 +103,22 @@ public class PlayableWorldFactory {
                         world.tasked,
                         world.maintenanceSkill,
                         world.profile,
-                        world.image);
+                        world.sprite,
+                        world.position);
         world.employeeNumber.set(developer.id, number);
         world.tasked.set(developer.id, Task.MAINTENANCE);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 5);
         world.profile.set(developer.id, employee.profile);
-        world.image.set(developer.id, employee.image);
+        world.sprite.set(developer.id, makeImageLayer(employee.image));
         return developer;
+    }
+
+    private Layer makeImageLayer(Image image) {
+        ImageLayer layer = new ImageLayer(image);
+        layer.setOrigin(image.width() / 2, 0);
+        layer.setScale(CHARACTER_SPRITE_SCALE);
+        return layer;
     }
 
     private void makeExistingFeature() {

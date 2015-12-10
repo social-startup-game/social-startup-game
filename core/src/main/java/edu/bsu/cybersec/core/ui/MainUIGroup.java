@@ -30,7 +30,10 @@ import playn.core.TileSource;
 import react.Slot;
 import react.Value;
 import react.ValueView;
+import tripleplay.anim.Animation;
 import tripleplay.entity.Entity;
+import tripleplay.entity.System;
+import tripleplay.entity.World;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.util.BoxPoint;
@@ -49,6 +52,8 @@ public class MainUIGroup extends Group {
             SimGame.game.assets.getTile(GameAssets.TileKey.BACKGROUND_1),
             SimGame.game.assets.getTile(GameAssets.TileKey.BACKGROUND_2),
             SimGame.game.assets.getTile(GameAssets.TileKey.BACKGROUND_4));
+    private static final float WORKER_TOP_PERCENT_OF_HEIGHT = 0.15f;
+    private static final float WORKER_X = SimGame.game.bounds.width() * 0.30f;
 
     private final Interface iface;
     private final GameWorld gameWorld;
@@ -78,6 +83,7 @@ public class MainUIGroup extends Group {
         }
         gameInteractionArea.setConstraint(AxisLayout.stretched(2));
         add(gameInteractionArea);
+        new EmployeeAtWorkSystem(gameWorld);
     }
 
     private void animateFocusChanges() {
@@ -142,19 +148,22 @@ public class MainUIGroup extends Group {
         private final int id;
         private final Value<Integer> developmentSkill = Value.create(0);
         private final Value<Integer> maintenanceSkill = Value.create(0);
+        private final Value<Boolean> atWork = Value.create(true);
 
-        EmployeeView(int id, Root root, Tile background) {
+        EmployeeView(final int id, Root root, Tile background) {
             super(AxisLayout.horizontal().offStretch());
             this.id = id;
             checkNotNull(root);
 
-            final Tile image = gameWorld.image.get(id);
             addStyles(Style.BACKGROUND.is(
-                    ExpandableParallaxBackground.foreground(image).background(background)
+                    ExpandableBackground.background(background)
                             .withWorkHours(((GameWorld.Systematized) gameWorld).workHoursSystem)))
                     .setConstraint(AxisLayout.stretched());
             add(createTransparentClickableArea(),
                     createControlsAndBioGroup(root));
+            layer.add(gameWorld.sprite.get(id));
+            gameWorld.position.setX(id, WORKER_X);
+            animateBasedOnAtWorkStatus();
         }
 
         private Element createTransparentClickableArea() {
@@ -243,11 +252,39 @@ public class MainUIGroup extends Group {
             return SimGame.game.bounds.percentOfHeight(percent);
         }
 
+        private void animateBasedOnAtWorkStatus() {
+            atWork.connect(new Slot<Boolean>() {
+                @Override
+                public void onEmit(Boolean aBoolean) {
+                    final int sign = aBoolean ? 1 : -1;
+                    iface.anim.tween(new Animation.Value() {
+                        @Override
+                        public float initial() {
+                            return gameWorld.position.getX(id);
+                        }
+
+                        @Override
+                        public void set(float value) {
+                            gameWorld.position.setX(id, value);
+                        }
+                    })
+                            .to(sign * WORKER_X)
+                            .in(500f)
+                            .easeInOut();
+                }
+            });
+        }
+
         void update() {
             final int displayedDevelopmentSkill = (int) gameWorld.developmentSkill.get(id);
             developmentSkill.update(displayedDevelopmentSkill);
             final int displayedMaintenanceSkill = (int) gameWorld.maintenanceSkill.get(id);
             maintenanceSkill.update(displayedMaintenanceSkill);
+            updateYPos();
+        }
+
+        private void updateYPos() {
+            gameWorld.position.setY(id, size().height() * WORKER_TOP_PERCENT_OF_HEIGHT);
         }
     }
 
@@ -361,6 +398,31 @@ public class MainUIGroup extends Group {
         private void updateDeveloperInfoArea(int id) {
             EmployeeView view = checkNotNull(developerViews.get(id), "Missing developer");
             view.update();
+        }
+    }
+
+    private final class EmployeeAtWorkSystem extends System {
+
+        protected EmployeeAtWorkSystem(World world) {
+            super(world, SystemPriority.UI_LEVEL.value);
+        }
+
+        @Override
+        protected boolean isInterested(Entity entity) {
+            return developerViews.containsKey(entity.id);
+        }
+
+        @Override
+        protected void update(Clock clock, Entities entities) {
+            for (int i = 0, limit = entities.size(); i < limit; i++) {
+                final int id = entities.get(i);
+                developerViews.get(id).atWork.update(isAtWork(id));
+            }
+        }
+
+        private boolean isAtWork(int id) {
+            return ((GameWorld.Systematized) gameWorld).workHoursSystem.isWorkHours().get()
+                    && gameWorld.tasked.get(id).isBoundByWorkDay();
         }
     }
 }

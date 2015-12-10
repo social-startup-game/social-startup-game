@@ -43,13 +43,7 @@ public class GameAssets {
         NARRATIVE_BACKGROUND_2("crop-2.png"),
         NARRATIVE_BACKGROUND_3("crop-3.png"),
         NARRATIVE_BACKGROUND_4("crop-4.png"),
-        COMPANY_LOGO_WITH_ALPHA("company_logo.png"),
-        ESTEBAN("Esteban.png"),
-        NANCY("Nancy.png"),
-        JERRY("Jerry.png"),
-        VANI("Vani.png"),
-        ABDULLAH("Abdullah.png"),
-        JANINE("Janine.png");
+        COMPANY_LOGO_WITH_ALPHA("company_logo.png");
 
         private final String path;
 
@@ -67,7 +61,13 @@ public class GameAssets {
         MAINTENANCE("maintenance.png"),
         LOGO("logo.png"),
         MUTE("mute.png"),
-        UNMUTE("unmute.png");
+        UNMUTE("unmute.png"),
+        ESTEBAN("Esteban.png"),
+        NANCY("Nancy.png"),
+        JERRY("Jerry.png"),
+        VANI("Vani.png"),
+        ABDULLAH("Abdullah.png"),
+        JANINE("Janine.png");
 
         private final String path;
 
