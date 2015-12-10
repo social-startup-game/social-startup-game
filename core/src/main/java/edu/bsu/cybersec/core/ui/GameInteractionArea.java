@@ -38,6 +38,7 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class GameInteractionArea extends Group {
 
@@ -153,10 +154,14 @@ public final class GameInteractionArea extends Group {
                             } else {
                                 canvas.setFillColor(Palette.DIALOG_BACKGROUND);
                             }
+                            final float fillWidth = size.width() - radius;
+                            final float fillHeight = size.height() - radius;
+                            checkState(fillWidth > 0, "Width should be positive, size=" + size + ", radius=" + radius);
+                            checkState(fillHeight > 0, "Height should be positive, size=" + size + ", radius=" + radius);
                             canvas.fillRoundRect(radius - radiusOffset,
                                     radius - radiusOffset,
-                                    size.width() - radius,
-                                    size.height() - radius,
+                                    fillWidth,
+                                    fillHeight,
                                     radius);
                             surf.draw(canvas.toTexture().tile(), 0, 0);
 
