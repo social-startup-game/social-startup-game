@@ -22,8 +22,10 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Game;
+import playn.scene.Layer;
 import playn.scene.Mouse;
 import playn.scene.Pointer;
+import pythagoras.f.IDimension;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
 import tripleplay.entity.System;
@@ -31,6 +33,7 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.util.Layers;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private final GameWorld.Systematized gameWorld;
@@ -109,6 +112,7 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private void createUI() {
+        IDimension viewSize = game().plat.graphics().viewSize;
         GameBounds contentBounds = SimGame.game.bounds;
         Root root = iface.createRoot(new AbsoluteLayout(), makeStyleSheet(), layer);
         Group content = createContentGroup(root);
@@ -116,6 +120,9 @@ public class GameScreen extends ScreenStack.UIScreen {
                 contentBounds.x(), contentBounds.y(), contentBounds.width(), contentBounds.height()))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Palette.UNUSED_SPACE)))
                 .setSize(size());
+        if (viewSize.width() > contentBounds.width()) {
+            createLeftSideLayerToCoverShiftingEmployees((viewSize.width() - contentBounds.width()) / 2, viewSize.height());
+        }
     }
 
     private Group createContentGroup(Root root) {
@@ -131,6 +138,11 @@ public class GameScreen extends ScreenStack.UIScreen {
         Stylesheet.Builder builder = SimGameStyle.newSheetBuilder(game().plat.graphics());
         builder.add(Label.class, Style.COLOR.is(Palette.FOREGROUND));
         return builder.create();
+    }
+
+    private void createLeftSideLayerToCoverShiftingEmployees(float width, float height) {
+        Layer sideLayer = Layers.solid(Palette.UNUSED_SPACE, width, height);
+        layer.addAt(sideLayer, 0, 0);
     }
 
     @Override
