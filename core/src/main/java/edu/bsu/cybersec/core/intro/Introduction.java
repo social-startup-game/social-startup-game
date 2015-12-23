@@ -19,10 +19,19 @@
 
 package edu.bsu.cybersec.core.intro;
 
+import edu.bsu.cybersec.core.EmployeePool;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameAssets;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public final class Introduction {
+
+    private final EmployeePool.Employee boss;
+
+    public Introduction(EmployeePool.Employee boss) {
+        this.boss = checkNotNull(boss);
+    }
 
     public Slide createSlides() {
         GameAssets assets = SimGame.game.assets;
@@ -53,8 +62,8 @@ public final class Introduction {
 
                             @Override
                             public Slide next() {
-                                return new TextAndImageSlide("You have a job review in two weeks. Do you have what it takes?",
-                                        SimGame.game.assets.getTile(GameAssets.TileKey.NARRATIVE_BACKGROUND_4)) {
+                                return new BossSlide("You have a job review in two weeks. Do you have what it takes?",
+                                        boss.image) {
                                     @Override
                                     public boolean hasNext() {
                                         return false;

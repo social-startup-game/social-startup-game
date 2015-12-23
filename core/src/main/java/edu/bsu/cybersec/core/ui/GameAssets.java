@@ -42,7 +42,6 @@ public class GameAssets {
         NARRATIVE_BACKGROUND_1("crop-1.png"),
         NARRATIVE_BACKGROUND_2("crop-2.png"),
         NARRATIVE_BACKGROUND_3("crop-3.png"),
-        NARRATIVE_BACKGROUND_4("crop-4.png"),
         COMPANY_LOGO_WITH_ALPHA("company_logo.png");
 
         private final String path;
@@ -62,6 +61,7 @@ public class GameAssets {
         LOGO("logo.png"),
         MUTE("mute.png"),
         UNMUTE("unmute.png"),
+        DESK("desk.png"),
         ESTEBAN("Esteban.png"),
         NANCY("Nancy.png"),
         JERRY("Jerry.png"),

@@ -19,9 +19,15 @@
 
 package edu.bsu.cybersec.core.intro;
 
+import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.ui.FontCache;
+import playn.core.Font;
 import tripleplay.ui.Group;
 
 public interface Slide {
+
+    Font FONT = FontCache.instance().REGULAR.derive(25);
+    float GAP = SimGame.game.bounds.percentOfHeight(0.04f);
 
     boolean hasNext();
 

@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.EmployeePool;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.intro.IntroScreen;
 import edu.bsu.cybersec.core.intro.Introduction;
@@ -52,6 +53,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
         Icon iconLogo = Icons.image(logo);
         final float buttonFontSize = percentOfViewHeight(0.04f);
         final Font font = FontCache.instance().REGULAR.derive(buttonFontSize);
+        final EmployeePool employeePool = EmployeePool.create(SimGame.game.assets);
         final Button[] buttons = new Button[]{
                 playButton = new Button("Start the Game!")
                         .addStyles(Style.FONT.is(font))
@@ -59,7 +61,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                             @Override
                             public void onEmit(Button button) {
                                 disableButtons();
-                                Introduction intro = new Introduction();
+                                Introduction intro = new Introduction(employeePool.removeOne());
                                 screenStack.push(new IntroScreen(screenStack, intro.createSlides()), screenStack.slide());
                             }
                         }),

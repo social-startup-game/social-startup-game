@@ -20,7 +20,6 @@
 package edu.bsu.cybersec.core.intro;
 
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.ui.FontCache;
 import playn.core.Tile;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
@@ -41,8 +40,8 @@ public abstract class TextAndImageSlide implements Slide {
         return new SizableGroup(AxisLayout.vertical(), SimGame.game.bounds.width(), SimGame.game.bounds.height())
                 .add(new Label(text, Icons.image(background))
                         .addStyles(Style.TEXT_WRAP.on,
-                                Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
+                                Style.FONT.is(FONT),
                                 Style.ICON_POS.below,
-                                Style.ICON_GAP.is((int) SimGame.game.bounds.percentOfHeight(0.04f))));
+                                Style.ICON_GAP.is((int) GAP)));
     }
 }

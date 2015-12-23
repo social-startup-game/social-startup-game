@@ -100,4 +100,8 @@ public final class EmployeePool {
         return result;
     }
 
+    public Employee removeOne() {
+        return recruit(1).iterator().next();
+    }
+
 }
