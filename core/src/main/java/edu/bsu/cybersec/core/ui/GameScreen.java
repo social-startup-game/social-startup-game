@@ -35,73 +35,83 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Layers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class GameScreen extends ScreenStack.UIScreen {
     private final GameWorld.Systematized gameWorld;
-
-    {
-        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(SimGame.game.assets, SimGame.game.config);
-        gameWorld = playableWorldFactory.createPlayableGameWorld();
-        gameWorld.onGameEnd.connect(new UnitSlot() {
-            @Override
-            public void onEmit() {
-                screenStack.replace(new EndScreen(screenStack, gameWorld), screenStack.slide());
-            }
-        });
-    }
-
-    @SuppressWarnings("unused")
-    private tripleplay.entity.System timeRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
-        {
-            Entity updater = gameWorld.create(true).add(gameWorld.onUpdate);
-            gameWorld.onUpdate.set(updater.id, new Updatable() {
-                @Override
-                public void update(Clock clock) {
-                    final long tick = gameWorld.gameTime.get().now;
-                    now = gameWorld.startTime + tick;
-                    final String formatted = formatter.format(now * (long) ClockUtils.MS_PER_SECOND);
-                    timeLabel.text.update(formatted);
-                }
-            });
-        }
-
-        private final PlatformSpecificDateFormatter formatter =
-                ((SimGame) game()).config.dateFormatter();
-
-        private long now = gameWorld.startTime;
-
-        @Override
-        protected boolean isInterested(Entity entity) {
-            return false;
-        }
-    };
-
-    @SuppressWarnings("unused")
-    tripleplay.entity.System hudRenderingSystem = new System(gameWorld, SystemPriority.UI_LEVEL.value) {
-        @Override
-        protected boolean isInterested(Entity entity) {
-            return true;
-        }
-
-        @Override
-        protected void update(Clock clock, Entities entities) {
-            super.update(clock, entities);
-            final float numberOfUsers = gameWorld.users.get();
-            usersLabel.text.update("Users: " + (int) numberOfUsers);
-        }
-    };
 
     private final Label timeLabel = new Label("");
     private final Label usersLabel = new Label("");
 
     private final ScreenStack screenStack;
 
-    public GameScreen(ScreenStack screenStack) {
+    public GameScreen(final ScreenStack screenStack, Company company) {
         super(SimGame.game.plat);
-        this.screenStack = screenStack;
+        this.screenStack = checkNotNull(screenStack);
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
+
+        gameWorld = createGameWorld(company);
+        initializeTimeRenderingSystem();
+        initializeHudRenderingSystem();
+
         gameWorld.connect(update, paint);
         game().plat.input().keyboardEvents.connect(new DebugMode(gameWorld));
+    }
+
+    private GameWorld.Systematized createGameWorld(final Company company) {
+        PlayableWorldFactory playableWorldFactory = new PlayableWorldFactory(SimGame.game.config, company);
+        final GameWorld.Systematized product = playableWorldFactory.createPlayableGameWorld();
+        product.onGameEnd.connect(new UnitSlot() {
+            @Override
+            public void onEmit() {
+                screenStack.replace(new EndScreen(screenStack, product, company), screenStack.slide());
+            }
+        });
+        return product;
+    }
+
+    private void initializeTimeRenderingSystem() {
+        new System(gameWorld, SystemPriority.UI_LEVEL.value) {
+            {
+                Entity updater = gameWorld.create(true).add(gameWorld.onUpdate);
+                gameWorld.onUpdate.set(updater.id, new Updatable() {
+                    @Override
+                    public void update(Clock clock) {
+                        final long tick = gameWorld.gameTime.get().now;
+                        now = gameWorld.startTime + tick;
+                        final String formatted = formatter.format(now * (long) ClockUtils.MS_PER_SECOND);
+                        timeLabel.text.update(formatted);
+                    }
+                });
+            }
+
+            private final PlatformSpecificDateFormatter formatter =
+                    ((SimGame) game()).config.dateFormatter();
+
+            private long now = gameWorld.startTime;
+
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return false;
+            }
+        };
+    }
+
+    private void initializeHudRenderingSystem() {
+        new System(gameWorld, SystemPriority.UI_LEVEL.value) {
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return true;
+            }
+
+            @Override
+            protected void update(Clock clock, Entities entities) {
+                super.update(clock, entities);
+                final float numberOfUsers = gameWorld.users.get();
+                usersLabel.text.update("Users: " + (int) numberOfUsers);
+            }
+        };
     }
 
     @Override

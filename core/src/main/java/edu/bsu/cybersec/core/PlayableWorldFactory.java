@@ -19,17 +19,12 @@
 
 package edu.bsu.cybersec.core;
 
-import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.narrative.DefaultNarrativeScript;
-import edu.bsu.cybersec.core.ui.GameAssets;
 import playn.core.Image;
 import playn.scene.ImageLayer;
 import playn.scene.Layer;
 import tripleplay.entity.Entity;
 
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PlayableWorldFactory {
@@ -43,11 +38,11 @@ public class PlayableWorldFactory {
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     private final GameConfig config;
-    private final GameAssets assets;
+    private final Company company;
 
-    public PlayableWorldFactory(GameAssets assets, GameConfig config) {
+    public PlayableWorldFactory(GameConfig config, Company company) {
         this.config = checkNotNull(config);
-        this.assets = checkNotNull(assets);
+        this.company = checkNotNull(company);
     }
 
     public GameWorld.Systematized createPlayableGameWorld() {
@@ -61,7 +56,7 @@ public class PlayableWorldFactory {
         world.exposure.update(0.10f);
         world.users.update(1000f);
         makeExistingFeature();
-        makeDevelopers(3);
+        makeDevelopers();
         setEndTime();
         if (SimGame.game.config.useNarrativeEvents()) {
             new DefaultNarrativeScript().createIn(world, config);
@@ -86,17 +81,14 @@ public class PlayableWorldFactory {
         world.gameEnd.update(gameEnd);
     }
 
-    private void makeDevelopers(int number) {
-        checkArgument(number >= 0);
-        EmployeePool pool = EmployeePool.create(assets);
-        List<EmployeePool.Employee> employees = ImmutableList.copyOf(pool.recruit(number));
-        for (int i = 0; i < number; i++) {
-            Entity e = makeDeveloper(i, employees.get(i));
+    private void makeDevelopers() {
+        for (int i = 0; i < company.employees.size(); i++) {
+            Entity e = makeDeveloper(i, company.employees.get(i));
             world.workers.add(e);
         }
     }
 
-    private Entity makeDeveloper(final int number, final EmployeePool.Employee employee) {
+    private Entity makeDeveloper(final int number, final Employee employee) {
         Entity developer = world.create(true)
                 .add(world.employeeNumber,
                         world.developmentSkill,

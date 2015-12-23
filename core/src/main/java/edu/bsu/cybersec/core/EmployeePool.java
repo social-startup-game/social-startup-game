@@ -33,19 +33,9 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class EmployeePool {
+public class EmployeePool {
 
     private static final Random RANDOM = new Random();
-
-    public static class Employee {
-        public final EmployeeProfile profile;
-        public final Image image;
-
-        private Employee(EmployeeProfile profile, Image image) {
-            this.profile = checkNotNull(profile);
-            this.image = checkNotNull(image);
-        }
-    }
 
     private static ImmutableMap<EmployeeProfile, Image> makeDeveloperMap(GameAssets assets) {
         ImmutableMap.Builder<EmployeeProfile, Image> builder = ImmutableMap.builder();

@@ -20,6 +20,8 @@
 package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Lists;
+import edu.bsu.cybersec.core.Company;
+import edu.bsu.cybersec.core.EmployeePool;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
 import playn.core.Image;
@@ -38,7 +40,7 @@ import tripleplay.ui.layout.AxisLayout;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoadingScreen extends ScreenStack.UIScreen {
 
@@ -65,7 +67,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
         final int max =
                 GameAssets.ImageKey.values().length
                         + GameAssets.TileKey.values().length
-                + MusicCache.instance().all().size();
+                        + MusicCache.instance().all().size();
         final float width = size().width();
         final float height = size().height();
         progressBar = new ProgressBar(max, width * 0.55f, height * 0.02f);
@@ -152,7 +154,9 @@ public class LoadingScreen extends ScreenStack.UIScreen {
 
     private void startGame() {
         if (((SimGame) game()).config.skipIntro()) {
-            screenStack.replace(new GameScreen(screenStack), screenStack.slide());
+            Company company = Company.from(EmployeePool.create(SimGame.game.assets)).withEmployees(3);
+            screenStack.replace(new GameScreen(screenStack, company),
+                    screenStack.slide());
         } else {
             screenStack.replace(new StartingScreen(screenStack), screenStack.slide());
         }

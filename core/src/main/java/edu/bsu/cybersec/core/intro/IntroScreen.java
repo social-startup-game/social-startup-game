@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core.intro;
 
 import com.google.common.collect.Lists;
+import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameScreen;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
@@ -41,11 +42,13 @@ public class IntroScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
     private final List<Connection> connections = Lists.newArrayList();
     private final Slide slide;
+    private final Company company;
 
-    public IntroScreen(ScreenStack screenStack, Slide slide) {
+    public IntroScreen(ScreenStack screenStack, Slide slide, Company company) {
         super(SimGame.game.plat);
         this.screenStack = checkNotNull(screenStack);
         this.slide = checkNotNull(slide);
+        this.company = checkNotNull(company);
         connections.add(game().plat.input().mouseEvents.connect(new Slot<Mouse.Event>() {
             @Override
             public void onEmit(Mouse.Event event) {
@@ -95,9 +98,9 @@ public class IntroScreen extends ScreenStack.UIScreen {
             c.close();
         }
         if (slide.hasNext()) {
-            screenStack.replace(new IntroScreen(screenStack, slide.next()), screenStack.slide());
+            screenStack.replace(new IntroScreen(screenStack, slide.next(), company), screenStack.slide());
         } else {
-            screenStack.replace(new GameScreen(screenStack), screenStack.slide());
+            screenStack.replace(new GameScreen(screenStack, company), screenStack.slide());
         }
     }
 

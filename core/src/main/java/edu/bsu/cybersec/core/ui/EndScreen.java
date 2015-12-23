@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
@@ -29,15 +30,19 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class EndScreen extends ScreenStack.UIScreen {
 
     private final GameWorld gameWorld;
     private final ScreenStack screenStack;
+    private final Company company;
 
-    public EndScreen(ScreenStack screenStack, GameWorld gameWorld) {
+    public EndScreen(ScreenStack screenStack, GameWorld gameWorld, Company company) {
         super(SimGame.game.plat);
         this.gameWorld = gameWorld;
         this.screenStack = screenStack;
+        this.company = checkNotNull(company);
         new Pointer(game().plat, layer, true);
     }
 
@@ -51,11 +56,12 @@ public class EndScreen extends ScreenStack.UIScreen {
         Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size())
                 .add(new Label("The game is over")
-                        .setStyles(Style.COLOR.is(Colors.WHITE)))
-                .setStyles(Style.BACKGROUND.is(Background.solid(Palette.START_BACKGROUND)));
+                        .setStyles(Style.COLOR.is(GameColors.HUNTER_GREEN)))
+                .setStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
         String outcomeText = determineOutcomeText();
-        root.add(new Label(outcomeText).setStyles(Style.COLOR.is(Colors.WHITE)))
-                .add(new Button("Back to Start Screen").onClick(new Slot<Button>() {
+        root.add(new Label(outcomeText).setStyles(Style.COLOR.is(GameColors.HUNTER_GREEN)),
+                BossAtDeskLabelFactory.create(company.boss.image),
+                new Button("Back to Start Screen").onClick(new Slot<Button>() {
 
                     @Override
                     public void onEmit(Button button) {

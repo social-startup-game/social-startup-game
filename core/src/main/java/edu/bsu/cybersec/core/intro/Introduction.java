@@ -19,7 +19,7 @@
 
 package edu.bsu.cybersec.core.intro;
 
-import edu.bsu.cybersec.core.EmployeePool;
+import edu.bsu.cybersec.core.Employee;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameAssets;
 
@@ -27,9 +27,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class Introduction {
 
-    private final EmployeePool.Employee boss;
+    private final Employee boss;
 
-    public Introduction(EmployeePool.Employee boss) {
+    public Introduction(Employee boss) {
         this.boss = checkNotNull(boss);
     }
 

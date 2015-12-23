@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.EmployeePool;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.intro.IntroScreen;
@@ -61,8 +62,9 @@ public class StartingScreen extends ScreenStack.UIScreen {
                             @Override
                             public void onEmit(Button button) {
                                 disableButtons();
-                                Introduction intro = new Introduction(employeePool.removeOne());
-                                screenStack.push(new IntroScreen(screenStack, intro.createSlides()), screenStack.slide());
+                                Company company = Company.from(employeePool).withEmployees(3);
+                                Introduction intro = new Introduction(company.boss);
+                                screenStack.push(new IntroScreen(screenStack, intro.createSlides(), company), screenStack.slide());
                             }
                         }),
                 creditsButton = new Button("Credits")
