@@ -19,10 +19,9 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.intro.IntroScreen;
-import edu.bsu.cybersec.core.intro.IntroSlideInformation;
+import edu.bsu.cybersec.core.intro.Introduction;
 import playn.core.Font;
 import playn.core.Game;
 import playn.core.Image;
@@ -36,16 +35,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
-    private final ImmutableList<IntroSlideInformation> narrativeInfoList = ImmutableList.of(
-            new IntroSlideInformation("Social Jam is an up and coming social media service, and they have hired you as their chief security advisor.",
-                    SimGame.game.assets.getTile(GameAssets.TileKey.NARRATIVE_BACKGROUND_1)),
-            new IntroSlideInformation("You were hired to manage a team of developers and protect the company from hackers! ",
-                    SimGame.game.assets.getTile(GameAssets.TileKey.NARRATIVE_BACKGROUND_2)),
-            new IntroSlideInformation("You have three employees. Assign them to develop features or maintain your current system.",
-                    SimGame.game.assets.getTile(GameAssets.TileKey.NARRATIVE_BACKGROUND_3)),
-            new IntroSlideInformation("You have a job review in two weeks. Do you have what it takes?",
-                    SimGame.game.assets.getTile(GameAssets.TileKey.NARRATIVE_BACKGROUND_4)));
-
     private Button playButton;
     private Button creditsButton;
 
@@ -70,7 +59,8 @@ public class StartingScreen extends ScreenStack.UIScreen {
                             @Override
                             public void onEmit(Button button) {
                                 disableButtons();
-                                screenStack.push(new IntroScreen(screenStack, narrativeInfoList.iterator()), screenStack.slide());
+                                Introduction intro = new Introduction();
+                                screenStack.push(new IntroScreen(screenStack, intro.createSlides()), screenStack.slide());
                             }
                         }),
                 creditsButton = new Button("Credits")

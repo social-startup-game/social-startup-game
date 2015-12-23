@@ -19,14 +19,13 @@
 
 package edu.bsu.cybersec.core.intro;
 
-import playn.core.Tile;
+import tripleplay.ui.Group;
 
-public class IntroSlideInformation {
-    public final String text;
-    public final Tile background;
+public interface Slide {
 
-    public IntroSlideInformation(String text, Tile background) {
-        this.text = text;
-        this.background = background;
-    }
+    boolean hasNext();
+
+    Slide next();
+
+    Group createUI();
 }

@@ -21,7 +21,6 @@ package edu.bsu.cybersec.core.intro;
 
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.ui.FontCache;
 import edu.bsu.cybersec.core.ui.GameScreen;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
 import playn.core.Game;
@@ -34,18 +33,19 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import java.util.Iterator;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class IntroScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
-    private final Iterator<IntroSlideInformation> iterator;
     private final List<Connection> connections = Lists.newArrayList();
+    private final Slide slide;
 
-    public IntroScreen(ScreenStack screenStack, Iterator<IntroSlideInformation> iterator) {
+    public IntroScreen(ScreenStack screenStack, Slide slide) {
         super(SimGame.game.plat);
-        this.screenStack = screenStack;
-        this.iterator = iterator;
+        this.screenStack = checkNotNull(screenStack);
+        this.slide = checkNotNull(slide);
         connections.add(game().plat.input().mouseEvents.connect(new Slot<Mouse.Event>() {
             @Override
             public void onEmit(Mouse.Event event) {
@@ -84,28 +84,18 @@ public class IntroScreen extends ScreenStack.UIScreen {
     private void createUI() {
         Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size());
-        IntroSlideInformation info = iterator.next();
-        Group display = createDisplayGroup(info)
+        Group display = slide.createUI()
                 .setConstraint(Constraints.fixedSize(SimGame.game.bounds.width(), SimGame.game.bounds.height()));
         root.add(display);
         root.addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
-    }
-
-    private Group createDisplayGroup(IntroSlideInformation info) {
-        return new SizableGroup(AxisLayout.vertical(), SimGame.game.bounds.width(), SimGame.game.bounds.height())
-                .add(new Label(info.text, Icons.image(info.background))
-                        .addStyles(Style.TEXT_WRAP.on,
-                                Style.FONT.is(FontCache.instance().REGULAR.derive(25)),
-                                Style.ICON_POS.below,
-                                Style.ICON_GAP.is((int) SimGame.game.bounds.percentOfHeight(0.04f))));
     }
 
     private void advance() {
         for (Connection c : connections) {
             c.close();
         }
-        if (iterator.hasNext()) {
-            screenStack.replace(new IntroScreen(screenStack, iterator), screenStack.slide());
+        if (slide.hasNext()) {
+            screenStack.replace(new IntroScreen(screenStack, slide.next()), screenStack.slide());
         } else {
             screenStack.replace(new GameScreen(screenStack), screenStack.slide());
         }
