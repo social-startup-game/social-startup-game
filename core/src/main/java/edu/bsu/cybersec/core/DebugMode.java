@@ -49,8 +49,13 @@ public class DebugMode implements SignalView.Listener<Keyboard.Event> {
                 public void run() {
                     runEvent(new SecurityConferenceEvent(gameWorld));
                 }
+            },
+            Key.END, new Runnable() {
+                @Override
+                public void run() {
+                    gameWorld.onGameEnd.emit();
+                }
             }
-
     );
 
     private final GameWorld.Systematized gameWorld;
