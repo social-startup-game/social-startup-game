@@ -35,6 +35,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class BossAtDeskLabelFactory {
 
+    /**
+     * Empirically-determined scale for getting the boss to look reasonable on an intro-style slide.
+     */
+    private static final float RELATIVE_BOSS_SCALE = 0.8f;
+
     public static Element create(Image boss) {
         return new BossAtDeskLabelFactory(boss).imageGroup();
     }
@@ -55,9 +60,11 @@ public final class BossAtDeskLabelFactory {
     }
 
     private void drawBossAndDeskTo(Canvas canvas) {
-        final float bossScale = boss.height() / canvas.height;
-        canvas.draw(boss, (canvas.width - boss.width() * bossScale) / 2f, 0, boss.width() * bossScale, canvas.height);
-        canvas.draw(desk, 0, canvas.height / 2, canvas.width, canvas.height / 2);
+        final float bossScale = canvas.height / boss.height();
+        final float bossScaledWidth = boss.width() * bossScale * RELATIVE_BOSS_SCALE;
+        canvas.draw(boss, (canvas.width - bossScaledWidth) / 2f, 0,
+                bossScaledWidth, canvas.height * RELATIVE_BOSS_SCALE);
+        canvas.draw(desk, 0, canvas.height * 0.4f, canvas.width, canvas.height * 0.5f);
     }
 
     private void drawCeoLabelTo(Canvas canvas) {
