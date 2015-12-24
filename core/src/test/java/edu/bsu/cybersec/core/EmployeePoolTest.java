@@ -19,56 +19,30 @@
 
 package edu.bsu.cybersec.core;
 
-import org.junit.Before;
+import edu.bsu.cybersec.core.ui.GameAssets;
 import org.junit.Test;
+import playn.core.Image;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public final class CompanyTest {
+public final class EmployeePoolTest {
 
     private static final int TIMES_TO_RUN_PROBABLISTIC_TEST = 50;
-    private EmployeePool employeePool;
-    private Company company;
-
-    @Before
-    public void setUp() {
-        employeePool = mock(EmployeePool.class);
-        when(employeePool.recruit(anyInt())).thenReturn(setOf(3));
-        when(employeePool.removeOne()).thenReturn(mock(Employee.class));
-    }
-
-    private Set<Employee> setOf(int value) {
-        checkArgument(value >= 0);
-        Set<Employee> set = new HashSet<>();
-        for (; value > 0; value--) {
-            set.add(mock(Employee.class));
-        }
-        return set;
-    }
-
-    @Test
-    public void testNumberOfEmployees() {
-        whenACompanyIsCreated();
-        assertEquals(3, company.employees.size());
-    }
-
-    private void whenACompanyIsCreated() {
-        company = Company.from(employeePool).withEmployees(3);
-    }
 
     @Test
     public void testBossIsNotAnEmployee() {
         for (int i = 0; i < TIMES_TO_RUN_PROBABLISTIC_TEST; i++) {
-            whenACompanyIsCreated();
-            assertFalse(company.employees.contains(company.boss));
+            GameAssets assets = mock(GameAssets.class);
+            when(assets.getImage(any(GameAssets.ImageKey.class))).thenReturn(mock(Image.class));
+            EmployeePool pool = EmployeePool.create(assets);
+            Employee boss = pool.removeOne();
+            Set<Employee> recruits = pool.recruit(3);
+            assertFalse(recruits.contains(boss));
         }
     }
 }

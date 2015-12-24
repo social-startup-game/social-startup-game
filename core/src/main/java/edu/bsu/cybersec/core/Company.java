@@ -44,7 +44,8 @@ public class Company {
 
         public Company withEmployees(int i) {
             checkArgument(i >= 0, "Must recruit non-negative numbers");
-            return new Company(pool.removeOne(), pool.recruit(i));
+            final Employee boss = pool.removeOne();
+            return new Company(boss, pool.recruit(i));
         }
     }
 

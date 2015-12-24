@@ -35,6 +35,7 @@
 
     <properties>
         <playn.version>2.0-SNAPSHOT</playn.version>
+        <guava.version>19.0</guava.version>
     </properties>
 
     <profiles>
