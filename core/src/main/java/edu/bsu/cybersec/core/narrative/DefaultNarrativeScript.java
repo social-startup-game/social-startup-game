@@ -19,62 +19,60 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.*;
 import tripleplay.entity.Entity;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class DefaultNarrativeScript {
 
+    private final Random random = new Random();
     private GameWorld world;
-
-    private List<NarrativeEvent> events = new ArrayList<>();
-    private int eventTime = 0;
-    private final int MINIMUM_HOURS_BETWEEN_EVENTS = 12;
-    private final int MAXIMUM_HOURS_BETWEEN_EVENTS = 67;
-    private final RandomInRange delayGenerator = new RandomInRange(MINIMUM_HOURS_BETWEEN_EVENTS, MAXIMUM_HOURS_BETWEEN_EVENTS);
-
 
     public void createIn(GameWorld world, GameConfig config) {
         this.world = checkNotNull(world);
-        int gameDurationInHours = world.gameEnd.get() / ClockUtils.SECONDS_PER_HOUR;
         if (!config.skipWelcome()) {
             now().runEvent(new WelcomeEvent(world));
         }
-        populateEvents();
-        int eventTime = 0;
-        while (!events.isEmpty() && eventTime < gameDurationInHours) {
-            hour(determineEventTime()).runEvent(getRandomEvent());
+        for (NarrativeEvent event : makeEventListIn(world)) {
+            int time = generateEventTime();
+            atSeconds(time).runEvent(event);
         }
     }
 
-    private void populateEvents() {
-        events.add(new ScriptKiddieAttackEvent(world));
-        events.add(new SecurityConferenceEvent(world));
-        events.add(new DataStolenNotifyChoiceEvent(world));
-        events.add(new InputSanitizationEvent(world));
-        events.add(new DDOSEvent(world));
+    private static List<NarrativeEvent> makeEventListIn(GameWorld world) {
+        List<NarrativeEvent> list = Lists.newArrayList();
+        list.add(new ScriptKiddieAttackEvent(world));
+        list.add(new SecurityConferenceEvent(world));
+        list.add(new DataStolenNotifyChoiceEvent(world));
+        list.add(new InputSanitizationEvent(world));
+        list.add(new DDOSEvent(world));
+        Shuffler.shuffle(list);
+        return list;
     }
 
-    private int determineEventTime() {
-        eventTime += delayGenerator.nextInt();
-        return eventTime;
+    private int generateEventTime() {
+        final WorkHoursPredicate pred = WorkHoursPredicate.instance();
+        final int endTime = world.gameEnd.get();
+        checkState(endTime > 0, "End time has not been properly initialized");
+        int time = random.nextInt(endTime);
+        while (!pred.apply(time)) {
+            time = random.nextInt(endTime);
+        }
+        return time;
     }
 
     private TimedEventBuilder now() {
         return new TimedEventBuilder(world.gameTime.get().now);
     }
 
-    private TimedEventBuilder hour(int hour) {
-        return new TimedEventBuilder(world.gameTime.get().now).addHours(hour);
-    }
-
-    public NarrativeEvent getRandomEvent() {
-        int index = new RandomInRange(0, events.size() - 1).nextInt();
-        return events.remove(index);
+    private TimedEventBuilder atSeconds(int seconds) {
+        return new TimedEventBuilder(world.gameTime.get().now).addSeconds(seconds);
     }
 
     private final class TimedEventBuilder {
@@ -90,8 +88,8 @@ public final class DefaultNarrativeScript {
             world.timeTrigger.set(e.id, trigger);
         }
 
-        public TimedEventBuilder addHours(int hour) {
-            trigger += hour * ClockUtils.SECONDS_PER_HOUR;
+        public TimedEventBuilder addSeconds(int seconds) {
+            trigger += seconds;
             return this;
         }
     }

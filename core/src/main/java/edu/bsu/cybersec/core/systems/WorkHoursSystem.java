@@ -20,10 +20,10 @@
 package edu.bsu.cybersec.core.systems;
 
 import com.google.common.collect.Maps;
-import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
 import edu.bsu.cybersec.core.Task;
+import edu.bsu.cybersec.core.WorkHoursPredicate;
 import playn.core.Clock;
 import react.Value;
 import react.ValueView;
@@ -41,8 +41,8 @@ public final class WorkHoursSystem extends System {
 
     private final GameWorld world;
     private final GameTimeSystem gameTimeSystem;
+    private final WorkHoursPredicate workHoursPredicate = WorkHoursPredicate.instance();
 
-    private float elapsedHours;
     private final HashMap<Integer, Task> previousTasks = Maps.newHashMap();
     private final Value<Boolean> isWorkHours = Value.create(true);
 
@@ -60,7 +60,7 @@ public final class WorkHoursSystem extends System {
     private interface State {
         void onEnter();
 
-        void update(Entities entities);
+        void update();
     }
 
     private final State IN_WORK_HOURS = new State() {
@@ -90,12 +90,16 @@ public final class WorkHoursSystem extends System {
         }
 
         @Override
-        public void update(Entities entities) {
-            if (elapsedHours > 8) {
+        public void update() {
+            if (!isCurrentlyWorkHours()) {
                 changeTo(OFF_WORK_HOURS);
             }
         }
     };
+
+    private boolean isCurrentlyWorkHours() {
+        return workHoursPredicate.apply(world.gameTime.get().now);
+    }
 
     private final State OFF_WORK_HOURS = new State() {
         @Override
@@ -113,10 +117,9 @@ public final class WorkHoursSystem extends System {
         }
 
         @Override
-        public void update(Entities entities) {
-            if (elapsedHours > 24) {
+        public void update() {
+            if (isCurrentlyWorkHours()) {
                 changeTo(IN_WORK_HOURS);
-                elapsedHours -= 24;
             }
         }
     };
@@ -131,8 +134,7 @@ public final class WorkHoursSystem extends System {
     @Override
     protected void update(Clock clock, Entities entities) {
         super.update(clock, entities);
-        elapsedHours += (float) world.gameTime.get().delta() / ClockUtils.SECONDS_PER_HOUR;
-        state.update(entities);
+        state.update();
     }
 
     public ValueView<Boolean> isWorkHours() {
