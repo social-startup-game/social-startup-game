@@ -28,8 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class Task {
 
-    public static final Task MAINTENANCE = new BasicTask("Maintenance");
-    public static final Task DEVELOPMENT = new BasicTask("Development");
+    public static final Task MAINTENANCE = createTask("Maintenance").build();
+    public static final Task DEVELOPMENT = createTask("Development").build();
     public static final ImmutableList<Task> CORE_TASKS = ImmutableList.of(DEVELOPMENT, MAINTENANCE);
 
     public static TaskBuilder createTask(String name) {
@@ -39,6 +39,7 @@ public abstract class Task {
     public static final class TaskBuilder {
         private final String name;
         private boolean boundByWorkday = true;
+        private boolean reassignable = true;
         private TimedTaskBuilder timed;
 
         private TaskBuilder(String name) {
@@ -54,9 +55,14 @@ public abstract class Task {
             return this;
         }
 
+        public TaskBuilder unreassignable() {
+            reassignable = false;
+            return this;
+        }
+
         public Task build() {
             if (timed == null) {
-                return new BasicTask(name);
+                return new BasicTask(this);
             } else {
                 return new TimedTask(this);
             }
@@ -100,13 +106,25 @@ public abstract class Task {
     }
 
     private static final class BasicTask extends Task {
-        private BasicTask(String name) {
-            super(name, true);
+
+        private final boolean reassignable;
+
+        private BasicTask(TaskBuilder builder) {
+            super(builder.name, true);
+            this.reassignable = builder.reassignable;
         }
 
         @Override
         public boolean isReassignable() {
-            return true;
+            return reassignable;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("name", name)
+                    .add("reassignable", reassignable)
+                    .toString();
         }
     }
 

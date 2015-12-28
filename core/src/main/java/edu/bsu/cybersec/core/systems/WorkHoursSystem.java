@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class WorkHoursSystem extends System {
 
     private static final float OFF_HOURS_TIME_SCALE_FACTOR = 2.5f;
-    private static final Task NOT_AT_WORK = Task.createTask("Not at work").build();
+    private static final Task NOT_AT_WORK = Task.createTask("Not at work").unreassignable().build();
 
     private final GameWorld world;
     private final GameTimeSystem gameTimeSystem;
