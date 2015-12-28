@@ -33,6 +33,15 @@ public class GameTimeSystem extends tripleplay.entity.System {
     private final GameWorld gameWorld;
     private final Value<Float> scale = Value.create(DEFAULT_SCALE);
 
+    /**
+     * Indicate if this system is enabled.
+     * <p/>
+     * The superclass has a <code>_enabled</code> field that represents this information, but it is private and, hence,
+     * inaccessible here. However, other parts of the game need to know if this system is enabled or not, and so
+     * we duplicate that data here to be able to use the {@link #isEnabled()} accessor.
+     */
+    private boolean enabled = true;
+
     public GameTimeSystem(GameWorld world) {
         super(world, SystemPriority.CLOCK_LEVEL.value);
         this.gameWorld = world;
@@ -53,6 +62,7 @@ public class GameTimeSystem extends tripleplay.entity.System {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        this.enabled = enabled;
         if (!enabled) {
             forceElapsedTimeToBeZeroWhileDisabled();
         }
@@ -67,5 +77,9 @@ public class GameTimeSystem extends tripleplay.entity.System {
 
     public Value<Float> scale() {
         return scale;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }

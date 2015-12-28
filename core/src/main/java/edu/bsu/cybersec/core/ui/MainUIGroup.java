@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
+import edu.bsu.cybersec.core.systems.GameTimeSystem;
 import playn.core.Clock;
 import playn.core.Font;
 import playn.core.Tile;
@@ -300,12 +301,21 @@ public class MainUIGroup extends Group {
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
             onClick(new Slot<Button>() {
+                private boolean timeEnabledStatus;
+                private GameTimeSystem gameTimeSystem = ((GameWorld.Systematized) gameWorld).gameTimeSystem;
+
                 @Override
                 public void onEmit(Button button) {
+                    stopGameTime();
                     MenuHost.Pop pop = new MenuHost.Pop(button,
                             createMenu());
                     pop.menu.itemTriggered().connect(updater(button));
                     menuHost.popup(pop);
+                }
+
+                private void stopGameTime() {
+                    timeEnabledStatus = gameTimeSystem.isEnabled();
+                    gameTimeSystem.setEnabled(false);
                 }
 
                 private Slot<MenuItem> updater(final Button button) {
@@ -316,6 +326,11 @@ public class MainUIGroup extends Group {
                             Task assignedTask = ((TaskItem) menuItem).task;
                             gameWorld.tasked.set(worker.id, assignedTask);
                             worker.didChange();
+                            restoreGameTimeSystemToPreviousState();
+                        }
+
+                        private void restoreGameTimeSystemToPreviousState() {
+                            gameTimeSystem.setEnabled(timeEnabledStatus);
                         }
                     };
                 }
