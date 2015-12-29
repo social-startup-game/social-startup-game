@@ -16,19 +16,19 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-windows:2.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.jinput:jinput-platform:natives-osx:2.0.5" level="project" />
     <orderEntry type="module" module-name="sim-core" />
-    <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-rc3" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-rc3" level="project" />
     <orderEntry type="library" name="Maven: com.samskivert:pythagoras:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.threerings:react:1.5.2" level="project" />
-    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-rc3" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava-gwt:19.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:19.0" level="project" />
     <orderEntry type="module" module-name="sim-assets" />
-    <orderEntry type="library" name="Maven: io.playn:playn-java-lwjgl:2.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-java-base:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-java-lwjgl:2.0-rc3" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-java-base:2.0-rc3" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.soundlibs:mp3spi:1.9.5-1" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.soundlibs:jlayer:1.0.1-1" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.soundlibs:tritonus-share:0.3.7-1" level="project" />
@@ -38,7 +38,7 @@
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-platform:natives-windows:3.0.0b" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-platform:natives-osx:3.0.0b" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>

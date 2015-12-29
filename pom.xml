@@ -24,7 +24,7 @@
     <parent>
         <groupId>io.playn</groupId>
         <artifactId>playn-project</artifactId>
-        <version>2.0-rc1</version>
+        <version>2.0-rc3</version>
     </parent>
 
     <groupId>edu.bsu.cybersec</groupId>
@@ -34,7 +34,7 @@
     <name>SimGame Metaproject</name>
 
     <properties>
-        <playn.version>2.0-SNAPSHOT</playn.version>
+        <playn.version>2.0-rc3</playn.version>
         <guava.version>19.0</guava.version>
     </properties>
 
