@@ -111,10 +111,18 @@ public abstract class NarrativeEvent implements Runnable {
         }
 
         public void post(NarrativeEvent event) {
-            checkNotNull(event);
-            final Entity e = world.create(true).add(world.event, world.timeTrigger);
-            world.timeTrigger.set(e.id, world.gameTime.get().now + hours * ClockUtils.SECONDS_PER_HOUR);
-            world.event.set(e.id, event);
+            postAfterDelay(event, hours * ClockUtils.SECONDS_PER_HOUR);
         }
+    }
+
+    protected void post(NarrativeEvent event) {
+        postAfterDelay(event, 0);
+    }
+
+    private void postAfterDelay(NarrativeEvent event, int afterSeconds) {
+        checkNotNull(event);
+        final Entity e = world.create(true).add(world.event, world.timeTrigger);
+        world.timeTrigger.set(e.id, world.gameTime.get().now + afterSeconds);
+        world.event.set(e.id, event);
     }
 }

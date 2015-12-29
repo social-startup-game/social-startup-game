@@ -92,13 +92,13 @@ public class PlayableWorldFactory {
         Entity developer = world.create(true)
                 .add(world.employeeNumber,
                         world.developmentSkill,
-                        world.tasked,
+                        world.task,
                         world.maintenanceSkill,
                         world.profile,
                         world.sprite,
                         world.position);
         world.employeeNumber.set(developer.id, number);
-        world.tasked.set(developer.id, Task.MAINTENANCE);
+        world.task.set(developer.id, world.maintenanceTaskId);
         world.developmentSkill.set(developer.id, 5);
         world.maintenanceSkill.set(developer.id, 5);
         world.profile.set(developer.id, employee.profile);

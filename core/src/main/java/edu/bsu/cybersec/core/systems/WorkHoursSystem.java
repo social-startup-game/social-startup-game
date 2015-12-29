@@ -22,7 +22,7 @@ package edu.bsu.cybersec.core.systems;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
-import edu.bsu.cybersec.core.Task;
+import edu.bsu.cybersec.core.TaskFlags;
 import edu.bsu.cybersec.core.WorkHoursPredicate;
 import playn.core.Clock;
 import react.Value;
@@ -37,13 +37,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class WorkHoursSystem extends System {
 
     private static final float OFF_HOURS_TIME_SCALE_FACTOR = 2.5f;
-    private static final Task NOT_AT_WORK = Task.createTask("Not at work").unreassignable().build();
 
     private final GameWorld world;
     private final GameTimeSystem gameTimeSystem;
     private final WorkHoursPredicate workHoursPredicate = WorkHoursPredicate.instance();
 
-    private final HashMap<Integer, Task> previousTasks = Maps.newHashMap();
+    private final HashMap<Integer, Integer> previousTasks = Maps.newHashMap();
     private final Value<Boolean> isWorkHours = Value.create(true);
 
     public WorkHoursSystem(GameWorld world, GameTimeSystem gameTimeSystem) {
@@ -54,7 +53,7 @@ public final class WorkHoursSystem extends System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.tasked);
+        return entity.has(world.task);
     }
 
     private interface State {
@@ -82,9 +81,9 @@ public final class WorkHoursSystem extends System {
         private void setWorkersToTheirPreviousTasks() {
             for (int i = 0, limit = entityCount(); i < limit; i++) {
                 final int id = entityId(i);
-                Task previousTask = previousTasks.get(id);
+                final Integer previousTask = previousTasks.get(id);
                 if (previousTask != null) {
-                    world.tasked.set(id, previousTask);
+                    world.task.set(id, previousTask);
                 }
             }
         }
@@ -107,10 +106,10 @@ public final class WorkHoursSystem extends System {
             isWorkHours.update(false);
             for (int i = 0, limit = entityCount(); i < limit; i++) {
                 final int id = entityId(i);
-                Task task = world.tasked.get(id);
-                if (task.isBoundByWorkDay()) {
-                    previousTasks.put(id, world.tasked.get(id));
-                    world.tasked.set(id, NOT_AT_WORK);
+                int taskId = world.task.get(id);
+                if (TaskFlags.BOUND_TO_WORKDAY.isSet(world.taskFlags.get(taskId))) {
+                    previousTasks.put(id, taskId);
+                    world.task.set(id, world.notAtWorkTaskId);
                 }
             }
             gameTimeSystem.scale().update(gameTimeSystem.scale().get() * OFF_HOURS_TIME_SCALE_FACTOR);

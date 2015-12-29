@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableMap;
+import edu.bsu.cybersec.core.narrative.InputSanitizationEvent;
 import edu.bsu.cybersec.core.narrative.ScriptKiddieAttackEvent;
 import edu.bsu.cybersec.core.narrative.SecurityConferenceEvent;
 import playn.core.Key;
@@ -48,6 +49,12 @@ public class DebugMode implements SignalView.Listener<Keyboard.Event> {
                 @Override
                 public void run() {
                     runEvent(new SecurityConferenceEvent(gameWorld));
+                }
+            },
+            Key.I, new Runnable() {
+                @Override
+                public void run() {
+                    runEvent(new InputSanitizationEvent(gameWorld));
                 }
             },
             Key.END, new Runnable() {

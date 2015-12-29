@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.systems;
 
-import edu.bsu.cybersec.core.Task;
 import org.junit.After;
 import org.junit.Test;
 import react.Value;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.when;
 public final class WorkHoursSystemTest extends AbstractSystemTest {
 
     private Entity worker;
-    private Task task;
+    private int taskId;
     private WorkHoursSystem system;
 
     @Override
@@ -50,26 +49,24 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
     @After
     public void tearDown() {
         worker = null;
-        task = null;
     }
 
     @Test
     public void testTaskUnchangedDuringNormalWorkHour() {
         givenAWorkerDoingANormalTask();
         whenOneHourOfGameTimeElapses();
-        assertEquals(task, world.tasked.get(worker.id));
+        assertEquals(taskId, world.task.get(worker.id));
     }
 
     private void givenAWorkerDoingANormalTask() {
-        task = mock(Task.class);
-        when(task.isBoundByWorkDay()).thenReturn(true);
+        taskId = makeIdleTask().id;
         makeWorker();
     }
 
     private void makeWorker() {
-        worker = world.create(true).add(world.tasked, world.employeeNumber);
+        worker = world.create(true).add(world.task, world.employeeNumber);
         world.employeeNumber.set(worker.id, 0);
-        world.tasked.set(worker.id, task);
+        world.task.set(worker.id, taskId);
         world.workers.add(worker);
     }
 
@@ -77,7 +74,7 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
     public void testUpdate_taskChangesAtEndOfWorkday() {
         givenAWorkerDoingANormalTask();
         advanceHours(10);
-        assertNotEquals(task, world.tasked.get(worker.id));
+        assertNotEquals(taskId, world.task.get(worker.id));
     }
 
     private void advanceHours(int hours) {
@@ -90,26 +87,25 @@ public final class WorkHoursSystemTest extends AbstractSystemTest {
     public void testUpdate_workerReturnsToPreviousTaskTheNextDay() {
         givenAWorkerDoingANormalTask();
         advanceHours(25);
-        assertEquals(task, world.tasked.get(worker.id));
+        assertEquals(taskId, world.task.get(worker.id));
     }
 
     @Test
     public void testUpdate_taskChangesAtEndOfSecondWorkday() {
         givenAWorkerDoingANormalTask();
         advanceHours(24 + 9);
-        assertNotEquals(task, world.tasked.get(worker.id));
+        assertNotEquals(taskId, world.task.get(worker.id));
     }
 
     @Test
     public void testUpdate_taskDoesNotEndAtEndOfDay_taskNotOverwritten() {
         givenAWorkerDoingATaskNotBoundByTheWorkday();
         advanceHours(9);
-        assertEquals(task, world.tasked.get(worker.id));
+        assertEquals(taskId, world.task.get(worker.id));
     }
 
     private void givenAWorkerDoingATaskNotBoundByTheWorkday() {
-        task = mock(Task.class);
-        when(task.isBoundByWorkDay()).thenReturn(false);
+        taskId = world.create(true).add(world.taskFlags).id;
         makeWorker();
     }
 

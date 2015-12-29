@@ -25,8 +25,6 @@ import tripleplay.entity.Entity;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AvailablePredicateTest {
     private AvailablePredicate pred;
@@ -41,20 +39,19 @@ public class AvailablePredicateTest {
 
     @Test
     public void testApply_available() {
-        givenAWorkerDoing(Task.DEVELOPMENT);
+        givenAWorkerDoing(world.developmentTaskId);
         assertTrue(pred.apply(worker));
     }
 
-    private void givenAWorkerDoing(Task task) {
-        worker = world.create(true).add(world.tasked);
-        world.tasked.set(worker.id, task);
+    private void givenAWorkerDoing(int taskId) {
+        worker = world.create(true).add(world.task);
+        world.task.set(worker.id, taskId);
     }
 
     @Test
     public void testApply_unavailable() {
-        Task task = mock(Task.class);
-        when(task.isReassignable()).thenReturn(false);
-        givenAWorkerDoing(task);
+        Entity task = world.create(true).add(world.taskFlags);
+        givenAWorkerDoing(task.id);
         assertFalse(pred.apply(worker));
     }
 }

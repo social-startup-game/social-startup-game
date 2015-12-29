@@ -20,14 +20,12 @@
 package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.*;
 import edu.bsu.cybersec.core.systems.GameTimeSystem;
 import playn.core.Clock;
 import playn.core.Font;
 import playn.core.Tile;
-import playn.core.TileSource;
 import react.Slot;
 import react.Value;
 import react.ValueView;
@@ -62,12 +60,13 @@ public class MainUIGroup extends Group {
     private final GameInteractionArea gameInteractionArea;
     private final Map<Integer, EmployeeView> developerViews = Maps.newTreeMap();
     private EmployeeViewUpdateSystem employeeViewUpdateSystem;
-    private TaskIconFactory taskIconFactory = new TaskIconFactory();
+    private TaskIconFactory taskIconFactory;
 
     public MainUIGroup(final GameWorld gameWorld, final Interface iface, Root root) {
         super(AxisLayout.vertical().offStretch().gap(0));
         this.iface = checkNotNull(iface);
         this.gameWorld = checkNotNull(gameWorld);
+        this.taskIconFactory = new TaskIconFactory();
         employeeViewUpdateSystem = new EmployeeViewUpdateSystem(gameWorld);
         gameInteractionArea = new GameInteractionArea(gameWorld, iface);
         configureUI(root);
@@ -135,12 +134,12 @@ public class MainUIGroup extends Group {
 
     private final class TaskItem extends MenuItem {
 
-        public final Task task;
+        public final int taskId;
 
-        public TaskItem(Task task) {
-            super(task.name.get());
-            this.task = checkNotNull(task);
-            icon.update(taskIconFactory.getIcon(task));
+        public TaskItem(int taskId) {
+            super(gameWorld.name.get(taskId));
+            this.taskId = taskId;
+            icon.update(taskIconFactory.getIcon(taskId));
         }
     }
 
@@ -211,10 +210,10 @@ public class MainUIGroup extends Group {
         private Group createSkillSummaryGroup() {
             final int color = Palette.NAME_COLOR;
             return new Group(AxisLayout.horizontal())
-                    .add(new Label(taskIconFactory.getIcon(Task.DEVELOPMENT)).addStyles(Style.COLOR.is(color)),
+                    .add(new Label(taskIconFactory.getIcon(gameWorld.developmentTaskId)).addStyles(Style.COLOR.is(color)),
                             createSkillLabel(developmentSkill),
                             new Shim(percentOfViewHeight(0.001f), 0),
-                            new Label(taskIconFactory.getIcon(Task.MAINTENANCE)).addStyles(Style.COLOR.is(color)),
+                            new Label(taskIconFactory.getIcon(gameWorld.maintenanceTaskId)).addStyles(Style.COLOR.is(color)),
                             createSkillLabel(maintenanceSkill));
         }
 
@@ -290,13 +289,11 @@ public class MainUIGroup extends Group {
     }
 
     private final class TaskSelector extends Button {
-        Task selected;
+        int selectedTaskId;
 
         TaskSelector(Root root, final Entity worker) {
             super();
-            updateIconBasedOnSelectedTask();
-            Task currentTask = gameWorld.tasked.get(worker.id);
-            select(currentTask);
+            select(gameWorld.task.get(worker.id));
             final MenuHost menuHost = new MenuHost(iface, root);
             BoxPoint popUnder = new BoxPoint(0, 1, 0, 2);
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
@@ -323,8 +320,8 @@ public class MainUIGroup extends Group {
                         @Override
                         public void onEmit(MenuItem menuItem) {
                             button.text.update(menuItem.text.get());
-                            Task assignedTask = ((TaskItem) menuItem).task;
-                            gameWorld.tasked.set(worker.id, assignedTask);
+                            int assignedTaskId = ((TaskItem) menuItem).taskId;
+                            gameWorld.task.set(worker.id, assignedTaskId);
                             worker.didChange();
                             restoreGameTimeSystemToPreviousState();
                         }
@@ -337,37 +334,34 @@ public class MainUIGroup extends Group {
 
                 private Menu createMenu() {
                     Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
-                    for (Task task : Task.CORE_TASKS) {
-                        menu.add(new TaskItem(task));
-                    }
+                    menu.add(new TaskItem(gameWorld.developmentTaskId));
+                    menu.add(new TaskItem(gameWorld.maintenanceTaskId));
                     return menu;
                 }
             });
             employeeViewUpdateSystem.track(worker.id, this);
+            showTaskNameUpdates();
         }
 
-        private void updateIconBasedOnSelectedTask() {
-            if (selected != null) {
-                Icon taskIcon = taskIconFactory.getIcon(selected);
+        private void showTaskNameUpdates() {
+            Entity taskNameUpdater = gameWorld.create(true).add(gameWorld.onUpdate);
+            gameWorld.onUpdate.set(taskNameUpdater.id, new Updatable() {
+                @Override
+                public void update(Clock clock) {
+                    setText(gameWorld.name.get(selectedTaskId));
+                }
+            });
+        }
+
+        public void select(int taskId) {
+            if (selectedTaskId != taskId) {
+                selectedTaskId = taskId;
+                setEnabled(TaskFlags.REASSIGNABLE.isSet(gameWorld.taskFlags.get(taskId)));
+                setText(gameWorld.name.get(taskId));
+                Icon taskIcon = taskIconFactory.getIcon(selectedTaskId);
                 icon.update(taskIcon);
             }
         }
-
-        public void select(Task task) {
-            checkNotNull(task);
-            if (selected != task) {
-                selected = task;
-                connectLabelTextTo(task);
-                setEnabled(task.isReassignable());
-                updateIconBasedOnSelectedTask();
-            }
-        }
-
-        private void connectLabelTextTo(Task task) {
-            text.update(task.name.get());
-            task.name.connect(text.slot());
-        }
-
     }
 
     private class EmployeeViewUpdateSystem extends tripleplay.entity.System {
@@ -404,9 +398,9 @@ public class MainUIGroup extends Group {
 
         private void ensureSelectedTaskMatchesAssignedTask(int id) {
             TaskSelector sel = map.get(id);
-            Task task = world.tasked.get(id);
-            if (sel.selected != task) {
-                sel.select(task);
+            int taskId = world.task.get(id);
+            if (sel.selectedTaskId != taskId) {
+                sel.select(taskId);
             }
         }
 
@@ -437,26 +431,27 @@ public class MainUIGroup extends Group {
 
         private boolean isAtWork(int id) {
             return ((GameWorld.Systematized) gameWorld).workHoursSystem.isWorkHours().get()
-                    && gameWorld.tasked.get(id).isBoundByWorkDay();
+                    && TaskFlags.BOUND_TO_WORKDAY.isSet(gameWorld.taskFlags.get(gameWorld.task.get(id)));
+        }
+    }
+
+    private final class TaskIconFactory {
+
+        public Icon getIcon(int taskId) {
+            final int taskFlags = gameWorld.taskFlags.get(taskId);
+            if (TaskFlags.any(TaskFlags.DEVELOPMENT, TaskFlags.MAINTENANCE).in(taskFlags)) {
+                final Tile tile = TaskFlags.DEVELOPMENT.isSet(taskFlags)
+                        ? SimGame.game.assets.getImage(GameAssets.ImageKey.DEVELOPMENT).tile()
+                        : SimGame.game.assets.getImage(GameAssets.ImageKey.MAINTENANCE).tile();
+                final float imageHeight = tile.height();
+                final float viewHeight = SimGame.game.bounds.height();
+                final float percentOfScreenHeight = 0.04f;
+                final float scale = (viewHeight * percentOfScreenHeight) / imageHeight;
+                return Icons.scaled(Icons.image(tile), scale);
+            } else {
+                return null;
+            }
         }
     }
 }
 
-final class TaskIconFactory {
-    private Map<Task, ? extends TileSource> iconMap = ImmutableMap.of(
-            Task.MAINTENANCE, SimGame.game.assets.getImage(GameAssets.ImageKey.MAINTENANCE),
-            Task.DEVELOPMENT, SimGame.game.assets.getImage(GameAssets.ImageKey.DEVELOPMENT));
-
-    public Icon getIcon(Task task) {
-        if (!iconMap.containsKey(task)) {
-            return null;
-        } else {
-            final Tile tile = iconMap.get(task).tile();
-            final float imageHeight = tile.height();
-            final float viewHeight = SimGame.game.bounds.height();
-            final float percentOfScreenHeight = 0.04f;
-            final float scale = (viewHeight * percentOfScreenHeight) / imageHeight;
-            return Icons.scaled(Icons.image(tile), scale);
-        }
-    }
-}

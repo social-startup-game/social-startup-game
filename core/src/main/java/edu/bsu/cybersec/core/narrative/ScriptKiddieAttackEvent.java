@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.Task;
+import edu.bsu.cybersec.core.TaskFlags;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -31,6 +31,8 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkState;
 
 public class ScriptKiddieAttackEvent extends NarrativeEvent {
+
+    static final String RETALIATION_TASK_LABEL = "Retaliating";
 
     private static final int HOURS_UNTIL_REPERCUSSION = 24;
     private static final int HOURS_FOR_RETALIATION = 6;
@@ -55,47 +57,54 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
         return "You were attacked by a script kiddie\u2014an amateur who copied some code from the Internet to attack our site. The attack was not successful, but we have to keep our guard up against future attacks.\n\nWould you like to try to find the attackers and strike back? Who should do it?";
     }
 
-    private final class RetaliateOption extends Option.Terminal {
+    final class RetaliateOption extends Option.Terminal {
 
-        private final int id;
+        private final int selectedWorkerId;
 
         public RetaliateOption(int id) {
-            this.id = id;
+            this.selectedWorkerId = id;
         }
 
         @Override
         public String text() {
-            return world.profile.get(id).firstName;
+            return world.profile.get(selectedWorkerId).firstName;
         }
 
         @Override
         public void onSelected() {
             assignRetaliation();
-            registerRepercussion();
         }
 
         private void assignRetaliation() {
-            final Task taskBeforeRetaliation = world.tasked.get(id);
-            checkState(taskBeforeRetaliation.isReassignable());
-            final int endOfRetaliation = world.gameTime.get().now + HOURS_FOR_RETALIATION * ClockUtils.SECONDS_PER_HOUR;
-            world.tasked.set(id, Task.createTask("Retaliating")
-                    .expiringAt(endOfRetaliation)
-                    .inWorld(world)
-                    .build());
-            world.entity(id).didChange();
-            after(HOURS_FOR_RETALIATION).post(new NarrativeEvent(world) {
-                @Override
-                public String text() {
-                    return world.profile.get(id).firstName + " was unable to determine who the script kiddies were and returns to work.";
-                }
-
+            final int taskBeforeRetaliation = world.task.get(selectedWorkerId);
+            checkState(TaskFlags.REASSIGNABLE.isSet(world.taskFlags.get(taskBeforeRetaliation)), "Previous task must be reassignable");
+            final Entity taskEntity = world.create(true).add(world.name, world.owner, world.taskFlags, world.secondsRemaining, world.onComplete);
+            world.name.set(taskEntity.id, RETALIATION_TASK_LABEL);
+            world.owner.set(taskEntity.id, selectedWorkerId);
+            world.taskFlags.set(taskEntity.id, TaskFlags.flags(TaskFlags.BOUND_TO_WORKDAY));
+            world.secondsRemaining.set(taskEntity.id, HOURS_FOR_RETALIATION * ClockUtils.SECONDS_PER_HOUR);
+            world.onComplete.set(taskEntity.id, new Runnable() {
                 @Override
                 public void run() {
-                    world.tasked.set(id, taskBeforeRetaliation);
-                    world.entity(id).didChange();
-                    super.run();
+                    post(new NarrativeEvent(world) {
+                        @Override
+                        public String text() {
+                            return world.profile.get(selectedWorkerId).firstName + " was unable to determine who the script kiddies were and returns to work.";
+                        }
+
+                        @Override
+                        public void run() {
+                            world.task.set(selectedWorkerId, taskBeforeRetaliation);
+                            world.entity(selectedWorkerId).didChange();
+                            super.run();
+                            taskEntity.close();
+                            registerRepercussion();
+                        }
+                    });
                 }
             });
+            world.task.set(selectedWorkerId, taskEntity.id);
+            world.entity(selectedWorkerId).didChange();
         }
 
         private void registerRepercussion() {

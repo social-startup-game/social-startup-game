@@ -22,43 +22,51 @@ package edu.bsu.cybersec.core.systems;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
-import edu.bsu.cybersec.core.TaskFlags;
 import playn.core.Clock;
 import tripleplay.entity.Entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
-public final class ExposureReductionSystem extends tripleplay.entity.System {
+public final class TaskProgressSystem extends tripleplay.entity.System {
 
     private final GameWorld world;
 
-    public ExposureReductionSystem(GameWorld world) {
+    public TaskProgressSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        boolean interested = entity.has(world.task)
-                && TaskFlags.MAINTENANCE.isSet(world.taskFlags.get(world.task.get(entity.id)));
-        if (interested) {
-            checkState(entity.has(world.maintenanceSkill), "Entity is doing maintenance without any skill.");
-        }
-        return interested;
+        return entity.has(world.secondsRemaining);
     }
 
     @Override
     protected void update(Clock clock, Entities entities) {
-        super.update(clock, entities);
-        final int elapsedSeconds = world.gameTime.get().delta();
         for (int i = 0, limit = entities.size(); i < limit; i++) {
-            final int id = entities.get(i);
-            final float currentExposure = world.exposure.get();
-            final float percentChangePerHour = (int) world.maintenanceSkill.get(id) / 1000f; // 5 skill = 0.05%
-            final float changePerHour = currentExposure * percentChangePerHour;
-            final float change = changePerHour * elapsedSeconds / ClockUtils.SECONDS_PER_HOUR;
-            world.exposure.update(currentExposure - change);
+            final int taskId = entities.get(i);
+            final int ownerId = world.owner.get(taskId);
+            if (world.task.get(ownerId) == taskId) {
+                world.secondsRemaining.add(taskId, -world.gameTime.get().delta());
+                handleCompletion(taskId);
+            }
+            if (world.entity(taskId).has(world.name)) {
+                int hoursRemaining = world.secondsRemaining.get(taskId) / ClockUtils.SECONDS_PER_HOUR + 1;
+                String newName = updateName(world.name.get(taskId), hoursRemaining);
+                world.name.set(taskId, newName);
+            }
         }
+    }
+
+    private void handleCompletion(final int taskId) {
+        if (world.secondsRemaining.get(taskId) <= 0 && world.entity(taskId).has(world.onComplete)) {
+            world.onComplete.get(taskId).run();
+        }
+    }
+
+    static String updateName(String name, int hoursRemaining) {
+        if (name.contains("(")) {
+            return name.substring(0, name.indexOf('(') + 1) + hoursRemaining + "hr)";
+        } else return name + " (" + hoursRemaining + "hr)";
     }
 }

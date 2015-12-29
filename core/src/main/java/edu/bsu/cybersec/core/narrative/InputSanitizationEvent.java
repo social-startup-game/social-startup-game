@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.Task;
+import edu.bsu.cybersec.core.TaskFlags;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -72,25 +72,32 @@ public class InputSanitizationEvent extends NarrativeEvent {
         }
 
         private void assignEmployee() {
-            final int endOfSanitizationPeriod = world.gameTime.get().now + HOURS_FOR_SANITIZATION * ClockUtils.SECONDS_PER_HOUR;
-            world.tasked.set(id, Task.createTask("Sanitizing Input")
-                    .expiringAt(endOfSanitizationPeriod)
-                    .inWorld(world)
-                    .build());
-            world.entity(id).didChange();
-            after(HOURS_FOR_SANITIZATION).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_SANITIZATION) {
-                @Override
-                public String text() {
-                    return "You lost " + loss + " users, but have sanitized input and should not run into this problem again.";
-                }
-
+            final Entity taskEntity = world.create(true).add(world.name, world.owner, world.secondsRemaining, world.onComplete, world.taskFlags);
+            world.name.set(taskEntity.id, "Adding sanitization");
+            world.owner.set(taskEntity.id, id);
+            world.taskFlags.set(taskEntity.id, TaskFlags.flags(TaskFlags.BOUND_TO_WORKDAY));
+            world.secondsRemaining.set(taskEntity.id, HOURS_FOR_SANITIZATION * ClockUtils.SECONDS_PER_HOUR);
+            world.onComplete.set(taskEntity.id, new Runnable() {
                 @Override
                 public void run() {
-                    world.tasked.set(id, Task.MAINTENANCE);
-                    world.entity(id).didChange();
-                    super.run();
+                    post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_SANITIZATION) {
+                        @Override
+                        public String text() {
+                            return "You lost " + loss + " users, but have sanitized input and should not run into this problem again.";
+                        }
+
+                        @Override
+                        public void run() {
+                            world.task.set(id, world.maintenanceTaskId);
+                            world.entity(id).didChange();
+                            super.run();
+                            taskEntity.close();
+                        }
+                    });
                 }
             });
+            world.task.set(id, taskEntity.id);
+            world.entity(id).didChange();
         }
     }
 

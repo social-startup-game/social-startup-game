@@ -19,12 +19,12 @@
 
 package edu.bsu.cybersec.core.systems;
 
-import edu.bsu.cybersec.core.Task;
 import org.junit.After;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public final class LearningSystemTest extends AbstractSystemTest {
 
@@ -50,12 +50,12 @@ public final class LearningSystemTest extends AbstractSystemTest {
 
     private void givenAnActiveDeveloper() {
         e = makeWorker();
-        world.tasked.set(e.id, Task.DEVELOPMENT);
+        world.task.set(e.id, world.developmentTaskId);
     }
 
     private Entity makeWorker() {
         return world.create(true)
-                .add(world.tasked, world.developmentSkill, world.maintenanceSkill);
+                .add(world.task, world.developmentSkill, world.maintenanceSkill);
     }
 
     @Test
@@ -87,7 +87,7 @@ public final class LearningSystemTest extends AbstractSystemTest {
 
     private void givenAnActiveMaintainer() {
         e = makeWorker();
-        world.tasked.set(e.id, Task.MAINTENANCE);
+        world.task.set(e.id, world.maintenanceTaskId);
     }
 
     @Test

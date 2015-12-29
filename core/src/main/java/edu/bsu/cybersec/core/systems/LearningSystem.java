@@ -19,38 +19,31 @@
 
 package edu.bsu.cybersec.core.systems;
 
-import com.google.common.collect.ImmutableMap;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SystemPriority;
-import edu.bsu.cybersec.core.Task;
+import edu.bsu.cybersec.core.TaskFlags;
 import playn.core.Clock;
 import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
 
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LearningSystem extends tripleplay.entity.System {
 
     public static final float SKILL_PER_GAME_HOUR = 0.1f;
 
     private final GameWorld world;
-    private final Map<? extends Task, Component.FScalar> taskSkillMap;
     private float elapsedHours;
 
     public LearningSystem(GameWorld world) {
         super(world, SystemPriority.MODEL_LEVEL.value);
         this.world = checkNotNull(world);
-        taskSkillMap = ImmutableMap.of(
-                Task.DEVELOPMENT, world.developmentSkill,
-                Task.MAINTENANCE, world.maintenanceSkill);
     }
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return entity.has(world.tasked) && entity.has(world.developmentSkill);
+        return entity.has(world.task) && entity.has(world.developmentSkill);
     }
 
     @Override
@@ -65,8 +58,9 @@ public class LearningSystem extends tripleplay.entity.System {
     }
 
     private void updateSkills(final int id) {
-        final Task task = world.tasked.get(id);
-        Component.FScalar c = taskSkillMap.get(task);
+        final int taskId = world.task.get(id);
+        final int taskFlags = world.taskFlags.get(taskId);
+        Component.FScalar c = TaskFlags.DEVELOPMENT.isSet(taskFlags) ? world.developmentSkill : world.maintenanceSkill;
         if (c != null) {
             float start = c.get(id);
             float updated = start + elapsedHours * SKILL_PER_GAME_HOUR;

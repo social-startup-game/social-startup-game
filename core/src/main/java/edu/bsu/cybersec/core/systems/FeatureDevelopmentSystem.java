@@ -51,8 +51,8 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
 
     private boolean isDeveloper(Entity entity) {
         return entity.has(world.developmentSkill)
-                && entity.has(world.tasked)
-                && world.tasked.get(entity.id) == Task.DEVELOPMENT;
+                && entity.has(world.task)
+                && TaskFlags.DEVELOPMENT.isSet(world.taskFlags.get(world.task.get(entity.id)));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     }
 
     private boolean isDeveloping(int entityId) {
-        return world.tasked.get(entityId) == Task.DEVELOPMENT;
+        return TaskFlags.DEVELOPMENT.isSet(world.taskFlags.get(world.task.get(entityId)));
     }
 
     private void processCompletedFeatures() {

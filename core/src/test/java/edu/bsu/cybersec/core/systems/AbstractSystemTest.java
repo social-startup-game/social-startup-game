@@ -21,14 +21,14 @@ package edu.bsu.cybersec.core.systems;
 
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.Task;
+import edu.bsu.cybersec.core.TaskFlags;
 import org.junit.Before;
 import playn.core.Clock;
+import tripleplay.entity.Entity;
 
 public abstract class AbstractSystemTest {
 
     protected static final float EPSILON = 0.00001f;
-    protected static final Task IDLE = Task.createTask("Idle").build();
 
     protected GameWorld world;
     private PlayNClockUtil clockUtil;
@@ -82,4 +82,10 @@ public abstract class AbstractSystemTest {
         }
     }
 
+    protected Entity makeIdleTask() {
+        Entity idleTask = world.create(true).add(world.name, world.taskFlags);
+        world.name.set(idleTask.id, "Idle");
+        world.taskFlags.set(idleTask.id, TaskFlags.flags(TaskFlags.BOUND_TO_WORKDAY));
+        return idleTask;
+    }
 }

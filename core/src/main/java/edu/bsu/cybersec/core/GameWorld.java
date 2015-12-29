@@ -46,8 +46,10 @@ public class GameWorld extends World {
     public final Value<Float> users = Value.create(0f);
     public final List<Entity> workers = Lists.newArrayListWithCapacity(3);
     public final Value<Integer> gameEnd = Value.create(-1);
+    public final int developmentTaskId;
+    public final int maintenanceTaskId;
+    public final int notAtWorkTaskId;
 
-    public final Component.Generic<Task> tasked = register("tasked", new Component.Generic<Task>(this));
     public final Component.IScalar employeeNumber = register("employeeNumber", new Component.IScalar(this));
     public final Component.FScalar developmentSkill = register("developmentSkill", new Component.FScalar(this));
     public final Component.FScalar maintenanceSkill = register("maintenanceSkill", new Component.FScalar(this));
@@ -69,10 +71,46 @@ public class GameWorld extends World {
     public final Component.FScalar maintenanceProgress = register("maintenanceProgress", new Component.FScalar(this));
     public final Component.Generic<Layer> sprite = register("sprite", new Component.Generic<Layer>(this));
     public final Component.XY position = register("position", new Component.XY(this));
+    public final Component.IScalar secondsRemaining = register("secondsRemaining", new Component.IScalar(this));
+    public final Component.Generic<Runnable> onComplete = register("onComplete", new Component.Generic<Runnable>(this));
+    public final Component.IScalar owner = register("owner", new Component.IScalar(this));
+    public final Component.IScalar task = register("task", new Component.IScalar(this));
+    public final Component.IScalar taskFlags = register("taskFlags", new Component.IScalar(this));
+
 
     private <T extends Component> T register(String name, T component) {
         components.put(name, component);
         return component;
+    }
+
+    public GameWorld() {
+        developmentTaskId = makeDevelopmentTask();
+        maintenanceTaskId = makeMaintenanceTask();
+        notAtWorkTaskId = makeNotAtWorkTask();
+    }
+
+    private int makeDevelopmentTask() {
+        int id = create(true).add(name, taskFlags).id;
+        name.set(id, "Development");
+        taskFlags.set(id,
+                TaskFlags.flags(TaskFlags.REASSIGNABLE, TaskFlags.BOUND_TO_WORKDAY, TaskFlags.DEVELOPMENT));
+        return id;
+    }
+
+    private int makeMaintenanceTask() {
+        int id = create(true).add(name, taskFlags).id;
+        name.set(id, "Maintenance");
+        taskFlags.set(id,
+                TaskFlags.flags(TaskFlags.REASSIGNABLE, TaskFlags.BOUND_TO_WORKDAY, TaskFlags.MAINTENANCE));
+        return id;
+    }
+
+    private int makeNotAtWorkTask() {
+        int id = create(true).add(name, taskFlags).id;
+        name.set(id, "Not at work");
+        taskFlags.set(id,
+                TaskFlags.flags(TaskFlags.NOT_AT_WORK));
+        return id;
     }
 
     public void advanceGameTime(int ms) {
@@ -94,6 +132,7 @@ public class GameWorld extends World {
             new ExploitMaintenanceSystem(this);
             new UserAttritionSystem(this);
             new LayerPositionSystem(this);
+            new TaskProgressSystem(this);
         }
 
         public final GameTimeSystem gameTimeSystem = new GameTimeSystem(this);

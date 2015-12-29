@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.systems;
 
-import edu.bsu.cybersec.core.Task;
 import org.junit.Test;
 import tripleplay.entity.Entity;
 
@@ -67,8 +66,8 @@ public final class ExposureReductionSystemTest extends AbstractSystemTest {
 
     private Entity givenAnActiveMaintainer(float skill) {
         Entity maintainer = world.create(true)
-                .add(world.tasked, world.maintenanceSkill);
-        world.tasked.set(maintainer.id, Task.MAINTENANCE);
+                .add(world.task, world.maintenanceSkill);
+        world.task.set(maintainer.id, world.maintenanceTaskId);
         world.maintenanceSkill.set(maintainer.id, skill);
         return maintainer;
     }
@@ -84,7 +83,8 @@ public final class ExposureReductionSystemTest extends AbstractSystemTest {
 
     private void givenAnIdleMaintainer() {
         Entity e = givenAnActiveMaintainer(ARBITRARY_SKILL);
-        world.tasked.set(e.id, IDLE);
+        Entity idleTask = makeIdleTask();
+        world.task.set(e.id, idleTask.id);
         e.didChange();
     }
 

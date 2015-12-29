@@ -32,6 +32,8 @@ public class AvailablePredicate implements Predicate<Entity> {
 
     @Override
     public boolean apply(Entity workerEntity) {
-        return world.tasked.get(workerEntity.id).isReassignable();
+        int taskId = world.task.get(workerEntity.id);
+        Entity taskEntity = world.entity(taskId);
+        return taskEntity.has(world.taskFlags) && TaskFlags.REASSIGNABLE.isSet(world.taskFlags.get(taskId));
     }
 }

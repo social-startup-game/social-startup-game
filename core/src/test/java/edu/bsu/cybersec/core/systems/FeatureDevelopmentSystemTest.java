@@ -19,7 +19,9 @@
 
 package edu.bsu.cybersec.core.systems;
 
-import edu.bsu.cybersec.core.*;
+import edu.bsu.cybersec.core.FeatureFactory;
+import edu.bsu.cybersec.core.GameTime;
+import edu.bsu.cybersec.core.UsersPerHourState;
 import org.junit.Assert;
 import org.junit.Test;
 import tripleplay.entity.Entity;
@@ -68,8 +70,9 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private void createIdleDeveloper() {
-        Entity developer = createEntityWithDevelopmentSkill(1).taskedWith(IDLE);
-        world.tasked.set(developer.id, IDLE);
+        Entity idleTask = makeIdleTask();
+        Entity developer = createEntityWithDevelopmentSkill(1).taskedWith(idleTask.id);
+        world.task.set(developer.id, idleTask.id);
     }
 
     private DeveloperBuilder createEntityWithDevelopmentSkill(float devSkill) {
@@ -77,7 +80,7 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     }
 
     private Entity createActiveDeveloper(float developmentSkill) {
-        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(Task.DEVELOPMENT);
+        return createEntityWithDevelopmentSkill(developmentSkill).taskedWith(world.developmentTaskId);
     }
 
     @Test
@@ -172,14 +175,14 @@ public class FeatureDevelopmentSystemTest extends AbstractSystemTest {
     private final class DeveloperBuilder {
         private Entity entity = world.create(true)
                 .add(world.developmentSkill,
-                        world.tasked);
+                        world.task);
 
         public DeveloperBuilder(float devSkill) {
             world.developmentSkill.set(entity.id, devSkill);
         }
 
-        public Entity taskedWith(Task task) {
-            world.tasked.set(entity.id, task);
+        public Entity taskedWith(int taskId) {
+            world.task.set(entity.id, taskId);
             return entity;
         }
     }

@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.Task;
 import tripleplay.entity.Entity;
 
 import java.util.Collection;
@@ -69,14 +68,13 @@ public class SecurityConferenceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            final int conferenceEnd = world.gameTime.get().now + ClockUtils.SECONDS_PER_HOUR * CONFERENCE_DURATION;
-            Task task = Task.createTask("At conference")
-                    .notBoundByWorkday()
-                    .expiringAt(conferenceEnd)
-                    .inWorld(world)
-                    .build();
-            world.tasked.set(id, task);
+            final Entity task = world.create(true).add(world.name, world.owner, world.secondsRemaining);
+            world.name.set(task.id, "At conference");
+            world.owner.set(task.id, id);
+            world.secondsRemaining.set(task.id, ClockUtils.SECONDS_PER_HOUR * CONFERENCE_DURATION);
+            world.task.set(id, task.id);
             world.entity(id).didChange();
+
             after(CONFERENCE_DURATION).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
@@ -86,8 +84,9 @@ public class SecurityConferenceEvent extends NarrativeEvent {
                 @Override
                 public void run() {
                     world.maintenanceSkill.add(id, CONFERENCE_SKILL_INCREASE);
-                    world.tasked.set(id, Task.MAINTENANCE);
+                    world.task.set(id, world.maintenanceTaskId);
                     world.entity(id).didChange();
+                    task.close();
                     super.run();
                 }
             });
