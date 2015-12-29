@@ -27,7 +27,8 @@ import tripleplay.entity.Entity;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public abstract class NarrativeEvent implements Runnable {
 
@@ -94,6 +95,7 @@ public abstract class NarrativeEvent implements Runnable {
     public abstract String text();
 
     protected final Collection<Entity> availableWorkers() {
+        checkState(!world.workers.isEmpty(), "There are no workers.");
         return Collections2.filter(world.workers, new AvailablePredicate(world));
     }
 
