@@ -60,11 +60,21 @@ public class LearningSystem extends tripleplay.entity.System {
     private void updateSkills(final int id) {
         final int taskId = world.task.get(id);
         final int taskFlags = world.taskFlags.get(taskId);
-        Component.FScalar c = TaskFlags.DEVELOPMENT.isSet(taskFlags) ? world.developmentSkill : world.maintenanceSkill;
+        Component.FScalar c = determineRelevantSkill(taskFlags);
         if (c != null) {
             float start = c.get(id);
             float updated = start + elapsedHours * SKILL_PER_GAME_HOUR;
             c.set(id, updated);
+        }
+    }
+
+    private Component.FScalar determineRelevantSkill(int taskFlags) {
+        if (TaskFlags.DEVELOPMENT.isSet(taskFlags)) {
+            return world.developmentSkill;
+        } else if (TaskFlags.MAINTENANCE.isSet(taskFlags)) {
+            return world.maintenanceSkill;
+        } else {
+            return null;
         }
     }
 
