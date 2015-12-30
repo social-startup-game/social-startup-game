@@ -95,7 +95,6 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                         @Override
                         public void run() {
                             world.task.set(selectedWorkerId, taskBeforeRetaliation);
-                            world.entity(selectedWorkerId).didChange();
                             super.run();
                             taskEntity.close();
                             registerRepercussion();
@@ -104,7 +103,6 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                 }
             });
             world.task.set(selectedWorkerId, taskEntity.id);
-            world.entity(selectedWorkerId).didChange();
         }
 
         private void registerRepercussion() {

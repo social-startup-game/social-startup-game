@@ -42,14 +42,20 @@ public class UserGenerationSystem extends tripleplay.entity.System {
         super.update(clock, entities);
         final float delta = world.gameTime.get().delta();
         for (int i = 0, limit = entities.size(); i < limit; i++) {
-            int id = entities.get(i);
-            float usersPerHour = world.usersPerHour.get(id);
-            float additionalUsers = 0;
-            if (userGenerationEnabled.get()) {
-                additionalUsers = usersPerHour * delta / ClockUtils.SECONDS_PER_HOUR;
+            final int id = entities.get(i);
+            if (isUserGenerationActive(id)) {
+                float usersPerHour = world.usersPerHour.get(id);
+                float additionalUsers = 0;
+                if (userGenerationEnabled.get()) {
+                    additionalUsers = usersPerHour * delta / ClockUtils.SECONDS_PER_HOUR;
+                }
+                addUsers(additionalUsers);
             }
-            addUsers(additionalUsers);
         }
+    }
+
+    private boolean isUserGenerationActive(int id) {
+        return world.usersPerHourState.get(id) == UsersPerHourState.ACTIVE.value;
     }
 
     private void addUsers(float additionalUsers) {
@@ -58,7 +64,7 @@ public class UserGenerationSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        return isActiveUserGeneratingEntity(entity);
+        return entity.has(world.usersPerHour) && entity.has(world.usersPerHourState);
     }
 
     public boolean isActiveUserGeneratingEntity(Entity entity) {

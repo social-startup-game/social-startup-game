@@ -73,7 +73,6 @@ public class SecurityConferenceEvent extends NarrativeEvent {
             world.owner.set(task.id, id);
             world.secondsRemaining.set(task.id, ClockUtils.SECONDS_PER_HOUR * CONFERENCE_DURATION);
             world.task.set(id, task.id);
-            world.entity(id).didChange();
 
             after(CONFERENCE_DURATION).post(new NarrativeEvent(world) {
                 @Override
@@ -85,7 +84,6 @@ public class SecurityConferenceEvent extends NarrativeEvent {
                 public void run() {
                     world.maintenanceSkill.add(id, CONFERENCE_SKILL_INCREASE);
                     world.task.set(id, world.maintenanceTaskId);
-                    world.entity(id).didChange();
                     task.close();
                     super.run();
                 }

@@ -322,7 +322,6 @@ public class MainUIGroup extends Group {
                             button.text.update(menuItem.text.get());
                             int assignedTaskId = ((TaskItem) menuItem).taskId;
                             gameWorld.task.set(worker.id, assignedTaskId);
-                            worker.didChange();
                             restoreGameTimeSystemToPreviousState();
                         }
 

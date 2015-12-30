@@ -27,7 +27,6 @@ import playn.core.Clock;
 import tripleplay.entity.Entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 public final class ExposureReductionSystem extends tripleplay.entity.System {
 
@@ -40,12 +39,7 @@ public final class ExposureReductionSystem extends tripleplay.entity.System {
 
     @Override
     protected boolean isInterested(Entity entity) {
-        boolean interested = entity.has(world.task)
-                && TaskFlags.MAINTENANCE.isSet(world.taskFlags.get(world.task.get(entity.id)));
-        if (interested) {
-            checkState(entity.has(world.maintenanceSkill), "Entity is doing maintenance without any skill.");
-        }
-        return interested;
+        return entity.has(world.task);
     }
 
     @Override
@@ -54,11 +48,17 @@ public final class ExposureReductionSystem extends tripleplay.entity.System {
         final int elapsedSeconds = world.gameTime.get().delta();
         for (int i = 0, limit = entities.size(); i < limit; i++) {
             final int id = entities.get(i);
-            final float currentExposure = world.exposure.get();
-            final float percentChangePerHour = (int) world.maintenanceSkill.get(id) / 1000f; // 5 skill = 0.05%
-            final float changePerHour = currentExposure * percentChangePerHour;
-            final float change = changePerHour * elapsedSeconds / ClockUtils.SECONDS_PER_HOUR;
-            world.exposure.update(currentExposure - change);
+            if (workerIsDoingMaintenance(id)) {
+                final float currentExposure = world.exposure.get();
+                final float percentChangePerHour = (int) world.maintenanceSkill.get(id) / 1000f; // 5 skill = 0.05%
+                final float changePerHour = currentExposure * percentChangePerHour;
+                final float change = changePerHour * elapsedSeconds / ClockUtils.SECONDS_PER_HOUR;
+                world.exposure.update(currentExposure - change);
+            }
         }
+    }
+
+    private boolean workerIsDoingMaintenance(int id) {
+        return TaskFlags.MAINTENANCE.isSet(world.taskFlags.get(world.task.get(id)));
     }
 }

@@ -42,17 +42,11 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
     @Override
     protected boolean isInterested(Entity entity) {
         return isFeatureInDevelopment(entity)
-                || isDeveloper(entity);
+                || entity.has(world.task);
     }
 
     private boolean isFeatureInDevelopment(Entity entity) {
         return entity.has(world.developmentProgress);
-    }
-
-    private boolean isDeveloper(Entity entity) {
-        return entity.has(world.developmentSkill)
-                && entity.has(world.task)
-                && TaskFlags.DEVELOPMENT.isSet(world.taskFlags.get(world.task.get(entity.id)));
     }
 
     @Override
@@ -97,12 +91,12 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
         return accumulatedDevelopmentEffort;
     }
 
-    private int roundDownSkillOfEntity(int entityId) {
-        return (int) world.developmentSkill.get(entityId);
-    }
-
     private boolean isDeveloping(int entityId) {
         return TaskFlags.DEVELOPMENT.isSet(world.taskFlags.get(world.task.get(entityId)));
+    }
+
+    private int roundDownSkillOfEntity(int entityId) {
+        return (int) world.developmentSkill.get(entityId);
     }
 
     private void processCompletedFeatures() {

@@ -85,7 +85,6 @@ public final class ExposureReductionSystemTest extends AbstractSystemTest {
         Entity e = givenAnActiveMaintainer(ARBITRARY_SKILL);
         Entity idleTask = makeIdleTask();
         world.task.set(e.id, idleTask.id);
-        e.didChange();
     }
 
 

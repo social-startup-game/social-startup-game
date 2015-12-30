@@ -89,7 +89,6 @@ public class InputSanitizationEvent extends NarrativeEvent {
                         @Override
                         public void run() {
                             world.task.set(id, world.maintenanceTaskId);
-                            world.entity(id).didChange();
                             super.run();
                             taskEntity.close();
                         }
@@ -97,7 +96,6 @@ public class InputSanitizationEvent extends NarrativeEvent {
                 }
             });
             world.task.set(id, taskEntity.id);
-            world.entity(id).didChange();
         }
     }
 
