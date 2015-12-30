@@ -57,7 +57,6 @@ public class GameWorld extends World {
     public final Component.FScalar developmentProgress = register("developmentProgress", new Component.FScalar(this));
     public final Component.IScalar goal = register("goal", new Component.IScalar(this));
     public final Component.FScalar usersPerHour = register("usersPerHour", new Component.FScalar(this));
-    public final Component.IScalar expiresIn = register("expiresIn", new Component.IScalar(this));
     public final Component.Generic<Updatable> onUpdate = register("onUpdate", new Component.Generic<Updatable>(this));
     public final Component.IScalar timeTrigger = register("timeTrigger", new Component.IScalar(this));
     public final Component.Generic<Runnable> event = register("event", new Component.Generic<Runnable>(this));
@@ -126,7 +125,6 @@ public class GameWorld extends World {
         private void initializeSystemsThatAreNeverDirectlyReferenced() {
             new UpdatingSystem(this);
             new ExposureReductionSystem(this);
-            new ExpirySystem(this);
             new EventTriggerSystem(this);
             new LearningSystem(this);
             new ExploitMaintenanceSystem(this);
