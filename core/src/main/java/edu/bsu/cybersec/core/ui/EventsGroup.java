@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -30,9 +30,10 @@ import react.UnitSignal;
 import tripleplay.ui.*;
 import tripleplay.ui.bgs.RoundRectBackground;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.ui.layout.FlowLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class EventsGroup extends InteractionAreaGroup {
     private static final Background CALLOUT_BACKGROUND = new RoundRectBackground(SimGame.game.plat.graphics(),
@@ -128,7 +129,7 @@ public class EventsGroup extends InteractionAreaGroup {
     }
 
     private Group makeButtonGroup() {
-        Group buttonGroup = new Group(AxisLayout.horizontal());
+        Group buttonGroup = new Group(new FlowLayout());
         for (final NarrativeEvent.Option option : currentEvent.options()) {
             buttonGroup.add(new Button(option.text()).onClick(new Slot<Button>() {
                 @Override
