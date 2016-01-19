@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -63,11 +63,13 @@ public class GameAssets {
         UNMUTE("unmute.png"),
         DESK("desk.png"),
         ESTEBAN("Esteban.png"),
+        MELISSA("Melissa.png"),
         NANCY("Nancy.png"),
         JERRY("Jerry.png"),
         VANI("Vani.png"),
         ABDULLAH("Abdullah.png"),
-        JANINE("Janine.png");
+        JANINE("Janine.png"),
+        IVAR("Ivar.png");
 
         private final String path;
 

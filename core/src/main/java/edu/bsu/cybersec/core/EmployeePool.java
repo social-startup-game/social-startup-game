@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -65,6 +65,15 @@ public class EmployeePool {
                         .withDegree("Bachelors in Computer Science").from("Virginia Tech")
                         .bio("Janine is especially talented at meeting with customers and understanding what they want from a product."),
                 assets.getImage(GameAssets.ImageKey.JANINE));
+        builder.put(EmployeeProfile.firstName("Melissa").lastName("Bernard")
+                        .withDegree("Bachelors in Mathematics").from("Stanford University")
+                        .bio("Melissa has always loved games and puzzles, but she especially loves bicycling and walking her German Shepherd."),
+                assets.getImage(GameAssets.ImageKey.MELISSA));
+        builder.put(EmployeeProfile.firstName("Ivar").lastName("Johansen")
+                        .withDegree("Bachelors in Chemistry").from("Stockholm University")
+                        .withDegree("Masters in Electrical Engineering").from("Uppsala University")
+                        .bio("Ivar teaches kids how to build simple robots as a volunteer in a local school."),
+                assets.getImage(GameAssets.ImageKey.IVAR));
         return builder.build();
     }
 
