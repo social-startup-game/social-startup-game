@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2015 Paul Gestwicki
+  ~ Copyright 2016 Paul Gestwicki
   ~
   ~ This file is part of The Social Startup Game
   ~
@@ -36,6 +36,7 @@
     <properties>
         <playn.version>2.0-rc3</playn.version>
         <guava.version>19.0</guava.version>
+        <mockito.version>1.9.5</mockito.version>
     </properties>
 
     <profiles>

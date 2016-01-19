@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.html;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.Window;
 import edu.bsu.cybersec.core.SimGame;
 import playn.html.HtmlPlatform;
 
@@ -29,8 +30,17 @@ public class SimGameHtml implements EntryPoint {
     public void onModuleLoad() {
         HtmlPlatform.Config config = new HtmlPlatform.Config();
         HtmlPlatform plat = new HtmlPlatform(config);
+        configureLogging(plat);
         plat.assets().setPathPrefix("sim/");
         new SimGame(plat, new HtmlGameConfig());
         plat.start();
+    }
+
+    private void configureLogging(HtmlPlatform plat) {
+        String logParameterValue = Window.Location.getParameter("log");
+        if (logParameterValue != null && logParameterValue.equalsIgnoreCase("true")) {
+            plat.log().setCollector(new FirebaseLogCollector());
+            plat.log().info("Game loaded.");
+        }
     }
 }

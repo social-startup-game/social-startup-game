@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -48,7 +48,6 @@ public class SimGameJava {
         config.height = size.height();
         return config;
     }
-
 
     private static void registerFont(JavaPlatform plat) {
         try {
