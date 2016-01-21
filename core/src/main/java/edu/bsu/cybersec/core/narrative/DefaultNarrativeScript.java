@@ -54,6 +54,7 @@ public final class DefaultNarrativeScript {
         list.add(new InputSanitizationEvent(world));
         list.add(new DDOSEvent(world));
         list.add(new ChildAdviceEvent(world));
+        list.add(new InsecurePasswordEvent(world));
         Shuffler.shuffle(list);
         return list;
     }
