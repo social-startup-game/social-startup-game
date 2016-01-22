@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -21,34 +21,16 @@ package edu.bsu.cybersec.core;
 
 import com.google.common.testing.EqualsTester;
 import org.junit.Test;
-import playn.core.Image;
 
-import static org.mockito.Mockito.mock;
-
-public class EmployeeTest {
-
-    @Test
-    public void testMocksEquality_differentMocksAreUnequal() {
-        Object object1 = mock(Object.class);
-        Object object2 = mock(Object.class);
-        new EqualsTester()
-                .addEqualityGroup(object1)
-                .addEqualityGroup(object2)
-                .testEquals();
-    }
+public class EmployeeProfileTest {
 
     @Test
     public void testEquals() {
-        EmployeeProfile profile1 = mock(EmployeeProfile.class);
-        Image image1 = mock(Image.class);
-        Employee e1 = new Employee(profile1, image1);
-        Employee e1Duplicate = new Employee(profile1, image1);
-        Employee e2 = new Employee(mock(EmployeeProfile.class), mock(Image.class));
-        new EqualsTester()
-                .addEqualityGroup(e1, e1Duplicate)
-                .addEqualityGroup(e2)
+        EmployeeProfile bobRoss = EmployeeProfile.firstName("Bob").lastName("Ross").bio("Painter of happy little trees");
+        EmployeeProfile otherBobRoss = EmployeeProfile.firstName("Bob").lastName("Ross").bio("Painter of happy little trees");
+        EmployeeProfile billWatterson = EmployeeProfile.firstName("Bill").lastName("Watterson").bio("Comic creator extraordinaire");
+        EqualsTester equalsTester = new EqualsTester().addEqualityGroup(bobRoss, otherBobRoss)
+                .addEqualityGroup(billWatterson)
                 .testEquals();
     }
-
-
 }
