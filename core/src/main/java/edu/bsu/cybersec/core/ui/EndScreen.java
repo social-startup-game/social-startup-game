@@ -62,10 +62,13 @@ public class EndScreen extends ScreenStack.UIScreen {
         root.add(new Label(outcomeText).setStyles(Style.COLOR.is(GameColors.HUNTER_GREEN)),
                 BossAtDeskLabelFactory.create(company.boss.image),
                 new Button("Back to Start Screen").onClick(new Slot<Button>() {
-
                     @Override
                     public void onEmit(Button button) {
-                        screenStack.remove(EndScreen.this, screenStack.slide().right());
+                        if (!SimGame.game.config.skipIntro()) {
+                            screenStack.remove(EndScreen.this, screenStack.slide().right());
+                        } else {
+                            screenStack.push(new StartingScreen(screenStack), screenStack.slide().right());
+                        }
                     }
                 }));
     }
