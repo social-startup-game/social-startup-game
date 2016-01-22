@@ -28,43 +28,63 @@ import playn.core.Keyboard;
 import react.SignalView;
 import tripleplay.entity.Entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class DebugMode implements SignalView.Listener<Keyboard.Event> {
 
-    private final ImmutableMap<Key, ? extends Runnable> actionMap = ImmutableMap.of(
-            Key.E, new Runnable() {
-                @Override
-                public void run() {
-                    gameWorld.exploitSystem.addExploit();
-                }
-            },
-            Key.S, new Runnable() {
-                @Override
-                public void run() {
-                    runEvent(new ScriptKiddieAttackEvent(gameWorld));
-                }
-            },
-            Key.C, new Runnable() {
-                @Override
-                public void run() {
-                    runEvent(new SecurityConferenceEvent(gameWorld));
-                }
-            },
-            Key.I, new Runnable() {
-                @Override
-                public void run() {
-                    runEvent(new InputSanitizationEvent(gameWorld));
-                }
-            },
-            Key.END, new Runnable() {
-                @Override
-                public void run() {
-                    gameWorld.onGameEnd.emit();
-                }
-            }
-    );
 
+    private final ImmutableMap.Builder<Key, Runnable> builder = ImmutableMap.builder();
+
+    {
+        builder
+                .put(Key.E, new Runnable() {
+                    @Override
+                    public void run() {
+                        gameWorld.exploitSystem.addExploit();
+                    }
+                })
+                .put(Key.S, new Runnable() {
+                    @Override
+                    public void run() {
+                        runEvent(new ScriptKiddieAttackEvent(gameWorld));
+                    }
+                })
+                .put(Key.C, new Runnable() {
+                    @Override
+                    public void run() {
+                        runEvent(new SecurityConferenceEvent(gameWorld));
+                    }
+                })
+                .put(Key.I, new Runnable() {
+                    @Override
+                    public void run() {
+                        runEvent(new InputSanitizationEvent(gameWorld));
+                    }
+                })
+                .put(Key.END, new Runnable() {
+                            @Override
+                            public void run() {
+                                gameWorld.onGameEnd.emit();
+                            }
+                        }
+                )
+                .put(Key.K2, new Runnable() {
+                    @Override
+                    public void run() {
+                        final float currentScale = gameWorld.gameTimeSystem.scale().get();
+                        gameWorld.gameTimeSystem.scale().update(currentScale * 2f);
+                    }
+                })
+                .put(Key.K1, new Runnable() {
+                    @Override
+                    public void run() {
+                        final float currentScale = gameWorld.gameTimeSystem.scale().get();
+                        gameWorld.gameTimeSystem.scale().update(currentScale / 2f);
+                    }
+                });
+    }
+
+    private final ImmutableMap<Key, ? extends Runnable> actionMap = builder.build();
     private final GameWorld.Systematized gameWorld;
 
     public DebugMode(GameWorld.Systematized gameWorld) {
