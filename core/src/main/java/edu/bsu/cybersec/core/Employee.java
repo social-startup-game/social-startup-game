@@ -19,6 +19,8 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import playn.core.Image;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -30,5 +32,29 @@ public class Employee {
     Employee(EmployeeProfile profile, Image image) {
         this.profile = checkNotNull(profile);
         this.image = checkNotNull(image);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("profile", profile)
+                .add("image", image)
+                .toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(profile, image);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Employee) {
+            Employee other = (Employee) obj;
+            return Objects.equal(this.profile, other.profile)
+                    && Objects.equal(this.image, other.image);
+        } else {
+            return false;
+        }
     }
 }

@@ -26,7 +26,6 @@ import edu.bsu.cybersec.core.ui.GameAssets;
 import playn.core.Image;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -81,17 +80,18 @@ public class EmployeePool {
         return new EmployeePool(cache);
     }
 
-    private final GameAssets cache;
+    private final ImmutableMap<EmployeeProfile, Image> map;
+    private final List<EmployeeProfile> employeePool;
 
     private EmployeePool(GameAssets cache) {
-        this.cache = checkNotNull(cache);
+        checkNotNull(cache);
+        this.map = makeDeveloperMap(cache);
+        employeePool = Lists.newLinkedList(map.keySet());
     }
 
     public Set<Employee> recruit(int numberOfEmployees) {
         checkArgument(numberOfEmployees >= 0);
-        Map<EmployeeProfile, Image> map = makeDeveloperMap(cache);
         Set<Employee> result = Sets.newHashSet();
-        List<EmployeeProfile> employeePool = Lists.newLinkedList(map.keySet());
         for (int i = 0; i < numberOfEmployees; i++) {
             EmployeeProfile profile = employeePool.remove(RANDOM.nextInt(employeePool.size()));
             result.add(new Employee(profile, map.get(profile)));
@@ -101,6 +101,10 @@ public class EmployeePool {
 
     public Employee removeOne() {
         return recruit(1).iterator().next();
+    }
+
+    public boolean isEmpty() {
+        return employeePool.isEmpty();
     }
 
 }

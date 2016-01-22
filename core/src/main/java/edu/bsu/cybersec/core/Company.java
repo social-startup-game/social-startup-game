@@ -21,6 +21,7 @@ package edu.bsu.cybersec.core;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -50,7 +51,20 @@ public class Company {
     }
 
     private Company(Employee boss, Set<Employee> recruits) {
+        checkArgument(!recruits.contains(boss), "The boss cannot also be a worker");
         this.boss = checkNotNull(boss);
         employees = ImmutableList.copyOf(recruits);
+        if (SimGame.game != null) {
+            SimGame.game.plat.log().debug("Boss is " + boss.profile.firstName + "; workers are " + asString(employees));
+        }
+    }
+
+    private String asString(List<Employee> employees) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Employee e : employees) {
+            stringBuilder.append(e.profile.firstName);
+            stringBuilder.append(", ");
+        }
+        return stringBuilder.toString();
     }
 }

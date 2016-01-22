@@ -19,10 +19,12 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -67,6 +69,34 @@ public class EmployeeProfile {
         this.lastName = importer.lastName;
         this.credentials = ImmutableList.copyOf(importer.credentials);
         this.bio = importer.bio;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("credentials", credentials)
+                .add("bio", bio)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EmployeeProfile) {
+            EmployeeProfile other = (EmployeeProfile) obj;
+            return Objects.equals(this.firstName, other.firstName)
+                    && Objects.equals(this.lastName, other.lastName)
+                    && Objects.equals(this.bio, other.bio)
+                    && Objects.equals(this.credentials, other.credentials);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, bio, credentials);
     }
 
     public static Builder firstName(String firstName) {

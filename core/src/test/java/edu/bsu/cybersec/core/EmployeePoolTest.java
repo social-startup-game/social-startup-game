@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core;
 
+import com.google.common.collect.Sets;
 import edu.bsu.cybersec.core.ui.GameAssets;
 import org.junit.Test;
 import playn.core.Image;
@@ -34,15 +35,34 @@ public final class EmployeePoolTest {
 
     private static final int TIMES_TO_RUN_PROBABLISTIC_TEST = 50;
 
+    private EmployeePool pool;
+
     @Test
     public void testBossIsNotAnEmployee() {
         for (int i = 0; i < TIMES_TO_RUN_PROBABLISTIC_TEST; i++) {
-            GameAssets assets = mock(GameAssets.class);
-            when(assets.getImage(any(GameAssets.ImageKey.class))).thenReturn(mock(Image.class));
-            EmployeePool pool = EmployeePool.create(assets);
+            givenAFreshEmployeePool();
             Employee boss = pool.removeOne();
             Set<Employee> recruits = pool.recruit(3);
             assertFalse(recruits.contains(boss));
         }
+    }
+
+    @Test
+    public void testRecruitCannotYieldRepeatResults() {
+        for (int i = 0; i < TIMES_TO_RUN_PROBABLISTIC_TEST; i++) {
+            givenAFreshEmployeePool();
+            Set<Employee> recruits = Sets.newHashSet();
+            while (!pool.isEmpty()) {
+                Employee newRecruit = pool.recruit(1).iterator().next();
+                assertFalse(recruits.contains(newRecruit));
+                recruits.add(newRecruit);
+            }
+        }
+    }
+
+    private void givenAFreshEmployeePool() {
+        GameAssets assets = mock(GameAssets.class);
+        when(assets.getImage(any(GameAssets.ImageKey.class))).thenReturn(mock(Image.class));
+        pool = EmployeePool.create(assets);
     }
 }
