@@ -22,10 +22,11 @@ package edu.bsu.cybersec.core.narrative;
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.SimGame;
 
 import java.util.List;
 
-public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
+public class DataStolenEvent extends NarrativeEvent {
 
     private static final int HOURS_UNTIL_LOSS_ON_NOTIFY = 1;
     private static final float PERCENT_LOSS_ON_NOTIFY = 0.05f;
@@ -33,8 +34,9 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
     private static final float PERCENT_LOSS_ON_IGNORE = 0.50f;
 
 
-    public DataStolenNotifyChoiceEvent(GameWorld world) {
+    public DataStolenEvent(GameWorld world) {
         super(world);
+        eventName = "DataStolenEvent";
     }
 
     @Override
@@ -48,13 +50,16 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
     }
 
     private class NotifyOption extends Option.Terminal {
+        private final String text = "Notify our users";
+
         @Override
         public String text() {
-            return "Notify our users";
+            return text;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             after(HOURS_UNTIL_LOSS_ON_NOTIFY).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_NOTIFY) {
                 @Override
                 public String text() {
@@ -65,13 +70,16 @@ public class DataStolenNotifyChoiceEvent extends NarrativeEvent {
     }
 
     private class IgnoreOption extends Option.Terminal {
+        private final String text = "Ignore It";
+
         @Override
         public String text() {
-            return "Ignore it";
+            return text;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             after(HOURS_UNTIL_DISCOVERY_AFTER_IGNORE).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
                 @Override
                 public String text() {

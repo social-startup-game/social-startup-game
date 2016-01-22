@@ -46,11 +46,10 @@ public final class DefaultNarrativeScript {
     }
 
     private static List<NarrativeEvent> makeEventListIn(GameWorld world) {
-
         List<NarrativeEvent> list = Lists.newArrayList();
         list.add(new ScriptKiddieAttackEvent(world));
         list.add(new SecurityConferenceEvent(world));
-        list.add(new DataStolenNotifyChoiceEvent(world));
+        list.add(new DataStolenEvent(world));
         list.add(new InputSanitizationEvent(world));
         list.add(new DDOSEvent(world));
         list.add(new ChildAdviceEvent(world));

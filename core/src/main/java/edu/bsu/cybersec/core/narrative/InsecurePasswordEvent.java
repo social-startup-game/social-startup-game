@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.narrative;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.RandomInRange;
+import edu.bsu.cybersec.core.SimGame;
 
 public class InsecurePasswordEvent extends NarrativeEvent {
     private int HOURS_UNTIL_NOTIFY_ON_TRAIN = 8;
@@ -30,6 +31,7 @@ public class InsecurePasswordEvent extends NarrativeEvent {
 
     public InsecurePasswordEvent(GameWorld world) {
         super(world);
+        eventName = "InsecurePasswordEvent";
     }
 
     @Override
@@ -39,14 +41,16 @@ public class InsecurePasswordEvent extends NarrativeEvent {
     }
 
     class TrainingOption implements Option {
+        private final String text = "Train staff on secure passwords";
 
         @Override
         public String text() {
-            return "Train Staff on Secure Passwords";
+            return text;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             after(HOURS_UNTIL_NOTIFY_ON_TRAIN).post(new AbstractUserLossEvent(world, PERCENT_LOSS) {
                 @Override
                 public String text() {
@@ -68,15 +72,17 @@ public class InsecurePasswordEvent extends NarrativeEvent {
     }
 
     class IgnoreOption implements Option {
+        private final String text = "Just change his password";
 
         @Override
         public String text() {
-            return "Just Change His Password";
+            return text;
         }
 
         @Override
         public void onSelected() {
-            after(HOURS_UNTIL_NOTIFY_ON_TRAIN).post(new AbstractUserLossEvent(world, PERCENT_LOSS) {
+            SimGame.game.plat.log().info(eventName + ": " + text);
+            after(HOURS_UNTIL_NOTIFY_ON_CHANGE_PASSWORD).post(new AbstractUserLossEvent(world, PERCENT_LOSS) {
                 @Override
                 public String text() {
                     return loss + " users have left our service after hearing about how our employee's actions compromised thier private information." +

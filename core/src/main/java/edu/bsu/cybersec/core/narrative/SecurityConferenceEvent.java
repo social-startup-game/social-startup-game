@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.SimGame;
 import tripleplay.entity.Entity;
 
 import java.util.Collection;
@@ -35,6 +36,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
 
     public SecurityConferenceEvent(GameWorld world) {
         super(world);
+        eventName = "SecurityConferenceEvent";
     }
 
     @Override
@@ -56,18 +58,21 @@ public class SecurityConferenceEvent extends NarrativeEvent {
 
     private final class SendWorkerToConferenceOption extends Option.Terminal {
         private final int id;
+        private final String name;
 
         SendWorkerToConferenceOption(int id) {
             this.id = id;
+            this.name = world.profile.get(id).firstName;
         }
 
         @Override
         public String text() {
-            return world.profile.get(id).firstName;
+            return name;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + name);
             final Entity task = world.create(true).add(world.name, world.owner, world.secondsRemaining);
             world.name.set(task.id, "At conference");
             world.owner.set(task.id, id);

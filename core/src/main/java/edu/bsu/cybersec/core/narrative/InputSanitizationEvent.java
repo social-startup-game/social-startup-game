@@ -20,10 +20,7 @@
 package edu.bsu.cybersec.core.narrative;
 
 import com.google.common.collect.Lists;
-import edu.bsu.cybersec.core.ClockUtils;
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.TaskFlags;
+import edu.bsu.cybersec.core.*;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -35,6 +32,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
     public InputSanitizationEvent(GameWorld world) {
         super(world);
+        eventName = "InputSanitizationEvent";
     }
 
     @Override
@@ -68,6 +66,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             assignEmployee();
         }
 
@@ -100,13 +99,15 @@ public class InputSanitizationEvent extends NarrativeEvent {
     }
 
     private final class IgnoreOption extends Option.Terminal {
+        private final String text = "Nobody";
         @Override
         public String text() {
-            return "Nobody";
+            return text;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             after(HOURS_FOR_SANITIZATION).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
                 @Override
                 public String text() {

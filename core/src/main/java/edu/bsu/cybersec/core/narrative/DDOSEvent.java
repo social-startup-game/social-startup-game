@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.narrative;
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.SimGame;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class DDOSEvent extends NarrativeEvent {
 
     public DDOSEvent(GameWorld world) {
         super(world);
+        eventName = "DDOSEvent";
     }
 
     @Override
@@ -50,13 +52,16 @@ public class DDOSEvent extends NarrativeEvent {
     }
 
     private class PressReleaseOption extends Option.Terminal {
+        private final String text = "Press Release";
+
         @Override
         public String text() {
-            return "PressRelease";
+            return text;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             after(HOURS_UNTIL_NOTIFY).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
@@ -73,13 +78,16 @@ public class DDOSEvent extends NarrativeEvent {
     }
 
     private class IgnoreOption extends Option.Terminal {
+        private final String text = "Just Wait";
+
         @Override
         public String text() {
-            return "Just Wait";
+            return text;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + text);
             after(HOURS_UNTIL_NOTIFY).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
                 @Override
                 public String text() {

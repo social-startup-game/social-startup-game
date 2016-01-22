@@ -31,6 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 public abstract class NarrativeEvent implements Runnable {
+    protected String eventName;
 
     public interface Option {
         String text();

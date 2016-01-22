@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.narrative;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.SimGame;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class ChildAdviceEvent extends NarrativeEvent {
 
     public ChildAdviceEvent(GameWorld world) {
         super(world);
+        eventName = "ChildAdviceEvent";
         populateOptionsList();
     }
 
@@ -65,6 +67,7 @@ public class ChildAdviceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": " + major);
             after(4).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {

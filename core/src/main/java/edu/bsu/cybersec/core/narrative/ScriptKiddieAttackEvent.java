@@ -20,10 +20,7 @@
 package edu.bsu.cybersec.core.narrative;
 
 import com.google.common.collect.Lists;
-import edu.bsu.cybersec.core.ClockUtils;
-import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.TaskFlags;
+import edu.bsu.cybersec.core.*;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -40,6 +37,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
     public ScriptKiddieAttackEvent(GameWorld world) {
         super(world);
+        eventName = "ScriptKiddieAttackEvent";
     }
 
     @Override
@@ -58,20 +56,21 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
     }
 
     final class RetaliateOption extends Option.Terminal {
-
         private final int selectedWorkerId;
-
+        private final String selectedWorkerName;
         public RetaliateOption(int id) {
             this.selectedWorkerId = id;
+            selectedWorkerName = world.profile.get(selectedWorkerId).firstName;
         }
 
         @Override
         public String text() {
-            return world.profile.get(selectedWorkerId).firstName;
+            return selectedWorkerName;
         }
 
         @Override
         public void onSelected() {
+            SimGame.game.plat.log().info(eventName + ": Retaliated using " + selectedWorkerName);
             assignRetaliation();
         }
 
