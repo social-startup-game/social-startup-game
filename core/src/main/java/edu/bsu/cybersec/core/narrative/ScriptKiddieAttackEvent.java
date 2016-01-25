@@ -20,7 +20,10 @@
 package edu.bsu.cybersec.core.narrative;
 
 import com.google.common.collect.Lists;
-import edu.bsu.cybersec.core.*;
+import edu.bsu.cybersec.core.ClockUtils;
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.TaskFlags;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -70,7 +73,6 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": Retaliated using " + selectedWorkerName);
             assignRetaliation();
         }
 
