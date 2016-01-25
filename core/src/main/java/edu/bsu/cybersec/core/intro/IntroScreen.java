@@ -36,7 +36,7 @@ import tripleplay.util.Colors;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class IntroScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;

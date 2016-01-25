@@ -19,32 +19,28 @@
 
 package edu.bsu.cybersec.html;
 
+import edu.bsu.cybersec.core.LogUtils;
 import playn.core.Log;
 
 public final class FirebaseLogCollector implements Log.Collector {
 
-    // The warnings being suppressed here are false positives, since this field is used in native Javascript.
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private final String record;
-
-    public FirebaseLogCollector() {
-        this.record = createGameRecord();
-    }
-
-    private native String createGameRecord()/*-{
-       return $wnd.firebaseRef.push();
-    }-*/;
-
     @Override
     public void logged(Log.Level level, String msg, Throwable e) {
         if (level == Log.Level.INFO) {
+            if (msg.equals(LogUtils.START_GAME_MESSAGE)) {
+                logStartNewGameSession();
+            }
             log(msg);
         }
     }
 
+    private native void logStartNewGameSession()/*-{
+        $wnd.gameRef = $wnd.firebaseRef.push();
+    }-*/;
+
     private native void log(String message)/*-{
-       var record = this.@edu.bsu.cybersec.html.FirebaseLogCollector::record;
-       record.push(
+       var target = ($wnd.gameRef === null) ? $wnd.firebaseRef : $wnd.gameRef;
+       target.push(
          {
            'timestamp' : new Date().getTime(),
            'message' : message

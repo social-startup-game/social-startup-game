@@ -21,6 +21,7 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.EmployeePool;
+import edu.bsu.cybersec.core.LogUtils;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.intro.IntroScreen;
 import edu.bsu.cybersec.core.intro.Introduction;
@@ -33,7 +34,7 @@ import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
@@ -61,6 +62,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                         .onClick(new Slot<Button>() {
                             @Override
                             public void onEmit(Button button) {
+                                SimGame.game.plat.log().info(LogUtils.START_GAME_MESSAGE);
                                 disableButtons();
                                 Company company = Company.from(employeePool).withEmployees(3);
                                 Introduction intro = new Introduction(company.boss);

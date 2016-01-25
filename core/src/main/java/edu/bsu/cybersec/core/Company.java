@@ -24,8 +24,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class Company {
 
@@ -55,7 +54,7 @@ public class Company {
         this.boss = checkNotNull(boss);
         employees = ImmutableList.copyOf(recruits);
         if (SimGame.game != null) {
-            SimGame.game.plat.log().debug("Boss is " + boss.profile.firstName + "; workers are " + asString(employees));
+            SimGame.game.plat.log().info("CEO is " + boss.profile.firstName + "; workers are " + asString(employees));
         }
     }
 

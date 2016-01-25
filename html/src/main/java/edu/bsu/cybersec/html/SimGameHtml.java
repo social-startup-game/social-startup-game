@@ -40,7 +40,6 @@ public class SimGameHtml implements EntryPoint {
         String logParameterValue = Window.Location.getParameter("log");
         if (logParameterValue != null && logParameterValue.equalsIgnoreCase("true")) {
             plat.log().setCollector(new FirebaseLogCollector());
-            plat.log().info("Game loaded.");
         }
     }
 }

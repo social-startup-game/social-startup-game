@@ -35,7 +35,7 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Layers;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private final GameWorld.Systematized gameWorld;
@@ -47,6 +47,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
     public GameScreen(final ScreenStack screenStack, Company company) {
         super(SimGame.game.plat);
+
         this.screenStack = checkNotNull(screenStack);
         new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
