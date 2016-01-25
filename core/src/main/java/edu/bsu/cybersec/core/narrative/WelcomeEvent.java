@@ -127,6 +127,11 @@ final class NextTutorialEvent extends NarrativeEvent {
     }
 
     @Override
+    public List<? extends Option> options() {
+        return ImmutableList.of(new Option.DoNothingOption("Ok"));
+    }
+
+    @Override
     public String text() {
         return "Developing features will attract new users. However, each feature also increases our exposure, meaning that it might be easier to be hacked. Keeping some workers maintaining our systems will limit our exposure."
                 + "\n\nI think that's everything you need to know. Good luck!";

@@ -19,10 +19,10 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.SimGame;
 
 import java.util.List;
 
@@ -31,7 +31,6 @@ public class ChildAdviceEvent extends NarrativeEvent {
 
     public ChildAdviceEvent(GameWorld world) {
         super(world);
-        eventName = "ChildAdviceEvent";
         populateOptionsList();
     }
 
@@ -58,6 +57,7 @@ public class ChildAdviceEvent extends NarrativeEvent {
 
         public majorOption(String major) {
             this.major = major;
+            setLogMessage(ChildAdviceEvent.class.getCanonicalName() + ": " + major);
         }
 
         @Override
@@ -67,7 +67,7 @@ public class ChildAdviceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + major);
+            super.onSelected();
             after(4).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
@@ -78,6 +78,11 @@ public class ChildAdviceEvent extends NarrativeEvent {
                 @Override
                 public void run() {
                     super.run();
+                }
+
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
                 }
             });
         }

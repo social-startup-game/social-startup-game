@@ -19,8 +19,12 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import edu.bsu.cybersec.core.*;
+import edu.bsu.cybersec.core.ClockUtils;
+import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.NarrativeEvent;
+import edu.bsu.cybersec.core.TaskFlags;
 import tripleplay.entity.Entity;
 
 import java.util.List;
@@ -32,7 +36,6 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
     public InputSanitizationEvent(GameWorld world) {
         super(world);
-        eventName = "InputSanitizationEvent";
     }
 
     @Override
@@ -56,17 +59,18 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
         public EmployeeAssignmentOption(int id) {
             this.id = id;
+            text = world.profile.get(id).firstName;
+            setLogMessage(InputSanitizationEvent.class.getCanonicalName() + ": " + text);
         }
 
         @Override
         public String text() {
-            text = world.profile.get(id).firstName;
             return text;
         }
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             assignEmployee();
         }
 
@@ -80,6 +84,11 @@ public class InputSanitizationEvent extends NarrativeEvent {
                 @Override
                 public void run() {
                     post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_SANITIZATION) {
+                        @Override
+                        public List<? extends Option> options() {
+                            return ImmutableList.of(new DoNothingOption("Ok"));
+                        }
+
                         @Override
                         public String text() {
                             return "You lost " + loss + " users, but have sanitized input and should not run into this problem again.";
@@ -100,6 +109,11 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
     private final class IgnoreOption extends Option.Terminal {
         private final String text = "Nobody";
+
+        public IgnoreOption() {
+            setLogMessage(InputSanitizationEvent.class.getCanonicalName() + ": " + text);
+        }
+
         @Override
         public String text() {
             return text;
@@ -107,8 +121,13 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_FOR_SANITIZATION).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return "You lost " + loss + " users. Unfortunately, you did not address this issue, and so may run into this problem again.";

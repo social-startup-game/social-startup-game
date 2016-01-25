@@ -21,7 +21,6 @@ package edu.bsu.cybersec.core;
 
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import tripleplay.entity.Entity;
 
 import java.util.Collection;
@@ -31,21 +30,30 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 public abstract class NarrativeEvent implements Runnable {
-    protected String eventName;
+    public abstract static class Option {
+        private String logMessage;
 
-    public interface Option {
-        String text();
+        abstract public String text();
 
-        void onSelected();
+        public Option setLogMessage(String logMessage) {
+            this.logMessage = logMessage;
+            return this;
+        }
 
-        boolean hasSubsequentPage();
+        public void onSelected() {
+            if (SimGame.game != null && logMessage != null) {
+                SimGame.game.plat.log().info(logMessage);
+            }
+        }
+
+        public abstract boolean hasSubsequentPage();
 
         /**
          * @throws UnsupportedOperationException if {@link #hasSubsequentPage()} is false
          */
-        NarrativeEvent subsequentPage();
+        public abstract NarrativeEvent subsequentPage();
 
-        abstract class Terminal implements Option {
+        public abstract static class Terminal extends Option {
             @Override
             public final boolean hasSubsequentPage() {
                 return false;
@@ -57,7 +65,7 @@ public abstract class NarrativeEvent implements Runnable {
             }
         }
 
-        final class DoNothingOption extends Terminal {
+        public static final class DoNothingOption extends Terminal {
             private final String text;
 
             public DoNothingOption(String text) {
@@ -76,8 +84,6 @@ public abstract class NarrativeEvent implements Runnable {
         }
     }
 
-    private static final List<? extends Option> ONLY_OK_OPTION = ImmutableList.of(new Option.DoNothingOption("OK"));
-
     protected final GameWorld world;
 
     public NarrativeEvent(GameWorld world) {
@@ -89,9 +95,7 @@ public abstract class NarrativeEvent implements Runnable {
         world.onNarrativeEvent.emit(this);
     }
 
-    public List<? extends Option> options() {
-        return ONLY_OK_OPTION;
-    }
+    public abstract List<? extends Option> options();
 
     public abstract String text();
 

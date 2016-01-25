@@ -22,7 +22,6 @@ package edu.bsu.cybersec.core.narrative;
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.SimGame;
 
 import java.util.List;
 
@@ -36,7 +35,6 @@ public class DataStolenEvent extends NarrativeEvent {
 
     public DataStolenEvent(GameWorld world) {
         super(world);
-        eventName = "DataStolenEvent";
     }
 
     @Override
@@ -52,6 +50,10 @@ public class DataStolenEvent extends NarrativeEvent {
     private class NotifyOption extends Option.Terminal {
         private final String text = "Notify our users";
 
+        NotifyOption() {
+            setLogMessage(DataStolenEvent.class.getCanonicalName() + ": " + text);
+        }
+
         @Override
         public String text() {
             return text;
@@ -59,8 +61,13 @@ public class DataStolenEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_UNTIL_LOSS_ON_NOTIFY).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_NOTIFY) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return loss + " users have left our service after hearing about how hackers stole some of their personal information.";
@@ -79,8 +86,13 @@ public class DataStolenEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_UNTIL_DISCOVERY_AFTER_IGNORE).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return "An independent security expert discovered that you ignored a data breach and has informed the press! " + loss + " users have left your service after finding out that you did not notify them of the problem.";

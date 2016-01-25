@@ -19,19 +19,23 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 import edu.bsu.cybersec.core.RandomInRange;
-import edu.bsu.cybersec.core.SimGame;
+
+import java.util.List;
 
 public class InsecurePasswordEvent extends NarrativeEvent {
-    private int HOURS_UNTIL_NOTIFY_ON_TRAIN = 8;
-    private int HOURS_UNTIL_NOTIFY_ON_CHANGE_PASSWORD = 2;
     private float PERCENT_LOSS = 0.05f;
 
     public InsecurePasswordEvent(GameWorld world) {
         super(world);
-        eventName = "InsecurePasswordEvent";
+    }
+
+    @Override
+    public List<? extends Option> options() {
+        return ImmutableList.of(new TrainingOption(), new IgnoreOption());
     }
 
     @Override
@@ -40,8 +44,13 @@ public class InsecurePasswordEvent extends NarrativeEvent {
                 "What would you like to do?";
     }
 
-    class TrainingOption implements Option {
+    class TrainingOption extends Option.Terminal {
         private final String text = "Train staff on secure passwords";
+        private int HOURS_UNTIL_NOTIFY_ON_TRAIN = 8;
+
+        public TrainingOption() {
+            setLogMessage(InsecurePasswordEvent.class.getCanonicalName() + ": " + text);
+        }
 
         @Override
         public String text() {
@@ -50,8 +59,13 @@ public class InsecurePasswordEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_UNTIL_NOTIFY_ON_TRAIN).post(new AbstractUserLossEvent(world, PERCENT_LOSS) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return loss + " users have left our service after hearing about how our employee's actions compromised thier private information." +
@@ -59,20 +73,15 @@ public class InsecurePasswordEvent extends NarrativeEvent {
                 }
             });
         }
-
-        @Override
-        public boolean hasSubsequentPage() {
-            return false;
-        }
-
-        @Override
-        public NarrativeEvent subsequentPage() {
-            return null;
-        }
     }
 
-    class IgnoreOption implements Option {
+    class IgnoreOption extends Option.Terminal {
         private final String text = "Just change his password";
+        private final int HOURS_UNTIL_NOTIFY_ON_CHANGE_PASSWORD = 2;
+
+        public IgnoreOption() {
+            setLogMessage(InsecurePasswordEvent.class.getCanonicalName() + ": " + text);
+        }
 
         @Override
         public String text() {
@@ -81,8 +90,13 @@ public class InsecurePasswordEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_UNTIL_NOTIFY_ON_CHANGE_PASSWORD).post(new AbstractUserLossEvent(world, PERCENT_LOSS) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return loss + " users have left our service after hearing about how our employee's actions compromised thier private information." +
@@ -92,14 +106,5 @@ public class InsecurePasswordEvent extends NarrativeEvent {
             after(new RandomInRange(8, 48).nextInt()).post(new InsecurePasswordEvent(world));
         }
 
-        @Override
-        public boolean hasSubsequentPage() {
-            return false;
-        }
-
-        @Override
-        public NarrativeEvent subsequentPage() {
-            return null;
-        }
     }
 }

@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
@@ -40,7 +41,6 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
     public ScriptKiddieAttackEvent(GameWorld world) {
         super(world);
-        eventName = "ScriptKiddieAttackEvent";
     }
 
     @Override
@@ -73,6 +73,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
+            super.onSelected();
             assignRetaliation();
         }
 
@@ -100,6 +101,11 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                             taskEntity.close();
                             registerRepercussion();
                         }
+
+                        @Override
+                        public List<? extends Option> options() {
+                            return ImmutableList.of(new DoNothingOption("Ok"));
+                        }
                     });
                 }
             });
@@ -108,6 +114,11 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
         private void registerRepercussion() {
             after(HOURS_UNTIL_REPERCUSSION).post(new AbstractUserLossEvent(world, LOSS_PERCENT) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return "Not only was having your employee retaliate unsuccessful, it was illegal! The FBI will be looking in to this...\n\n You lost "

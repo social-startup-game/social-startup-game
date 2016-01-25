@@ -22,7 +22,6 @@ package edu.bsu.cybersec.core.narrative;
 import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.SimGame;
 
 import java.util.List;
 
@@ -32,7 +31,6 @@ public class DDOSEvent extends NarrativeEvent {
 
     public DDOSEvent(GameWorld world) {
         super(world);
-        eventName = "DDOSEvent";
     }
 
     @Override
@@ -54,6 +52,10 @@ public class DDOSEvent extends NarrativeEvent {
     private class PressReleaseOption extends Option.Terminal {
         private final String text = "Press Release";
 
+        public PressReleaseOption() {
+            setLogMessage(DDOSEvent.class.getCanonicalName() + ": " + text);
+        }
+
         @Override
         public String text() {
             return text;
@@ -61,8 +63,13 @@ public class DDOSEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_UNTIL_NOTIFY).post(new NarrativeEvent(world) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return "You gave a press conference about the incident and how the company is working to get servers back up. You lost no users, and, after " + HOURS_UNTIL_NOTIFY + " hours, your servers are back online!";
@@ -80,6 +87,10 @@ public class DDOSEvent extends NarrativeEvent {
     private class IgnoreOption extends Option.Terminal {
         private final String text = "Just Wait";
 
+        public IgnoreOption() {
+            setLogMessage(DDOSEvent.class.getCanonicalName() + ": " + text);
+        }
+
         @Override
         public String text() {
             return text;
@@ -87,8 +98,13 @@ public class DDOSEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + text);
+            super.onSelected();
             after(HOURS_UNTIL_NOTIFY).post(new AbstractUserLossEvent(world, PERCENT_LOSS_ON_IGNORE) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+                }
+
                 @Override
                 public String text() {
                     return "After " + HOURS_UNTIL_NOTIFY + " hours, your servers are back up! Unfortunately, " + loss + " users have left your service because they got frustrated about your servers being down for no reason.";

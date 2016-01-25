@@ -19,11 +19,11 @@
 
 package edu.bsu.cybersec.core.narrative;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.ClockUtils;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
-import edu.bsu.cybersec.core.SimGame;
 import tripleplay.entity.Entity;
 
 import java.util.Collection;
@@ -36,7 +36,6 @@ public class SecurityConferenceEvent extends NarrativeEvent {
 
     public SecurityConferenceEvent(GameWorld world) {
         super(world);
-        eventName = "SecurityConferenceEvent";
     }
 
     @Override
@@ -51,7 +50,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
         for (Entity e : availableWorkers) {
             result.add(new SendWorkerToConferenceOption(e.id));
         }
-        result.add(new Option.DoNothingOption("No one"));
+        result.add(new Option.DoNothingOption("Nobody"));
         return result;
     }
 
@@ -63,6 +62,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
         SendWorkerToConferenceOption(int id) {
             this.id = id;
             this.name = world.profile.get(id).firstName;
+            setLogMessage(SecurityConferenceEvent.class.getCanonicalName() + ": " + name);
         }
 
         @Override
@@ -72,7 +72,7 @@ public class SecurityConferenceEvent extends NarrativeEvent {
 
         @Override
         public void onSelected() {
-            SimGame.game.plat.log().info(eventName + ": " + name);
+            super.onSelected();
             final Entity task = world.create(true).add(world.name, world.owner, world.secondsRemaining);
             world.name.set(task.id, "At conference");
             world.owner.set(task.id, id);
@@ -80,6 +80,12 @@ public class SecurityConferenceEvent extends NarrativeEvent {
             world.task.set(id, task.id);
 
             after(CONFERENCE_DURATION).post(new NarrativeEvent(world) {
+                @Override
+                public List<? extends Option> options() {
+                    return ImmutableList.of(new DoNothingOption("Ok"));
+
+                }
+
                 @Override
                 public String text() {
                     return world.profile.get(id).firstName + " has returned from the conference with greatly increased maintenance skill!";
