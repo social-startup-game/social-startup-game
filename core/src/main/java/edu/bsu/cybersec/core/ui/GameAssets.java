@@ -69,7 +69,8 @@ public class GameAssets {
         VANI("Vani.png"),
         ABDULLAH("Abdullah.png"),
         JANINE("Janine.png"),
-        IVAR("Ivar.png");
+        IVAR("Ivar.png"),
+        BRUCE("Bruce.png");
 
         private final String path;
 

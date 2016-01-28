@@ -73,6 +73,10 @@ public class EmployeePool {
                         .withDegree("Masters in Electrical Engineering").from("Uppsala University")
                         .bio("Ivar teaches kids how to build simple robots as a volunteer in a local school."),
                 assets.getImage(GameAssets.ImageKey.IVAR));
+        builder.put(EmployeeProfile.firstName("Bruce").lastName("Powers")
+                        .withDegree("Bachelors in Computer Science").from("Ball State University")
+                        .bio("Bruce was recently married and enjoys going to the gym and watching documentaries about history."),
+                assets.getImage(GameAssets.ImageKey.BRUCE));
         return builder.build();
     }
 
