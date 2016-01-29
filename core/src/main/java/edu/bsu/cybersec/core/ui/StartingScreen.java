@@ -65,7 +65,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                                 SimGame.game.plat.log().info(LogUtils.START_GAME_MESSAGE);
                                 disableButtons();
                                 Company company = Company.from(employeePool).withEmployees(3);
-                                Introduction intro = new Introduction(company.boss);
+                                Introduction intro = new Introduction(company);
                                 screenStack.push(new IntroScreen(screenStack, intro.createSlides(), company), screenStack.slide());
                             }
                         }),

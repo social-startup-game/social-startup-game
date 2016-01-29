@@ -30,7 +30,7 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class EndScreen extends ScreenStack.UIScreen {
 
@@ -74,7 +74,7 @@ public class EndScreen extends ScreenStack.UIScreen {
     }
 
     private String determineOutcomeText() {
-        if (gameWorld.users.get() > 100000) {
+        if (company.goal.isMet(gameWorld.users.get().intValue())) {
             return "You were succesful, and get to keep your job!";
         } else {
             return "You made poor security decisions. You're fired.";
