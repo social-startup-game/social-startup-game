@@ -324,6 +324,7 @@ public class MainUIGroup extends Group {
                             button.text.update(menuItem.text.get());
                             int assignedTaskId = ((TaskItem) menuItem).taskId;
                             gameWorld.task.set(worker.id, assignedTaskId);
+                            SimGame.game.plat.log().info("Task Button Clicked, task id is " + assignedTaskId);
                             restoreGameTimeSystemToPreviousState();
                         }
 
