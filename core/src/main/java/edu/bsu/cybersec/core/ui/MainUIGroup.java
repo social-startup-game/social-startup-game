@@ -172,8 +172,10 @@ public class MainUIGroup extends Group {
                         @Override
                         public void onEmit(ClickableLabel event) {
                             if (focus.get() != EmployeeView.this) {
+                                SimGame.game.plat.log().info("Clicked Unfocused Employee Group.");
                                 focus.update(EmployeeView.this);
                             } else {
+                                SimGame.game.plat.log().info("Clicked Focused Employee Group.");
                                 focus.update(null);
                             }
                         }
