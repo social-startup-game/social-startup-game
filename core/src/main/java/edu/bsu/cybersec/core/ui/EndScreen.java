@@ -30,20 +30,29 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class EndScreen extends ScreenStack.UIScreen {
 
     private final GameWorld gameWorld;
     private final ScreenStack screenStack;
     private final Company company;
+    private final int finalUserAmount;
 
     public EndScreen(ScreenStack screenStack, GameWorld gameWorld, Company company) {
         super(SimGame.game.plat);
         this.gameWorld = gameWorld;
         this.screenStack = screenStack;
         this.company = checkNotNull(company);
+        finalUserAmount = gameWorld.users.get().intValue();
+        logEndGameStats();
         new Pointer(game().plat, layer, true);
+    }
+
+    private void logEndGameStats() {
+        float exposure = gameWorld.exposure.get();
+        SimGame.game.plat.log().info("Final Number of Users: " + finalUserAmount);
+        SimGame.game.plat.log().info("Final Expsoure Value: " + exposure);
     }
 
     @Override
@@ -75,9 +84,11 @@ public class EndScreen extends ScreenStack.UIScreen {
 
     private String determineOutcomeText() {
         if (company.goal.isMet(gameWorld.users.get().intValue())) {
-            return "You were succesful, and get to keep your job!";
+            return "You needed " + company.goal.minimum + "users. You had "
+                    + finalUserAmount + " users. You were succesful, and get to keep your job!";
         } else {
-            return "You made poor security decisions. You're fired.";
+            return "You needed " + company.goal.minimum + "users. You had "
+                    + finalUserAmount + " users. You made poor security decisions. You're fired.";
         }
     }
 
