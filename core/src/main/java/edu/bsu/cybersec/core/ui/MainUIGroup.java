@@ -172,10 +172,10 @@ public class MainUIGroup extends Group {
                         @Override
                         public void onEmit(ClickableLabel event) {
                             if (focus.get() != EmployeeView.this) {
-                                SimGame.game.plat.log().info("Clicked Unfocused Employee Group.");
+                                SimGame.game.plat.log().info("Expanded: " + gameWorld.profile.get(id).firstName);
                                 focus.update(EmployeeView.this);
                             } else {
-                                SimGame.game.plat.log().info("Clicked Focused Employee Group.");
+                                SimGame.game.plat.log().info("Collapsed: " + gameWorld.profile.get(id).firstName);
                                 focus.update(null);
                             }
                         }
@@ -324,7 +324,7 @@ public class MainUIGroup extends Group {
                             button.text.update(menuItem.text.get());
                             int assignedTaskId = ((TaskItem) menuItem).taskId;
                             gameWorld.task.set(worker.id, assignedTaskId);
-                            SimGame.game.plat.log().info("Task Button Clicked, task id is " + assignedTaskId);
+                            SimGame.game.plat.log().info(gameWorld.profile.get(worker.id).firstName + " task changed to " + gameWorld.name.get(assignedTaskId));
                             restoreGameTimeSystemToPreviousState();
                         }
 
