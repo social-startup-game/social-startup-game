@@ -17,9 +17,12 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core.ui;
+package edu.bsu.cybersec.core.study;
 
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.ui.GameColors;
+import edu.bsu.cybersec.core.ui.SimGameStyle;
+import edu.bsu.cybersec.core.ui.StartingScreen;
 import playn.core.Game;
 import playn.scene.Pointer;
 import react.Slot;
