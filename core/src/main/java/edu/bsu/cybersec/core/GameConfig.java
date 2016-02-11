@@ -35,6 +35,8 @@ public interface GameConfig {
 
     boolean showConsentForm();
 
+    void enableGameplayLogging();
+
     abstract class Default implements GameConfig {
         @Override
         public boolean skipIntro() {

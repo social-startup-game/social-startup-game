@@ -22,13 +22,18 @@ package edu.bsu.cybersec.html;
 import com.google.gwt.user.client.Window;
 import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
+import playn.html.HtmlPlatform;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class HtmlGameConfig extends GameConfig.Default {
 
     private final GWTDateFormatter formatter = new GWTDateFormatter();
     private final boolean showConsent;
+    private final HtmlPlatform plat;
 
-    public HtmlGameConfig() {
+    public HtmlGameConfig(HtmlPlatform plat) {
+        this.plat = checkNotNull(plat);
         showConsent = Window.Location.getParameter("consent") != null;
     }
 
@@ -40,5 +45,10 @@ public final class HtmlGameConfig extends GameConfig.Default {
     @Override
     public boolean showConsentForm() {
         return showConsent;
+    }
+
+    @Override
+    public void enableGameplayLogging() {
+        plat.log().setCollector(new FirebaseLogCollector());
     }
 }

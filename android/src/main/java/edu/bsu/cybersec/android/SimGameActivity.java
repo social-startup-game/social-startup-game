@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -39,6 +39,11 @@ public class SimGameActivity extends GameActivity {
         @Override
         public PlatformSpecificDateFormatter dateFormatter() {
             return new AndroidDateFormatter();
+        }
+
+        @Override
+        public void enableGameplayLogging() {
+            platform().log().warn("Gameplay logging from Android is not yet supported");
         }
     }
 

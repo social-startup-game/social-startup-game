@@ -32,11 +32,12 @@ public class SimGameJava {
 
     private static final IDimension DEFAULT_SIZE = new Dimension(640, 960);
     private static Dimension size = new Dimension(DEFAULT_SIZE.width(), DEFAULT_SIZE.height());
-    private static JavaGameConfig gameConfig = new JavaGameConfig();
+    private static JavaGameConfig gameConfig;
 
     public static void main(String[] args) {
-        new Parser().process(args);
         LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
+        gameConfig = new JavaGameConfig(plat);
+        new Parser().process(args);
         registerFont(plat);
         new SimGame(plat, gameConfig);
         plat.start();

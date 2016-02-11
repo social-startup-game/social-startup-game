@@ -26,20 +26,27 @@ import playn.html.HtmlPlatform;
 
 public class SimGameHtml implements EntryPoint {
 
+    private HtmlGameConfig gameConfig;
+
     @Override
     public void onModuleLoad() {
         HtmlPlatform.Config config = new HtmlPlatform.Config();
         HtmlPlatform plat = new HtmlPlatform(config);
+        gameConfig = new HtmlGameConfig(plat);
         configureLogging(plat);
         plat.assets().setPathPrefix("sim/");
-        new SimGame(plat, new HtmlGameConfig());
+        new SimGame(plat, new HtmlGameConfig(plat));
         plat.start();
     }
 
+    /**
+     * If the 'log' HTTP parameter is specified, then enabled logging regardless of any other setting.
+     *
+     * @param plat platform
+     */
     private void configureLogging(HtmlPlatform plat) {
-        String logParameterValue = Window.Location.getParameter("log");
-        if (logParameterValue != null && logParameterValue.equalsIgnoreCase("true")) {
-            plat.log().setCollector(new FirebaseLogCollector());
+        if (Window.Location.getParameter("log") != null) {
+            gameConfig.enableGameplayLogging();
         }
     }
 }
