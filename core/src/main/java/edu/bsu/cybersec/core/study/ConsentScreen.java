@@ -68,7 +68,7 @@ public class ConsentScreen extends ScreenStack.UIScreen {
                                                 .onClick(new Slot<Button>() {
                                                     @Override
                                                     public void onEmit(Button button) {
-                                                        game.screenStack.replace(new StartingScreen(game.screenStack), game.screenStack.slide());
+                                                        game.screenStack.replace(new PreGameSurveyScreen(game), game.screenStack.slide());
                                                     }
                                                 }),
                                         new Button("Play without giving informed consent")

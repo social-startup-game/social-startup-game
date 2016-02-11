@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import com.google.common.base.MoreObjects;
+import pythagoras.f.IDimension;
 import pythagoras.f.IRectangle;
 import pythagoras.f.Rectangle;
 
@@ -49,6 +50,10 @@ public final class GameBounds {
 
     public float height() {
         return bounds.height();
+    }
+
+    public IDimension size() {
+        return bounds.size();
     }
 
     @Override
