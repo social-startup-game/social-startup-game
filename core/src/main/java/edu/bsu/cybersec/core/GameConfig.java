@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -33,6 +33,8 @@ public interface GameConfig {
 
     boolean muteMusic();
 
+    boolean showConsentForm();
+
     abstract class Default implements GameConfig {
         @Override
         public boolean skipIntro() {
@@ -51,6 +53,11 @@ public interface GameConfig {
 
         @Override
         public boolean muteMusic() {
+            return false;
+        }
+
+        @Override
+        public boolean showConsentForm() {
             return false;
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -153,7 +153,10 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     }
 
     private void startGame() {
-        if (((SimGame) game()).config.skipIntro()) {
+        SimGame game = (SimGame) game();
+        if (game.config.showConsentForm()) {
+            screenStack.replace(new ConsentScreen(game, screenStack), screenStack.slide());
+        } else if (game.config.skipIntro()) {
             Company company = Company.from(EmployeePool.create(SimGame.game.assets)).withEmployees(3);
             screenStack.replace(new GameScreen(screenStack, company),
                     screenStack.slide());

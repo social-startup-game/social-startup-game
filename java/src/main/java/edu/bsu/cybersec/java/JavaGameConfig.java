@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -30,6 +30,7 @@ public final class JavaGameConfig extends GameConfig.Default {
     Value<Boolean> skipWelcome = Value.create(super.skipWelcome());
     Value<Boolean> useNarrativeEvents = Value.create(super.useNarrativeEvents());
     Value<Boolean> muteMusic = Value.create(super.muteMusic());
+    Value<Boolean> showConsent = Value.create(super.showConsentForm());
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
@@ -54,5 +55,10 @@ public final class JavaGameConfig extends GameConfig.Default {
     @Override
     public boolean muteMusic() {
         return muteMusic.get();
+    }
+
+    @Override
+    public boolean showConsentForm() {
+        return showConsent.get();
     }
 }

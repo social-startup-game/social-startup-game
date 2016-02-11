@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -19,15 +19,26 @@
 
 package edu.bsu.cybersec.html;
 
+import com.google.gwt.user.client.Window;
 import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 
 public final class HtmlGameConfig extends GameConfig.Default {
 
     private final GWTDateFormatter formatter = new GWTDateFormatter();
+    private final boolean showConsent;
+
+    public HtmlGameConfig() {
+        showConsent = Window.Location.getParameter("consent") != null;
+    }
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
         return formatter;
+    }
+
+    @Override
+    public boolean showConsentForm() {
+        return showConsent;
     }
 }
