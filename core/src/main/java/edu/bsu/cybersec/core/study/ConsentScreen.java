@@ -38,7 +38,7 @@ public class ConsentScreen extends ScreenStack.UIScreen {
     private final SimGame game;
     private Label label = new Label("Loading consent form...");
 
-    public ConsentScreen(SimGame game, final ScreenStack screenStack) {
+    public ConsentScreen(final SimGame game) {
         super(game.plat);
         this.game = game;
         new Pointer(game().plat, layer, true);
@@ -68,14 +68,14 @@ public class ConsentScreen extends ScreenStack.UIScreen {
                                                 .onClick(new Slot<Button>() {
                                                     @Override
                                                     public void onEmit(Button button) {
-                                                        screenStack.replace(new StartingScreen(screenStack), screenStack.slide());
+                                                        game.screenStack.replace(new StartingScreen(game.screenStack), game.screenStack.slide());
                                                     }
                                                 }),
                                         new Button("Play without giving informed consent")
                                                 .onClick(new Slot<Button>() {
                                                     @Override
                                                     public void onEmit(Button button) {
-                                                        screenStack.replace(new StartingScreen(screenStack), screenStack.slide());
+                                                        game.screenStack.replace(new StartingScreen(game.screenStack), game.screenStack.slide());
                                                     }
                                                 })))
                 .setLocation((game.plat.graphics().viewSize.width() - game.bounds.width()) / 2,

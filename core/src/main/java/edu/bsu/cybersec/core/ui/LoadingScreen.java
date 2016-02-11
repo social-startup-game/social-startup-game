@@ -156,7 +156,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
     private void startGame() {
         SimGame game = (SimGame) game();
         if (game.config.showConsentForm()) {
-            screenStack.replace(new ConsentScreen(game, screenStack), screenStack.slide());
+            screenStack.replace(new ConsentScreen(game), screenStack.slide());
         } else if (game.config.skipIntro()) {
             Company company = Company.from(EmployeePool.create(SimGame.game.assets)).withEmployees(3);
             screenStack.replace(new GameScreen(screenStack, company),

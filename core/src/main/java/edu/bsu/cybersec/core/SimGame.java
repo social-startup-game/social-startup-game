@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -41,6 +41,8 @@ public class SimGame extends SceneGame {
 
     public final GameBounds bounds;
 
+    public final ScreenStack screenStack;
+
     public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);
         assets = new GameAssets(plat.assets());
@@ -49,6 +51,7 @@ public class SimGame extends SceneGame {
         IRectangle box = new AspectRatioTool(IPHONE5_VERTICAL_ASPECT_RATIO)
                 .createBoundingBoxWithin(plat.graphics().viewSize);
         this.bounds = new GameBounds(box);
+        this.screenStack = new ScreenStack(this, rootLayer);
         handleMusicMute();
         initializeAssetCaches();
         pushFirstScreen();
@@ -66,7 +69,6 @@ public class SimGame extends SceneGame {
     }
 
     private void pushFirstScreen() {
-        ScreenStack screenStack = new ScreenStack(this, rootLayer);
         screenStack.push(new LoadingScreen(screenStack));
     }
 }
