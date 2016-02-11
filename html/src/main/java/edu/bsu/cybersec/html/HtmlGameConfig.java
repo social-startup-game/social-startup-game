@@ -34,7 +34,7 @@ public final class HtmlGameConfig extends GameConfig.Default {
 
     public HtmlGameConfig(HtmlPlatform plat) {
         this.plat = checkNotNull(plat);
-        showConsent = Window.Location.getParameter("consent") != null;
+        showConsent = Window.Location.getParameter("public") != null;
     }
 
     @Override
