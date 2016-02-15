@@ -94,8 +94,8 @@ public class FeatureFactory {
     }
 
     private float generateUsersPerHour() {
-        int min = 5;
-        int max = 50;
+        int min = 50;
+        int max = 200;
         int range = max - min;
         return (float) Math.floor(Math.random() * range) + min;
     }
