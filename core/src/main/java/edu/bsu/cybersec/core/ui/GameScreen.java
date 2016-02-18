@@ -168,10 +168,15 @@ public class GameScreen extends ScreenStack.UIScreen {
     }
 
     private final class TopStatusBar extends Group {
+
+        private final float SHIM_WIDTH = SimGame.game.bounds.percentOfHeight(0.05f);
+
         public TopStatusBar() {
-            super(AxisLayout.horizontal().stretchByDefault());
-            add(timeLabel);
-            add(usersLabel);
+            super(AxisLayout.horizontal());
+            add(new Shim(0, 0).setConstraint(Constraints.fixedSize(SHIM_WIDTH, 0)));
+            add(timeLabel.addStyles(Style.HALIGN.left).setConstraint(AxisLayout.stretched()));
+            add(new Shim(0, 0).setConstraint(Constraints.fixedSize(SHIM_WIDTH, 0)));
+            add(usersLabel.addStyles(Style.HALIGN.left).setConstraint(AxisLayout.stretched()));
             addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
         }
     }
