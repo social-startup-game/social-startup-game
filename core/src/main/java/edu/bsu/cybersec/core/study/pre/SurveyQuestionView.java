@@ -17,7 +17,7 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core.study;
+package edu.bsu.cybersec.core.study.pre;
 
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;

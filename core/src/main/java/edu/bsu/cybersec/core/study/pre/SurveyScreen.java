@@ -17,7 +17,7 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core.study;
+package edu.bsu.cybersec.core.study.pre;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -34,7 +34,7 @@ import tripleplay.util.Colors;
 
 import java.util.List;
 
-public class PreGameSurveyScreen extends ScreenStack.UIScreen {
+public class SurveyScreen extends ScreenStack.UIScreen {
 
     private final SimGame game;
 
@@ -70,7 +70,7 @@ public class PreGameSurveyScreen extends ScreenStack.UIScreen {
 
     private List<SurveyQuestionView> views = Lists.newArrayListWithCapacity(questions.size());
 
-    public PreGameSurveyScreen(SimGame game) {
+    public SurveyScreen(SimGame game) {
         super(game.plat);
         this.game = game;
         new Pointer(game().plat, layer, true);
