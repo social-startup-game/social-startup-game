@@ -24,7 +24,6 @@ import playn.core.Clock;
 import playn.core.Game;
 import playn.scene.Layer;
 import playn.scene.Mouse;
-import playn.scene.Pointer;
 import pythagoras.f.IDimension;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
@@ -49,7 +48,6 @@ public class GameScreen extends ScreenStack.UIScreen {
         super(SimGame.game.plat);
 
         this.screenStack = checkNotNull(screenStack);
-        new Pointer(game().plat, layer, true);
         game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
 
         gameWorld = createGameWorld(company);

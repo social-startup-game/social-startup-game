@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -28,13 +28,12 @@ import edu.bsu.cybersec.core.intro.Introduction;
 import playn.core.Font;
 import playn.core.Game;
 import playn.core.Image;
-import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class StartingScreen extends ScreenStack.UIScreen {
     private final ScreenStack screenStack;
@@ -44,7 +43,6 @@ public class StartingScreen extends ScreenStack.UIScreen {
     public StartingScreen(ScreenStack screenStack) {
         super(SimGame.game.plat);
         this.screenStack = checkNotNull(screenStack);
-        new Pointer(game().plat, layer, true);
         createUI();
     }
 

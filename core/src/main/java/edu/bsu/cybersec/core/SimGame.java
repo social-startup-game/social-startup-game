@@ -21,8 +21,10 @@ package edu.bsu.cybersec.core;
 
 import edu.bsu.cybersec.core.ui.*;
 import playn.core.Platform;
+import playn.scene.Pointer;
 import playn.scene.SceneGame;
 import pythagoras.f.IRectangle;
+import react.Value;
 import tripleplay.game.ScreenStack;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -43,6 +45,8 @@ public class SimGame extends SceneGame {
 
     public final ScreenStack screenStack;
 
+    public final Value<Boolean> consent = Value.create(false);
+
     public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);
         assets = new GameAssets(plat.assets());
@@ -55,6 +59,7 @@ public class SimGame extends SceneGame {
         handleMusicMute();
         initializeAssetCaches();
         pushFirstScreen();
+        new Pointer(plat, rootLayer, true);
     }
 
     private void handleMusicMute() {

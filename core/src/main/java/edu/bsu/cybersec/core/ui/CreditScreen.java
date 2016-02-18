@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -21,7 +21,6 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Game;
-import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
@@ -49,7 +48,6 @@ public class CreditScreen extends ScreenStack.UIScreen {
     public CreditScreen(ScreenStack screenStack) {
         super(SimGame.game.plat);
         this.screenStack = screenStack;
-        new Pointer(game().plat, layer, true);
     }
 
     @Override

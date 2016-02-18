@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -22,8 +22,8 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.study.PostSurveyScreen;
 import playn.core.Game;
-import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
@@ -46,13 +46,12 @@ public class EndScreen extends ScreenStack.UIScreen {
         this.company = checkNotNull(company);
         finalUserAmount = gameWorld.users.get().intValue();
         logEndGameStats();
-        new Pointer(game().plat, layer, true);
     }
 
     private void logEndGameStats() {
         float exposure = gameWorld.exposure.get();
-        SimGame.game.plat.log().info("Final Number of Users: " + finalUserAmount);
-        SimGame.game.plat.log().info("Final Expsoure Value: " + exposure);
+        SimGame.game.plat.log().info("Final users: " + finalUserAmount
+                + "; exposure: " + exposure);
     }
 
     @Override
@@ -68,13 +67,19 @@ public class EndScreen extends ScreenStack.UIScreen {
                         .setStyles(Style.COLOR.is(GameColors.HUNTER_GREEN)))
                 .setStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
         String outcomeText = determineOutcomeText();
-        root.add(new Label(outcomeText).setStyles(Style.COLOR.is(GameColors.HUNTER_GREEN)),
+        root.add(new Label(outcomeText)
+                        .addStyles(Style.COLOR.is(GameColors.HUNTER_GREEN),
+                                Style.TEXT_WRAP.on),
                 BossAtDeskLabelFactory.create(company.boss.image),
-                new Button("Back to Start Screen").onClick(new Slot<Button>() {
+                new Button("OK").onClick(new Slot<Button>() {
                     @Override
                     public void onEmit(Button button) {
                         if (!SimGame.game.config.skipIntro()) {
-                            screenStack.remove(EndScreen.this, screenStack.slide().right());
+                            if (SimGame.game.consent.get()) {
+                                screenStack.replace(new PostSurveyScreen(SimGame.game), screenStack.slide().right());
+                            } else {
+                                screenStack.remove(EndScreen.this, screenStack.slide().right());
+                            }
                         } else {
                             screenStack.push(new StartingScreen(screenStack), screenStack.slide().right());
                         }

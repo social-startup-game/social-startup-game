@@ -17,14 +17,13 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core.study.pre;
+package edu.bsu.cybersec.core.study;
 
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameColors;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
 import edu.bsu.cybersec.core.ui.StartingScreen;
 import playn.core.Game;
-import playn.scene.Pointer;
 import react.Slot;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
@@ -41,7 +40,6 @@ public class ConsentScreen extends ScreenStack.UIScreen {
     public ConsentScreen(final SimGame game) {
         super(game.plat);
         this.game = game;
-        new Pointer(game().plat, layer, true);
         game.plat.assets().getText("text/consent.txt").onSuccess(new Slot<String>() {
             @Override
             public void onEmit(String s) {
@@ -68,8 +66,9 @@ public class ConsentScreen extends ScreenStack.UIScreen {
                                                 .onClick(new Slot<Button>() {
                                                     @Override
                                                     public void onEmit(Button button) {
+                                                        game.consent.update(true);
                                                         game.config.enableGameplayLogging();
-                                                        game.screenStack.replace(new SurveyScreen(game), game.screenStack.slide());
+                                                        game.screenStack.replace(new PreSurveyScreen(game), game.screenStack.slide());
                                                     }
                                                 }),
                                         new Button("Play without giving informed consent")

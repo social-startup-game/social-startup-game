@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.EmployeePool;
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.study.pre.ConsentScreen;
+import edu.bsu.cybersec.core.study.ConsentScreen;
 import playn.core.Game;
 import playn.core.Image;
 import playn.core.Sound;
