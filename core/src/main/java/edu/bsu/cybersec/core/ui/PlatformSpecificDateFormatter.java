@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -20,6 +20,6 @@
 package edu.bsu.cybersec.core.ui;
 
 public interface PlatformSpecificDateFormatter {
-    String FORMAT_STRING = "EEE, MMM d hh:mm aaa";
+    String FORMAT_STRING = "h:mm aaa";
     String format(long ms);
 }

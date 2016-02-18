@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Map;
 
 public class GameWorld extends World {
-    private static final long EIGHT_OCLOCK_ON_A_MONDAY_IN_SECONDS = 61410229200L;
+    private static final long START_DATE_MIDNIGHT = 61410200400L;
+    public static final int START_HOUR_OFFSET = ClockUtils.SECONDS_PER_HOUR * 8;
+    private static final long EIGHT_OCLOCK_ON_A_MONDAY_IN_SECONDS = START_DATE_MIDNIGHT + START_HOUR_OFFSET;
 
     public final Map<String, Component> components = Maps.newHashMap();
 
