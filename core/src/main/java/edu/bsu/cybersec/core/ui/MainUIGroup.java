@@ -305,16 +305,18 @@ public class MainUIGroup extends Group {
 
                 @Override
                 public void onEmit(Button button) {
-                    stopGameTime();
-                    MenuHost.Pop pop = new MenuHost.Pop(button, createMenu());
-                    pop.menu.itemTriggered().connect(taskUpdater(button));
-                    pop.menu.deactivated().connect(new Slot<Menu>() {
-                        @Override
-                        public void onEmit(Menu elements) {
-                            restoreGameTimeSystemToPreviousState();
-                        }
-                    });
-                    menuHost.popup(pop);
+                    if (button.isEnabled()) {
+                        stopGameTime();
+                        MenuHost.Pop pop = new MenuHost.Pop(button, createMenu());
+                        pop.menu.itemTriggered().connect(taskUpdater(button));
+                        pop.menu.deactivated().connect(new Slot<Menu>() {
+                            @Override
+                            public void onEmit(Menu elements) {
+                                restoreGameTimeSystemToPreviousState();
+                            }
+                        });
+                        menuHost.popup(pop);
+                    }
                 }
 
                 private void stopGameTime() {
