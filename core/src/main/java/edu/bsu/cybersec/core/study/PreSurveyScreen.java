@@ -105,11 +105,19 @@ public class PreSurveyScreen extends ScreenStack.UIScreen {
     }
 
     private void logResponses() {
+        StringBuilder stringBuilder = new StringBuilder();
         for (SurveyQuestionView question : views) {
             if (question.hasSelection()) {
                 String selection = question.getSelection();
-                game.plat.log().info(question.question.logPrefix + ":" + selection);
+                stringBuilder.append(question.question.logPrefix)
+                        .append(":")
+                        .append(selection)
+                        .append(";");
             }
+        }
+        String output = stringBuilder.toString();
+        if (!output.isEmpty()) {
+            game.plat.log().info(output);
         }
     }
 
