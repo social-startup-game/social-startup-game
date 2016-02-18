@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -35,7 +35,7 @@ import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Layers;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class GameScreen extends ScreenStack.UIScreen {
     private final GameWorld.Systematized gameWorld;
@@ -81,8 +81,14 @@ public class GameScreen extends ScreenStack.UIScreen {
                     public void update(Clock clock) {
                         final long tick = gameWorld.gameTime.get().now;
                         now = gameWorld.startTime + tick;
-                        final String formatted = formatter.format(now * (long) ClockUtils.MS_PER_SECOND);
-                        timeLabel.text.update(formatted);
+                        final int day = computeInGameDay();
+                        String text = "Day " + day + " " + formatter.format(now * (long) ClockUtils.MS_PER_SECOND);
+                        timeLabel.text.update(text);
+                    }
+
+                    private int computeInGameDay() {
+                        return ((gameWorld.gameTime.get().now + GameWorld.START_HOUR_OFFSET)
+                                / ClockUtils.SECONDS_PER_DAY) + 1;
                     }
                 });
             }
