@@ -24,22 +24,35 @@ import playn.core.Log;
 
 public final class FirebaseLogCollector implements Log.Collector {
 
+    public static FirebaseLogCollector createSession() {
+        FirebaseLogCollector collector = new FirebaseLogCollector();
+        collector.startSession();
+        return collector;
+    }
+
+    private FirebaseLogCollector() {
+    }
+
+    private native void startSession()/*-{
+        $wnd.sessionRef = $wnd.firebaseRef.push();
+    }-*/;
+
     @Override
     public void logged(Log.Level level, String msg, Throwable e) {
         if (level == Log.Level.INFO) {
             if (msg.equals(LogUtils.START_GAME_MESSAGE)) {
-                logStartNewGameSession();
+                logStartNewGame();
             }
             log(msg);
         }
     }
 
-    private native void logStartNewGameSession()/*-{
-        $wnd.gameRef = $wnd.firebaseRef.push();
+    private native void logStartNewGame()/*-{
+        $wnd.gameRef = $wnd.sessionRef.push();
     }-*/;
 
     private native void log(String message)/*-{
-       var target = ($wnd.gameRef === null) ? $wnd.firebaseRef : $wnd.gameRef;
+       var target = ($wnd.gameRef === null) ? $wnd.sessionRef : $wnd.gameRef;
        target.push(
          {
            'timestamp' : new Date().getTime(),

@@ -49,6 +49,6 @@ public final class HtmlGameConfig extends GameConfig.Default {
 
     @Override
     public void enableGameplayLogging() {
-        plat.log().setCollector(new FirebaseLogCollector());
+        plat.log().setCollector(FirebaseLogCollector.createSession());
     }
 }
