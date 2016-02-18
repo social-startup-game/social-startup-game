@@ -64,7 +64,7 @@ public class GameScreen extends ScreenStack.UIScreen {
         product.onGameEnd.connect(new UnitSlot() {
             @Override
             public void onEmit() {
-                screenStack.replace(new EndScreen(screenStack, product, company), screenStack.slide());
+                screenStack.replace(new EndScreen(screenStack, product), screenStack.slide());
             }
         });
         return product;

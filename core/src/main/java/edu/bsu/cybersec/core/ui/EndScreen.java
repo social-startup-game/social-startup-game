@@ -19,8 +19,8 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.GameWorld;
+import edu.bsu.cybersec.core.Goal;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.study.PostSurveyScreen;
 import playn.core.Game;
@@ -30,20 +30,16 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public class EndScreen extends ScreenStack.UIScreen {
 
     private final GameWorld gameWorld;
     private final ScreenStack screenStack;
-    private final Company company;
     private final int finalUserAmount;
 
-    public EndScreen(ScreenStack screenStack, GameWorld gameWorld, Company company) {
+    public EndScreen(ScreenStack screenStack, GameWorld gameWorld) {
         super(SimGame.game.plat);
         this.gameWorld = gameWorld;
         this.screenStack = screenStack;
-        this.company = checkNotNull(company);
         finalUserAmount = gameWorld.users.get().intValue();
         logEndGameStats();
     }
@@ -70,7 +66,7 @@ public class EndScreen extends ScreenStack.UIScreen {
         root.add(new Label(outcomeText)
                         .addStyles(Style.COLOR.is(GameColors.HUNTER_GREEN),
                                 Style.TEXT_WRAP.on),
-                BossAtDeskLabelFactory.create(company.boss.image),
+                BossAtDeskLabelFactory.create(gameWorld.company.get().boss.image),
                 new Button("OK").onClick(new Slot<Button>() {
                     @Override
                     public void onEmit(Button button) {
@@ -88,11 +84,12 @@ public class EndScreen extends ScreenStack.UIScreen {
     }
 
     private String determineOutcomeText() {
-        if (company.goal.isMet(gameWorld.users.get().intValue())) {
-            return "You needed " + company.goal.minimum + "users. You had "
+        final Goal goal = gameWorld.company.get().goal;
+        if (goal.isMet(gameWorld.users.get().intValue())) {
+            return "You needed " + goal.minimum + "users. You had "
                     + finalUserAmount + " users. You were succesful, and get to keep your job!";
         } else {
-            return "You needed " + company.goal.minimum + "users. You had "
+            return "You needed " + goal.minimum + "users. You had "
                     + finalUserAmount + " users. You made poor security decisions. You're fired.";
         }
     }
