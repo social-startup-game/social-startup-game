@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -34,7 +34,7 @@ public class PlayableWorldFactory {
      * This number was empirically determined based on the production size of the character images.
      */
     private static final float CHARACTER_SPRITE_SCALE = SimGame.game.bounds.width() / 510f;
-    private static final int DAYS_UNTIL_GAME_END = 14;
+    private static final int DAYS_UNTIL_GAME_END = 10;
 
     private final GameWorld.Systematized world = new GameWorld.Systematized();
     private final GameConfig config;
