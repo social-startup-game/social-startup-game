@@ -17,7 +17,7 @@
  * along with The Social Startup Game.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package edu.bsu.cybersec.core.study;
+package edu.bsu.cybersec.core.study.pre;
 
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameColors;
@@ -69,7 +69,7 @@ public class ConsentScreen extends ScreenStack.UIScreen {
                                                     @Override
                                                     public void onEmit(Button button) {
                                                         game.config.enableGameplayLogging();
-                                                        game.screenStack.replace(new PreGameSurveyScreen(game), game.screenStack.slide());
+                                                        game.screenStack.replace(new SurveyScreen(game), game.screenStack.slide());
                                                     }
                                                 }),
                                         new Button("Play without giving informed consent")
