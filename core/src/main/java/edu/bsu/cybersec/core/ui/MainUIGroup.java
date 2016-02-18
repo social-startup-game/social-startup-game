@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -301,14 +301,19 @@ public class MainUIGroup extends Group {
             addStyles(MenuHost.TRIGGER_POINT.is(MenuHost.relative(popUnder)));
             onClick(new Slot<Button>() {
                 private boolean timeEnabledStatus;
-                private GameTimeSystem gameTimeSystem = ((GameWorld.Systematized) gameWorld).gameTimeSystem;
+                private final GameTimeSystem gameTimeSystem = ((GameWorld.Systematized) gameWorld).gameTimeSystem;
 
                 @Override
                 public void onEmit(Button button) {
                     stopGameTime();
-                    MenuHost.Pop pop = new MenuHost.Pop(button,
-                            createMenu());
-                    pop.menu.itemTriggered().connect(updater(button));
+                    MenuHost.Pop pop = new MenuHost.Pop(button, createMenu());
+                    pop.menu.itemTriggered().connect(taskUpdater(button));
+                    pop.menu.deactivated().connect(new Slot<Menu>() {
+                        @Override
+                        public void onEmit(Menu elements) {
+                            restoreGameTimeSystemToPreviousState();
+                        }
+                    });
                     menuHost.popup(pop);
                 }
 
@@ -317,7 +322,12 @@ public class MainUIGroup extends Group {
                     gameTimeSystem.setEnabled(false);
                 }
 
-                private Slot<MenuItem> updater(final Button button) {
+
+                private void restoreGameTimeSystemToPreviousState() {
+                    gameTimeSystem.setEnabled(timeEnabledStatus);
+                }
+
+                private Slot<MenuItem> taskUpdater(final Button button) {
                     return new Slot<MenuItem>() {
                         @Override
                         public void onEmit(MenuItem menuItem) {
@@ -325,14 +335,10 @@ public class MainUIGroup extends Group {
                             int assignedTaskId = ((TaskItem) menuItem).taskId;
                             gameWorld.task.set(worker.id, assignedTaskId);
                             SimGame.game.plat.log().info(gameWorld.profile.get(worker.id).firstName + " task changed to " + gameWorld.name.get(assignedTaskId));
-                            restoreGameTimeSystemToPreviousState();
-                        }
-
-                        private void restoreGameTimeSystemToPreviousState() {
-                            gameTimeSystem.setEnabled(timeEnabledStatus);
                         }
                     };
                 }
+
 
                 private Menu createMenu() {
                     Menu menu = new Menu(AxisLayout.vertical().offStretch().gap(3));
