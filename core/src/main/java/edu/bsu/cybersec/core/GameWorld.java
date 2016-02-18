@@ -48,6 +48,7 @@ public class GameWorld extends World {
     public final Value<Float> users = Value.create(0f);
     public final List<Entity> workers = Lists.newArrayListWithCapacity(3);
     public final Value<Integer> gameEnd = Value.create(-1);
+    public final Value<Company> company = Value.create(null);
     public final int developmentTaskId;
     public final int maintenanceTaskId;
     public final int notAtWorkTaskId;

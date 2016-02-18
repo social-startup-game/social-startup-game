@@ -47,6 +47,7 @@ public class PlayableWorldFactory {
 
     public GameWorld.Systematized createPlayableGameWorld() {
         initializeWorld();
+        world.company.update(company);
         return world;
     }
 
