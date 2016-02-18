@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -21,20 +21,22 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
+import react.Slot;
 import react.ValueView;
 import tripleplay.entity.Entity;
-import tripleplay.ui.Group;
-import tripleplay.ui.Label;
-import tripleplay.ui.Shim;
+import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.ui.layout.TableLayout;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class CompanyStatusGroup extends InteractionAreaGroup {
 
-    private static final String TEXT = "Users per hour: ";
+    private static final float HGAP_BETWEEN_COLUMNS = SimGame.game.bounds.percentOfHeight(0.02f);
+    private static final float TABLE_INSETS = SimGame.game.bounds.percentOfHeight(0.005f);
+
     private final GameWorld gameWorld;
-    private final Label usersPerHourLabel = new Label(TEXT);
+    private final Label usersPerHourLabel = new Label();
 
     public CompanyStatusGroup(GameWorld world) {
         super(AxisLayout.vertical().offStretch());
@@ -44,14 +46,30 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
     }
 
     private void layoutUI() {
-        add(usersPerHourLabel);
-        add(new EstimatedExposureLabel(gameWorld));
-        add(new DaysRemainingLabel(gameWorld));
-        add(new Group(AxisLayout.horizontal().offStretch())
-                .add(unitShim(),
-                        new CompanyStatusGraph(gameWorld).setConstraint(AxisLayout.stretched(14f)),
-                        unitShim())
-                .setConstraint(AxisLayout.stretched()));
+        Group summaryTable = new Group(new TableLayout(
+                new ExposedColumn(Style.HAlign.LEFT, true, 1, 0),
+                new ExposedColumn(Style.HAlign.RIGHT, false, 1, 0),
+                new ExposedColumn(Style.HAlign.CENTER, false, 1, HGAP_BETWEEN_COLUMNS),
+                new ExposedColumn(Style.HAlign.LEFT, true, 1, 0),
+                new ExposedColumn(Style.HAlign.RIGHT, false, 1, 0)))
+                .addStyles(Style.BACKGROUND.is(Background.blank().inset(TABLE_INSETS, TABLE_INSETS)));
+        summaryTable.add(
+                new Label("Users per hour").addStyles(Style.HALIGN.left),
+                usersPerHourLabel,
+                new Shim(0, 0),
+                new Label("Days remaining").addStyles(Style.HALIGN.left),
+                new DaysRemainingLabel(gameWorld),
+                new Label("Estimated exposure").addStyles(Style.HALIGN.left),
+                new EstimatedExposureLabel(gameWorld),
+                new Shim(0, 0),
+                new Label("Progress toward goal").addStyles(Style.HALIGN.left),
+                new ProgressTowardGoalLabel(gameWorld));
+        add(summaryTable,
+                new Group(AxisLayout.horizontal().offStretch())
+                        .add(unitShim(),
+                                new CompanyStatusGraph(gameWorld).setConstraint(AxisLayout.stretched(14f)),
+                                unitShim())
+                        .setConstraint(AxisLayout.stretched()));
     }
 
     private Shim unitShim() {
@@ -75,7 +93,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
         protected void update(Clock clock, Entities entities) {
             float sum = sumOfUsersPerHour(entities);
             String truncatedUsersPerHour = truncator.makeTruncatedString(sum);
-            usersPerHourLabel.text.update(TEXT + truncatedUsersPerHour);
+            usersPerHourLabel.text.update(truncatedUsersPerHour);
         }
 
         private float sumOfUsersPerHour(Entities entities) {
@@ -88,23 +106,21 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
     }
 
     private static final class EstimatedExposureLabel extends Label {
-        private static final String TEXT_TEMPLATE = "Estimated exposure: ";
 
         private EstimatedExposureLabel(GameWorld gameWorld) {
-            super(TEXT_TEMPLATE + gameWorld.exposure.get());
+            super(String.valueOf(gameWorld.exposure.get()));
             gameWorld.exposure.connect(new ValueView.Listener<Float>() {
                 private final DecimalTruncator truncator = new DecimalTruncator(1);
 
                 @Override
                 public void onChange(Float value, Float oldValue) {
-                    text.update(TEXT_TEMPLATE + truncator.makeTruncatedString(value * 100) + "%");
+                    text.update(truncator.makeTruncatedString(value * 100) + "%");
                 }
             });
         }
     }
 
     private static final class DaysRemainingLabel extends Label {
-        private static final String TEXT_TEMPLATE = "Days until performance review: ";
 
         private DaysRemainingLabel(final GameWorld world) {
             world.gameTime.connect(new ValueView.Listener<GameTime>() {
@@ -112,7 +128,28 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
                 public void onChange(GameTime value, GameTime oldValue) {
                     final int secondsLeft = world.gameEnd.get() - value.now;
                     final int daysLeft = secondsLeft / ClockUtils.SECONDS_PER_DAY + 1;
-                    text.update(TEXT_TEMPLATE + daysLeft);
+                    text.update(String.valueOf(daysLeft));
+                }
+            });
+        }
+    }
+
+    private static final class ExposedColumn extends TableLayout.Column {
+        protected ExposedColumn(Style.HAlign halign, boolean stretch, float weight, float minWidth) {
+            super(halign, stretch, weight, minWidth);
+        }
+    }
+
+    private static final class ProgressTowardGoalLabel extends Label {
+        private ProgressTowardGoalLabel(final GameWorld world) {
+            world.users.connect(new Slot<Float>() {
+
+                final DecimalTruncator truncator = new DecimalTruncator(1);
+
+                @Override
+                public void onEmit(Float users) {
+                    float progress = users / world.company.get().goal.minimum;
+                    text.update(truncator.makeTruncatedString(progress * 100) + "%");
                 }
             });
         }
