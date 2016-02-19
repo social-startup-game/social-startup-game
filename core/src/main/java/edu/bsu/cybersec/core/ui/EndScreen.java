@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.DecimalTruncator;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.Goal;
 import edu.bsu.cybersec.core.SimGame;
@@ -28,6 +29,7 @@ import react.Slot;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.ui.layout.TableLayout;
 import tripleplay.util.Colors;
 
 public class EndScreen extends ScreenStack.UIScreen {
@@ -35,12 +37,16 @@ public class EndScreen extends ScreenStack.UIScreen {
     private final GameWorld gameWorld;
     private final ScreenStack screenStack;
     private final int finalUserAmount;
+    private final String finalExposure;
+    private static final float HGAP_BETWEEN_COLUMNS = SimGame.game.bounds.percentOfHeight(0.02f);
+    private static final float TABLE_INSETS = SimGame.game.bounds.percentOfHeight(0.005f);
 
     public EndScreen(ScreenStack screenStack, GameWorld gameWorld) {
         super(SimGame.game.plat);
         this.gameWorld = gameWorld;
         this.screenStack = screenStack;
         finalUserAmount = gameWorld.users.get().intValue();
+        finalExposure = new DecimalTruncator(2).makeTruncatedString(gameWorld.exposure.get() * 100f);
         logEndGameStats();
     }
 
@@ -59,11 +65,11 @@ public class EndScreen extends ScreenStack.UIScreen {
     private void createUI() {
         Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size())
-                .add(new Label("The game is over")
+                .add(new Label("Your two weeks is up! Lets take a look.")
                         .setStyles(Style.COLOR.is(GameColors.HUNTER_GREEN)))
                 .setStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE)));
-        String outcomeText = determineOutcomeText();
-        root.add(new Label(outcomeText)
+        root.add(createEndGameTable());
+        root.add(new Label(determineOutcomeText())
                         .addStyles(Style.COLOR.is(GameColors.HUNTER_GREEN),
                                 Style.TEXT_WRAP.on),
                 BossAtDeskLabelFactory.create(gameWorld.company.get().boss.image),
@@ -83,14 +89,34 @@ public class EndScreen extends ScreenStack.UIScreen {
                 }));
     }
 
+    private Element<?> createEndGameTable() {
+        Group wholeTable = new Group(AxisLayout.vertical())
+                .addStyles(Style.BACKGROUND.is(Background.solid(GameColors.HALF_BAKED).inset(5, 5)));
+        Group tableHeader = new Group(AxisLayout.horizontal());
+        tableHeader.add(new Label("Performance Review").addStyles(Style.COLOR.is(Colors.WHITE)));
+        Group summaryTable = new Group(new TableLayout(
+                new ExposedColumn(Style.HAlign.LEFT, true, 1, 0),
+                new ExposedColumn(Style.HAlign.CENTER, false, 1, HGAP_BETWEEN_COLUMNS),
+                new ExposedColumn(Style.HAlign.RIGHT, false, 1, 0)))
+                .addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE).inset(TABLE_INSETS, TABLE_INSETS)));
+        summaryTable.add(
+                new Label("Users:").addStyles(Style.HALIGN.left),
+                new Shim(0, 0),
+                new Label(finalUserAmount + ""),
+                new Label("Exposure:").addStyles(Style.HALIGN.left),
+                new Shim(0, 0),
+                new Label(finalExposure + "%"));
+        wholeTable.add(tableHeader, summaryTable, new Shim(1, 1));
+        return wholeTable;
+
+    }
+
     private String determineOutcomeText() {
         final Goal goal = gameWorld.company.get().goal;
         if (goal.isMet(gameWorld.users.get().intValue())) {
-            return "You needed " + goal.minimum + "users. You had "
-                    + finalUserAmount + " users. You were succesful, and get to keep your job!";
+            return "You needed " + goal.minimum + " users. You were succesful, and get to keep your job!";
         } else {
-            return "You needed " + goal.minimum + "users. You had "
-                    + finalUserAmount + " users. You made poor security decisions. You're fired.";
+            return "You needed " + goal.minimum + " users. You made poor security decisions. You're fired.";
         }
     }
 
