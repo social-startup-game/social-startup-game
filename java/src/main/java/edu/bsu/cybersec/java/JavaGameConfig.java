@@ -25,7 +25,7 @@ import playn.core.Log;
 import playn.java.JavaPlatform;
 import react.Value;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public final class JavaGameConfig extends GameConfig.Default {
 
@@ -36,11 +36,7 @@ public final class JavaGameConfig extends GameConfig.Default {
     Value<Boolean> muteMusic = Value.create(super.muteMusic());
     Value<Boolean> showConsent = Value.create(super.showConsentForm());
 
-    private final JavaPlatform platform;
-
-    JavaGameConfig(JavaPlatform platform) {
-        this.platform = checkNotNull(platform);
-    }
+    private JavaPlatform platform;
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
@@ -74,7 +70,12 @@ public final class JavaGameConfig extends GameConfig.Default {
 
     @Override
     public void enableGameplayLogging() {
+        checkNotNull(platform, "Platform must be specified first.");
         platform.log().setCollector(new EchoCollector());
+    }
+
+    public void setPlatform(JavaPlatform platform) {
+        this.platform = platform;
     }
 
     private class EchoCollector implements Log.Collector {

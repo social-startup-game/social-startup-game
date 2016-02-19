@@ -35,9 +35,10 @@ public class SimGameJava {
     private static JavaGameConfig gameConfig;
 
     public static void main(String[] args) {
-        LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
-        gameConfig = new JavaGameConfig(plat);
+        gameConfig = new JavaGameConfig();
         new Parser().process(args);
+        LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
+        gameConfig.setPlatform(plat);
         registerFont(plat);
         new SimGame(plat, gameConfig);
         plat.start();
