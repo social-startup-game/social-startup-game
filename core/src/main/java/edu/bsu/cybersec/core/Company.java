@@ -24,13 +24,14 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Company {
 
     public final ImmutableList<Employee> employees;
     public final Employee boss;
-    public final Goal goal = new Goal(75000);
+    public final Goal goal = new Goal(20000);
 
     public static Builder from(EmployeePool employeePool) {
         return new Builder(employeePool);

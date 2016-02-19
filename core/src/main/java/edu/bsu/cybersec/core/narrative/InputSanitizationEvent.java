@@ -31,8 +31,8 @@ import java.util.List;
 
 public class InputSanitizationEvent extends NarrativeEvent {
     private static final int HOURS_FOR_SANITIZATION = 16;
-    private static final float PERCENT_LOSS_ON_SANITIZATION = .10f;
-    private static final float PERCENT_LOSS_ON_IGNORE = .35f;
+    private static final float PERCENT_LOSS_ON_SANITIZATION = .7f;
+    private static final float PERCENT_LOSS_ON_IGNORE = .20f;
 
     public InputSanitizationEvent(GameWorld world) {
         super(world);
