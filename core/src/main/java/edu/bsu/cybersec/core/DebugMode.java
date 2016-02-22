@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import edu.bsu.cybersec.core.narrative.InputSanitizationEvent;
 import edu.bsu.cybersec.core.narrative.ScriptKiddieAttackEvent;
 import edu.bsu.cybersec.core.narrative.SecurityConferenceEvent;
+import edu.bsu.cybersec.core.study.PostSurveyScreen;
 import playn.core.Key;
 import playn.core.Keyboard;
 import react.SignalView;
@@ -93,6 +94,13 @@ public class DebugMode implements SignalView.Listener<Keyboard.Event> {
                     @Override
                     public void run() {
                         gameWorld.users.update(gameWorld.users.get() - USER_MOD_AMOUNT);
+                    }
+                })
+                .put(Key.U, new Runnable() {
+                    @Override
+                    public void run() {
+                        SimGame.game.plat.log().info("Jumping to a new screen");
+                        SimGame.game.screenStack.push(new PostSurveyScreen(SimGame.game));
                     }
                 });
     }

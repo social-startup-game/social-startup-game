@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.study;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.ui.FontCache;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
 import playn.core.Game;
 import react.Slot;
@@ -167,6 +168,7 @@ public final class PostSurveyScreen extends ScreenStack.UIScreen {
             LevelButton(Level level) {
                 super(level.text);
                 this.level = level;
+                addStyles(Style.FONT.is(FontCache.instance().REGULAR.derive(12f)));
             }
         }
     }
