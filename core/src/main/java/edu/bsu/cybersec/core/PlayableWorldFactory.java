@@ -53,7 +53,7 @@ public class PlayableWorldFactory {
 
     private void initializeWorld() {
         world.featureGenerationSystem.nextFeatureNumber(1);
-        world.featureDevelopmentSystem.inefficiencyFactor.update(1 / 3f);
+        world.featureDevelopmentSystem.inefficiencyFactor.update(1 / 10f);
         world.exposure.update(0.10f);
         world.users.update(1000f);
         makeExistingFeature();

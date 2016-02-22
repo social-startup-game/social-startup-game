@@ -42,7 +42,7 @@ public class FeatureFactory {
             "User reviews"
     };
 
-    private static final RandomInRange vulnerabilityRandomizer = new RandomInRange(1, 4);
+    private static final RandomInRange vulnerabilityRandomizer = new RandomInRange(2, 7);
 
     public static FeatureFactory in(GameWorld world) {
         return new FeatureFactory(world);
