@@ -31,7 +31,7 @@ import java.util.List;
 
 public class SecurityConferenceEvent extends NarrativeEvent {
 
-    private static final int CONFERENCE_SKILL_INCREASE = 15;
+    private static final int CONFERENCE_SKILL_INCREASE = 25;
     private static final int CONFERENCE_DURATION = 48;
 
     public SecurityConferenceEvent(GameWorld world) {

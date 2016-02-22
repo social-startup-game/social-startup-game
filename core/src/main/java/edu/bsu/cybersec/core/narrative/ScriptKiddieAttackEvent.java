@@ -45,11 +45,12 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
     @Override
     public List<? extends Option> options() {
-        List<Option> options = Lists.newArrayListWithCapacity(4);
+        List<Option> options = Lists.newArrayListWithCapacity(5);
         for (Entity e : availableWorkers()) {
             options.add(new RetaliateOption(e.id));
         }
-        options.add(new Option.DoNothingOption("Nobody"));
+        options.add(new Option.DoNothingOption("Do Nothing"));
+        options.add(new ReportToThePoliceOption());
         return options;
     }
 
@@ -123,6 +124,46 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                 public String text() {
                     return "Not only was having your employee retaliate unsuccessful, it was illegal! The FBI will be looking in to this...\n\n You lost "
                             + loss + " users because of your short temper.";
+                }
+            });
+        }
+    }
+
+    private final class ReportToThePoliceOption extends Option.Terminal {
+        private final float USER_PERCENTAGE_GAIN = 0.08f;
+
+        @Override
+        public String text() {
+            return "Report to Police";
+        }
+
+        @Override
+        public void onSelected() {
+            super.onSelected();
+            registerReprecussion();
+        }
+
+        private void registerReprecussion() {
+            after(4).post(new NarrativeEvent(world) {
+                private int userGain;
+
+                @Override
+                public List<? extends Option> options() {
+                    return Lists.newArrayList(new DoNothingOption("Ok"));
+                }
+
+                @Override
+                public String text() {
+                    return "The police found the hacker responsible, and you were in the press! You gained "
+                            + userGain + " from the free publicity.";
+                }
+
+                @Override
+                public void run() {
+                    float initialNumberOfUsers = world.users.get();
+                    userGain = (int) (initialNumberOfUsers * USER_PERCENTAGE_GAIN);
+                    world.users.update(userGain + initialNumberOfUsers);
+                    super.run();
                 }
             });
         }
