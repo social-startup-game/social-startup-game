@@ -27,8 +27,9 @@ import tripleplay.entity.Entity;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.TableLayout;
+import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public final class CompanyStatusGroup extends InteractionAreaGroup {
 
@@ -141,7 +142,12 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
     }
 
     private static final class ProgressTowardGoalLabel extends Label {
+        private static final int PASS_COLOR = GameColors.WHITE;
+        private static final int FAIL_COLOR = Colors.RED;
+        private boolean metGoal = false;
+
         private ProgressTowardGoalLabel(final GameWorld world) {
+            addStyles(Style.COLOR.is(FAIL_COLOR));
             world.users.connect(new Slot<Float>() {
 
                 final DecimalTruncator truncator = new DecimalTruncator(1);
@@ -150,6 +156,13 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
                 public void onEmit(Float users) {
                     float progress = users / world.company.get().goal.minimum;
                     text.update(truncator.makeTruncatedString(progress * 100) + "%");
+                    if (progress >= 1 && !metGoal) {
+                        addStyles(Style.COLOR.is(PASS_COLOR));
+                        metGoal = true;
+                    } else if (progress < 1 && metGoal) {
+                        addStyles(Style.COLOR.is(FAIL_COLOR));
+                        metGoal = false;
+                    }
                 }
             });
         }
