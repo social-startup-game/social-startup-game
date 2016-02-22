@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.*;
 
 public class DebugMode implements SignalView.Listener<Keyboard.Event> {
 
+    private static final int USER_MOD_AMOUNT = 2000;
 
     private final ImmutableMap.Builder<Key, Runnable> builder = ImmutableMap.builder();
 
@@ -80,6 +81,18 @@ public class DebugMode implements SignalView.Listener<Keyboard.Event> {
                     public void run() {
                         final float currentScale = gameWorld.gameTimeSystem.scale().get();
                         gameWorld.gameTimeSystem.scale().update(currentScale / 2f);
+                    }
+                })
+                .put(Key.EQUALS, new Runnable() {
+                    @Override
+                    public void run() {
+                        gameWorld.users.update(gameWorld.users.get() + USER_MOD_AMOUNT);
+                    }
+                })
+                .put(Key.MINUS, new Runnable() {
+                    @Override
+                    public void run() {
+                        gameWorld.users.update(gameWorld.users.get() - USER_MOD_AMOUNT);
                     }
                 });
     }
