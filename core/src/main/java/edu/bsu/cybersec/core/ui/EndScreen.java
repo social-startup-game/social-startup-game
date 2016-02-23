@@ -19,6 +19,8 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.DecimalTruncator;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.Goal;
@@ -26,11 +28,14 @@ import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.study.PostSurveyScreen;
 import playn.core.Game;
 import react.Slot;
+import tripleplay.entity.Entity;
 import tripleplay.game.ScreenStack;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.TableLayout;
 import tripleplay.util.Colors;
+
+import java.util.Map;
 
 public class EndScreen extends ScreenStack.UIScreen {
 
@@ -99,16 +104,40 @@ public class EndScreen extends ScreenStack.UIScreen {
                 new ExposedColumn(Style.HAlign.CENTER, false, 1, HGAP_BETWEEN_COLUMNS),
                 new ExposedColumn(Style.HAlign.RIGHT, false, 1, 0)))
                 .addStyles(Style.BACKGROUND.is(Background.solid(Colors.WHITE).inset(TABLE_INSETS, TABLE_INSETS)));
-        summaryTable.add(
-                new Label("Users:").addStyles(Style.HALIGN.left),
-                new Shim(0, 0),
-                new Label(finalUserAmount + ""),
-                new Label("Exposure:").addStyles(Style.HALIGN.left),
-                new Shim(0, 0),
-                new Label(finalExposure + "%"));
+        Map<String, String> data = tabulateResults();
+        for (String key : data.keySet()) {
+            summaryTable.add(new Label(key).addStyles(Style.HALIGN.left),
+                    new Shim(0, 0),
+                    new Label(data.get(key)).addStyles(Style.HALIGN.left));
+        }
         wholeTable.add(tableHeader, summaryTable, new Shim(1, 1));
         return wholeTable;
+    }
 
+    private Map<String, String> tabulateResults() {
+        Map<String, String> map = Maps.newLinkedHashMap();
+        map.put("Users", String.valueOf(finalUserAmount));
+        map.put("Features", String.valueOf(completedFeatures()));
+        map.put("Exposure", String.valueOf(finalExposure) + "%");
+        map.put("Known exploits", String.valueOf(knownExploits()));
+        return ImmutableMap.copyOf(map);
+    }
+
+    private int completedFeatures() {
+        // There is always one in development, so the total count is one less than the total of featureNumbers.
+        int count = -1;
+        for (Entity e : gameWorld) {
+            if (e.has(gameWorld.featureNumber)) count++;
+        }
+        return count;
+    }
+
+    private int knownExploits() {
+        int count = 0;
+        for (Entity e : gameWorld) {
+            if (e.has(gameWorld.exploitNumber)) count++;
+        }
+        return count;
     }
 
     private String determineOutcomeText() {
