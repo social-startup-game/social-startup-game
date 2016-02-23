@@ -51,4 +51,10 @@ public final class HtmlGameConfig extends GameConfig.Default {
     public void enableGameplayLogging() {
         plat.log().setCollector(FirebaseLogCollector.createSession());
     }
+
+    @Override
+    public boolean useDebugKeys() {
+        final String hostName = Window.Location.getHostName();
+        return hostName.equals("127.0.0.1");
+    }
 }

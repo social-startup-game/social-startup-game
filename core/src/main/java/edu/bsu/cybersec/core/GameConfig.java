@@ -37,6 +37,8 @@ public interface GameConfig {
 
     void enableGameplayLogging();
 
+    boolean useDebugKeys();
+
     abstract class Default implements GameConfig {
         @Override
         public boolean skipIntro() {
@@ -61,6 +63,11 @@ public interface GameConfig {
         @Override
         public boolean showConsentForm() {
             return false;
+        }
+
+        @Override
+        public boolean useDebugKeys() {
+            return true;
         }
     }
 

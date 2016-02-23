@@ -55,7 +55,9 @@ public class GameScreen extends ScreenStack.UIScreen {
         initializeHudRenderingSystem();
 
         gameWorld.connect(update, paint);
-        game().plat.input().keyboardEvents.connect(new DebugMode(gameWorld));
+        if (SimGame.game.config.useDebugKeys()) {
+            game().plat.input().keyboardEvents.connect(new DebugMode(gameWorld));
+        }
     }
 
     private GameWorld.Systematized createGameWorld(final Company company) {
