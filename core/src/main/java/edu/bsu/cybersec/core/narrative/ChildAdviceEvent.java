@@ -20,31 +20,32 @@
 package edu.bsu.cybersec.core.narrative;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.NarrativeEvent;
 
 import java.util.List;
 
-public class ChildAdviceEvent extends NarrativeEvent {
-    List<Option> options = Lists.newArrayList();
+public final class ChildAdviceEvent extends NarrativeEvent {
+    private static final ImmutableList<String> OPTIONS_TEXT = ImmutableList.of(
+            "Computer Science",
+            "Psychology",
+            "Performing Arts",
+            "Law");
+    private final ImmutableList<Option> options;
 
     public ChildAdviceEvent(GameWorld world) {
         super(world);
-        populateOptionsList();
-    }
-
-    private void populateOptionsList() {
-        options.add(new majorOption("Computer Science"));
-        options.add(new majorOption("Psychology"));
-        options.add(new majorOption("Performing Arts"));
-        options.add(new majorOption("Law"));
+        ImmutableList.Builder<Option> builder = ImmutableList.builder();
+        for (String text : OPTIONS_TEXT) {
+            builder.add(new MajorOption(text));
+        }
+        this.options = builder.build();
     }
 
     @Override
     public String text() {
-        return "It is take your child to work day! James from accounting brought his daughter. She has a question for you! What should she study " +
-                "in order to get a job in app development?";
+        return "James from Accounting brought his daughter to work today. She has a question for you! What should she study " +
+                "in college to get a job in app development?";
     }
 
     @Override
@@ -52,10 +53,10 @@ public class ChildAdviceEvent extends NarrativeEvent {
         return options;
     }
 
-    final class majorOption extends Option.Terminal {
+    final class MajorOption extends Option.Terminal {
         String major;
 
-        public majorOption(String major) {
+        public MajorOption(String major) {
             this.major = major;
             setLogMessage(ChildAdviceEvent.class.getCanonicalName() + ": " + major);
         }
@@ -71,8 +72,8 @@ public class ChildAdviceEvent extends NarrativeEvent {
             after(4).post(new NarrativeEvent(world) {
                 @Override
                 public String text() {
-                    return "James from accounting would like to thank you for taking the time to answer his duaghter's question." +
-                            "He hopes she listens to and studies " + major + "!";
+                    return "James from Accounting gives you a call to thank you for speaking with his daughter. " +
+                            "He hopes she listens to you and studies " + major + "!";
                 }
 
                 @Override
