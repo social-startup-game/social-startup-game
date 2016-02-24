@@ -32,14 +32,13 @@ public class DataStolenEvent extends NarrativeEvent {
     private static final int HOURS_UNTIL_DISCOVERY_AFTER_IGNORE = 6;
     private static final float PERCENT_LOSS_ON_IGNORE = 0.40f;
 
-
     public DataStolenEvent(GameWorld world) {
         super(world);
     }
 
     @Override
     public String text() {
-        return "It looks like some of your user data was stolen by hackers! What do you do?";
+        return "Hackers stole some user data! What do you do?";
     }
 
     @Override
@@ -95,7 +94,7 @@ public class DataStolenEvent extends NarrativeEvent {
 
                 @Override
                 public String text() {
-                    return "An independent security expert discovered that you ignored a data breach and has informed the press! " + loss + " users have left your service after finding out that you did not notify them of the problem.";
+                    return "An independent security expert discovered that you ignored a data breach! " + loss + " users have left after discovering that you did not notify them.";
                 }
             });
         }
