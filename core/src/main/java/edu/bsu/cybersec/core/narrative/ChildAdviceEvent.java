@@ -28,9 +28,14 @@ import java.util.List;
 public final class ChildAdviceEvent extends NarrativeEvent {
     private static final ImmutableList<String> OPTIONS_TEXT = ImmutableList.of(
             "Computer Science",
-            "Psychology",
+            "Engineering",
+            "English",
+            "Graphic Design",
+            "Mathematics",
+            "Marketing",
             "Performing Arts",
-            "Law");
+            "Physics",
+            "Psychology");
     private final ImmutableList<Option> options;
 
     public ChildAdviceEvent(GameWorld world) {
