@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -125,7 +125,7 @@ public final class GameInteractionArea extends Group {
 
         private Animation.Handle animationHandle;
         private final InteractionAreaGroup view;
-        private boolean drawAttentionBackground = false;
+        private boolean needsAttention = false;
 
         ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view) {
             super(text);
@@ -146,7 +146,7 @@ public final class GameInteractionArea extends Group {
 
                         @Override
                         protected void paintImpl(Surface surf) {
-                            canvas.setFillColor(Palette.DIALOG_FOREGROUND);
+                            canvas.setFillColor(needsAttention ? Palette.DIALOG_BACKGROUND : Palette.DIALOG_FOREGROUND);
                             canvas.fillRoundRect(0, 0, size.width(), size.height(), radius);
                             if (isSelected()) {
                                 canvas.setFillColor(Palette.DIALOG_FOREGROUND);
@@ -169,7 +169,7 @@ public final class GameInteractionArea extends Group {
                             final float aspectRatio = iconImage.width() / iconImage.height();
                             final float imageRenderWidth = Math.min(size.width(), size.height() * aspectRatio);
                             final float imageRenderHeight = Math.min(size.height(), size.width() / aspectRatio);
-                            surf.draw(drawAttentionBackground ? attentionImage.tile() : iconImage.tile(),
+                            surf.draw(needsAttention ? attentionImage.tile() : iconImage.tile(),
                                     0, 0, imageRenderWidth, imageRenderHeight);
                         }
                     });
@@ -202,14 +202,14 @@ public final class GameInteractionArea extends Group {
             private final Runnable attentionThemer = new Runnable() {
                 @Override
                 public void run() {
-                    drawAttentionBackground = true;
+                    needsAttention = true;
                 }
             };
 
             private final Runnable regularThemer = new Runnable() {
                 @Override
                 public void run() {
-                    drawAttentionBackground = false;
+                    needsAttention = false;
                 }
             };
 
