@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -35,7 +35,7 @@ public class DDOSEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        return "Somewhere along the way, a tech savvy customer became disgruntled about his selfie not winning Selfie of the Week. He used a Distributed Denial of Service attack to overload your server capacity. Your servers are now down, and tech support is working to get it back up. What should you do?";
+        return "An angry customer is using a Distributed Denial of Service attack to overload your server capacity. Your servers are now down, and the server team is working hard to get them back up. What should you do?";
     }
 
     @Override
@@ -107,7 +107,7 @@ public class DDOSEvent extends NarrativeEvent {
 
                 @Override
                 public String text() {
-                    return "After " + HOURS_UNTIL_NOTIFY + " hours, your servers are back up! Unfortunately, " + loss + " users have left your service because they got frustrated about your servers being down for no reason.";
+                    return "After " + HOURS_UNTIL_NOTIFY + " hours, your servers are back up! Unfortunately, " + loss + " users have left because they got frustrated about your servers being down for no reason.";
                 }
 
                 @Override

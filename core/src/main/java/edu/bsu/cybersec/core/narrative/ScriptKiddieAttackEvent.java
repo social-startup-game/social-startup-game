@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -56,7 +56,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        return "You were attacked by a script kiddie\u2014an amateur who copied some code from the Internet to attack our site. The attack was not successful, but we have to keep our guard up against future attacks.\n\nWould you like to try to find the attackers and strike back? Who should do it?";
+        return "You were attacked by a script kiddie\u2014an amateur who copied some code from the Internet to attack our site. The attack was not successful, but we have to keep our guard up.\n\nShould someone try to find the attackers and strike back?";
     }
 
     final class RetaliateOption extends Option.Terminal {
@@ -92,7 +92,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                     post(new NarrativeEvent(world) {
                         @Override
                         public String text() {
-                            return world.profile.get(selectedWorkerId).firstName + " was unable to determine who the script kiddies were and returns to work.";
+                            return world.profile.get(selectedWorkerId).firstName + " was unable to find the script kiddies and returns to work.";
                         }
 
                         @Override
@@ -154,7 +154,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
                 @Override
                 public String text() {
-                    return "The police found the hacker responsible, and you were in the press! You gained "
+                    return "The police found the hacker responsible, and the story gave you some good press! You gained "
                             + userGain + " from the free publicity.";
                 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -40,7 +40,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        return "You are receiving complaints from numerous users about their information being taken by an outside source. Upon inspection, you see that your web service input wasn’t sanitized, which allowed your user list to be stolen.\n\nWho should work on encrypting user input?";
+        return "One of your engineers is concerned about injection attacks: if user data is not handled correctly, hackers may be able to run their programs on your machines. Who will you assign to investigate?";
     }
 
     @Override
@@ -76,7 +76,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
         private void assignEmployee() {
             final Entity taskEntity = world.create(true).add(world.name, world.owner, world.secondsRemaining, world.onComplete, world.taskFlags);
-            world.name.set(taskEntity.id, "Adding sanitization");
+            world.name.set(taskEntity.id, "Checking input handling");
             world.owner.set(taskEntity.id, id);
             world.taskFlags.set(taskEntity.id, TaskFlags.flags(TaskFlags.BOUND_TO_WORKDAY));
             world.secondsRemaining.set(taskEntity.id, HOURS_FOR_SANITIZATION * ClockUtils.SECONDS_PER_HOUR);
@@ -91,7 +91,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
                         @Override
                         public String text() {
-                            return "You lost " + loss + " users, but have sanitized input and should not run into this problem again.";
+                            return "You lost " + loss + " users before you could fix the injection problem, but now it has been fixed.";
                         }
 
                         @Override
@@ -130,7 +130,8 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
                 @Override
                 public String text() {
-                    return "You lost " + loss + " users. Unfortunately, you did not address this issue, and so may run into this problem again.";
+                    return "One of your employees finds and fixes a defect regarding input handling. You lost "
+                            + loss + " users while you ignored the problem.";
                 }
             });
 
