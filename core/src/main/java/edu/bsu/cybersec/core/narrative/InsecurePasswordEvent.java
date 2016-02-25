@@ -40,7 +40,7 @@ public class InsecurePasswordEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        return "Some private information was stolen because one of the employees in advertising was using weak a password." +
+        return "Some private information was stolen because one of the employees in advertising was using weak a password. " +
                 "What would you like to do?";
     }
 
@@ -68,7 +68,7 @@ public class InsecurePasswordEvent extends NarrativeEvent {
 
                 @Override
                 public String text() {
-                    return loss + " users have left our service after hearing about someone using a weak password." +
+                    return loss + " users have left our service after hearing about someone using a weak password. " +
                             "\n\nThankfully, we took the time to train our staff, and this won't be a problem again!";
                 }
             });
