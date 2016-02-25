@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -21,15 +21,11 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.GameBounds;
 import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.intro.Slide;
 import playn.core.Canvas;
 import playn.core.Image;
-import playn.core.TextFormat;
-import playn.core.TextLayout;
 import tripleplay.ui.Element;
 import tripleplay.ui.Icons;
 import tripleplay.ui.Label;
-import tripleplay.util.Colors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -55,7 +51,6 @@ public final class BossAtDeskLabelFactory {
         GameBounds bounds = SimGame.game.bounds;
         Canvas canvas = SimGame.game.plat.graphics().createCanvas(bounds.width(), bounds.height() / 2);
         drawBossAndDeskTo(canvas);
-        drawCeoLabelTo(canvas);
         return new Label(Icons.image(canvas.image));
     }
 
@@ -65,12 +60,5 @@ public final class BossAtDeskLabelFactory {
         canvas.draw(boss, (canvas.width - bossScaledWidth) / 2f, 0,
                 bossScaledWidth, canvas.height * RELATIVE_BOSS_SCALE);
         canvas.draw(desk, 0, canvas.height * 0.4f, canvas.width, canvas.height * 0.5f);
-    }
-
-    private void drawCeoLabelTo(Canvas canvas) {
-        TextFormat textFormat = new TextFormat(Slide.FONT);
-        TextLayout textLayout = SimGame.game.plat.graphics().layoutText("CEO", textFormat);
-        canvas.setFillColor(Colors.WHITE);
-        canvas.fillText(textLayout, canvas.width / 2, canvas.height * 0.55f);
     }
 }
