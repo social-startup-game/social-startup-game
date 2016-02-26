@@ -102,14 +102,6 @@ public final class Jukebox {
         }
     }
 
-    public void mute() {
-        muted.update(true);
-    }
-
-    public void unmute() {
-        muted.update(false);
-    }
-
     public void toggleMute() {
         muted.update(!muted.get());
     }
