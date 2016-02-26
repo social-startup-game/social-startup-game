@@ -55,6 +55,8 @@ public class SimGameStyle {
                         Style.FONT.is(font))
                 .add(Button.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(butSelBg))
+                .add(Button.class,
+                        Style.ACTION_SOUND.is(SfxCache.instance().CLICK))
                 .add(ToggleButton.class,
                         Style.BACKGROUND.is(butBg))
                 .add(ToggleButton.class, Style.Mode.SELECTED,
@@ -93,7 +95,8 @@ public class SimGameStyle {
                         Style.BACKGROUND.is(disabledChangeViewButtonBackground))
                 .add(GameInteractionArea.ChangeViewButton.class, Style.TEXT_EFFECT.pixelOutline)
                 .add(GameInteractionArea.ChangeViewButton.class, Style.HIGHLIGHT.is(Palette.UNUSED_SPACE))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.COLOR.is(Palette.FOREGROUND));
+                .add(GameInteractionArea.ChangeViewButton.class, Style.COLOR.is(Palette.FOREGROUND))
+                .add(GameInteractionArea.ChangeViewButton.class, Style.ACTION_SOUND.is(SfxCache.instance().CLICK));
 
     }
 }

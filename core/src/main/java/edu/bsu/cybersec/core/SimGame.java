@@ -27,7 +27,7 @@ import pythagoras.f.IRectangle;
 import react.Value;
 import tripleplay.game.ScreenStack;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class SimGame extends SceneGame {
 
@@ -71,6 +71,7 @@ public class SimGame extends SceneGame {
     private void initializeAssetCaches() {
         MusicCache.initialize(plat.assets());
         FontCache.initialize(plat.graphics());
+        SfxCache.initialize(plat.assets());
     }
 
     private void pushFirstScreen() {

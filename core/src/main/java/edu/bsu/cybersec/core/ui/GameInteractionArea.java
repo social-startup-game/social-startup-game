@@ -37,8 +37,7 @@ import tripleplay.anim.Animation;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public final class GameInteractionArea extends Group {
 

@@ -19,11 +19,15 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.Maps;
+import edu.bsu.cybersec.core.SimGame;
 import playn.core.Sound;
 import react.Slot;
 import react.Value;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.*;
 
 public final class Jukebox {
 
@@ -34,6 +38,7 @@ public final class Jukebox {
     }
 
     private Sound currentTrack;
+
     public final Value<Boolean> muted = Value.create(false);
 
     Jukebox() {
@@ -44,6 +49,36 @@ public final class Jukebox {
                     currentTrack.play();
                 } else if (muted && currentTrack != null) {
                     currentTrack.stop();
+                }
+            }
+        });
+        silenceSoundEffectsWhileMuted();
+    }
+
+    private void silenceSoundEffectsWhileMuted() {
+        muted.connect(new Slot<Boolean>() {
+            private final Map<Sound, Float> storedVolumes = Maps.newHashMap();
+
+            @Override
+            public void onEmit(Boolean muted) {
+                if (muted) {
+                    muteSounds();
+                } else {
+                    restoreVolumes();
+                }
+            }
+
+            private void muteSounds() {
+                for (Sound s : SfxCache.instance().all()) {
+                    storedVolumes.put(s, s.volume());
+                    s.setVolume(0);
+                    SimGame.game.plat.log().debug("Set volume to zero");
+                }
+            }
+
+            private void restoreVolumes() {
+                for (Sound s : storedVolumes.keySet()) {
+                    s.setVolume(storedVolumes.get(s));
                 }
             }
         });

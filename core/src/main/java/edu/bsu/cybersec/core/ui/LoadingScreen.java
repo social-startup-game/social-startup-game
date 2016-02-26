@@ -19,6 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.EmployeePool;
@@ -41,12 +42,12 @@ import tripleplay.ui.layout.AxisLayout;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 public class LoadingScreen extends ScreenStack.UIScreen {
 
     private final ScreenStack screenStack;
-    private int assetTypesYetToCache = 3; // images, tiles, sounds
+    private int assetTypesYetToCache = 3; // images, tiles, music
     private ProgressBar progressBar;
 
     public LoadingScreen(ScreenStack screenStack) {
@@ -125,7 +126,10 @@ public class LoadingScreen extends ScreenStack.UIScreen {
 
     private void startLoadingSounds() {
         List<RFuture<Sound>> sounds = Lists.newArrayList();
-        for (Sound sound : MusicCache.instance().all()) {
+        ImmutableList.Builder<Sound> allSoundsBuilder = new ImmutableList.Builder<>();
+        allSoundsBuilder.addAll(MusicCache.instance().all());
+        allSoundsBuilder.addAll(SfxCache.instance().all());
+        for (Sound sound : allSoundsBuilder.build()) {
             sounds.add(sound.state);
             sound.state.onComplete(new Slot<Try<Sound>>() {
                 @Override
@@ -138,7 +142,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
             @Override
             public void onEmit(Try<Collection<Sound>> event) {
                 if (event.isFailure()) {
-                    game().plat.log().warn("Failed to load some sound: " + event);
+                    game().plat.log().warn("Failed to load a sound: " + event);
                 } else {
                     countDown();
                 }
