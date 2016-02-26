@@ -69,7 +69,8 @@ public class LoadingScreen extends ScreenStack.UIScreen {
         final int max =
                 GameAssets.ImageKey.values().length
                         + GameAssets.TileKey.values().length
-                        + MusicCache.instance().all().size();
+                        + MusicCache.instance().all().size()
+                        + SfxCache.instance().all().size();
         final float width = size().width();
         final float height = size().height();
         progressBar = new ProgressBar(max, width * 0.55f, height * 0.02f);
