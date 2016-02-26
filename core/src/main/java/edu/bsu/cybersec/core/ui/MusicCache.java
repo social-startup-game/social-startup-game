@@ -25,14 +25,14 @@ import playn.core.Sound;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 public abstract class MusicCache {
     private static MusicCache instance;
 
     public final Sound GAME_THEME = load("ChipperDoodle");
     public final Sound INTRO_THEME = load("Pamgaea");
-    private final ImmutableList<Sound> all = ImmutableList.of(GAME_THEME);
+    private final ImmutableList<Sound> all = ImmutableList.of(GAME_THEME, INTRO_THEME);
 
     public static MusicCache initialize(final Assets assets) {
         if (instance == null) {
