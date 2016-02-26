@@ -89,7 +89,7 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
 
             private void drawGoalLine(Surface surface, float yPerUnit) {
                 // Draw goal line
-                final float goal = world.company.get().goal.minimum;
+                final float goal = world.company.get().goal.minimumUsers;
                 final float goalY = goal * yPerUnit;
                 if (goalY < _size.height) {
                     surface.setFillColor(GameColors.GRANNY_SMITH);
