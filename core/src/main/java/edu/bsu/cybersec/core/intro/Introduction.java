@@ -60,8 +60,9 @@ public final class Introduction {
 
                             @Override
                             public Slide next() {
-                                return new BossSlide("You have a job review in two weeks, and I expect us to have " + company.goal.minimum
-                                        + " users by then. Do you have what it takes?",
+                                return new BossSlide("You have a job review in two weeks, and I expect us to have " + company.goal.minimumUsers
+                                        + " users by then. Make sure that we stay safe and our expsoure doesn't go above" + company.goal.maximumExposure
+                                        + ". Do you have what it takes?",
                                         company.boss.image) {
                                     @Override
                                     public boolean hasNext() {

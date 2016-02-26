@@ -20,13 +20,15 @@
 package edu.bsu.cybersec.core;
 
 public class Goal {
-    public final int minimum;
+    public final int minimumUsers;
+    public final float maximumExposure;
 
-    public Goal(int minimum) {
-        this.minimum = minimum;
+    public Goal(int minimumUsers, float maximumExposure) {
+        this.minimumUsers = minimumUsers;
+        this.maximumExposure = maximumExposure;
     }
 
-    public boolean isMet(int numberOfUsers) {
-        return numberOfUsers >= minimum;
+    public boolean isMet(int numberOfUsers, float exposureLevel) {
+        return numberOfUsers >= minimumUsers && exposureLevel <= maximumExposure;
     }
 }

@@ -31,7 +31,7 @@ public class Company {
 
     public final ImmutableList<Employee> employees;
     public final Employee boss;
-    public final Goal goal = new Goal(20000);
+    public final Goal goal = new Goal(20000, 0.15f);
 
     public static Builder from(EmployeePool employeePool) {
         return new Builder(employeePool);

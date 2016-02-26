@@ -24,24 +24,39 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class GoalTest {
-    private final Goal goal = new Goal(100);
+    private final Goal goal = new Goal(100, .15f);
 
     @Test
-    public void testIsMet_false() {
-        boolean isMet = goal.isMet(50);
+    public void testIsMet_notEnoughUsers_false() {
+        boolean isMet = goal.isMet(50, .10f);
         assertFalse(isMet);
     }
 
     @Test
+    public void testIsMet_tooMuchExposure_false() {
+        boolean isMet = goal.isMet(500, .17f);
+        assertFalse(isMet);
+    }
+
+
+    @Test
     public void testIsMet_true() {
-        boolean isMet = goal.isMet(100);
+        boolean isMet = goal.isMet(100, .127f);
         assertTrue(isMet);
     }
 
     @Test
-    public void testGoalVariable() {
+    public void testGoalUsersVariable() {
         int expected = 100;
-        int actual = goal.minimum;
+        int actual = goal.minimumUsers;
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGoalExposureVariable() {
+        float expected = .15f;
+        float actual = goal.maximumExposure;
+        float delta = 0.0001f;
+        assertEquals(expected, actual, delta);
     }
 }

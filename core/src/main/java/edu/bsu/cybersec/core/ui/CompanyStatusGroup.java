@@ -29,7 +29,7 @@ import tripleplay.ui.layout.AxisLayout;
 import tripleplay.ui.layout.TableLayout;
 import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class CompanyStatusGroup extends InteractionAreaGroup {
 
@@ -107,15 +107,29 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
     }
 
     private static final class EstimatedExposureLabel extends Label {
+        private static final int PASS_COLOR = GameColors.WHITE;
+        private static final int FAIL_COLOR = Colors.RED;
+        private boolean isPassColor = true;
+        private final float maximumExposure;
 
-        private EstimatedExposureLabel(GameWorld gameWorld) {
-            super(String.valueOf(gameWorld.exposure.get()));
-            gameWorld.exposure.connect(new ValueView.Listener<Float>() {
+        private EstimatedExposureLabel(final GameWorld world) {
+            super(String.valueOf(world.exposure.get()));
+            addStyles(Style.COLOR.is(PASS_COLOR));
+            this.maximumExposure = world.company.get().goal.maximumExposure;
+            world.exposure.connect(new ValueView.Listener<Float>() {
                 private final DecimalTruncator truncator = new DecimalTruncator(1);
 
                 @Override
                 public void onChange(Float value, Float oldValue) {
                     text.update(truncator.makeTruncatedString(value * 100) + "%");
+                    boolean isAcceptableExposureLevel = world.exposure.get() <= maximumExposure;
+                    if (isAcceptableExposureLevel && !isPassColor) {
+                        addStyles(Style.COLOR.is(PASS_COLOR));
+                        isPassColor = true;
+                    } else if (!isAcceptableExposureLevel && isPassColor) {
+                        addStyles(Style.COLOR.is(FAIL_COLOR));
+                        isPassColor = false;
+                    }
                 }
             });
         }
@@ -154,7 +168,7 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
 
                 @Override
                 public void onEmit(Float users) {
-                    float progress = users / world.company.get().goal.minimum;
+                    float progress = users / world.company.get().goal.minimumUsers;
                     text.update(truncator.makeTruncatedString(progress * 100) + "%");
                     if (progress >= 1 && !metGoal) {
                         addStyles(Style.COLOR.is(PASS_COLOR));

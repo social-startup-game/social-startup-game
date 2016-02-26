@@ -42,7 +42,8 @@ public class EndScreen extends ScreenStack.UIScreen {
     private final GameWorld gameWorld;
     private final ScreenStack screenStack;
     private final int finalUserAmount;
-    private final String finalExposure;
+    private final float finalExposure;
+    private final DecimalTruncator truncator = new DecimalTruncator(2);
     private static final float HGAP_BETWEEN_COLUMNS = SimGame.game.bounds.percentOfHeight(0.02f);
     private static final float TABLE_INSETS = SimGame.game.bounds.percentOfHeight(0.005f);
 
@@ -51,7 +52,7 @@ public class EndScreen extends ScreenStack.UIScreen {
         this.gameWorld = gameWorld;
         this.screenStack = screenStack;
         finalUserAmount = gameWorld.users.get().intValue();
-        finalExposure = new DecimalTruncator(2).makeTruncatedString(gameWorld.exposure.get() * 100f);
+        finalExposure = gameWorld.exposure.get();
         logEndGameStats();
     }
 
@@ -118,7 +119,7 @@ public class EndScreen extends ScreenStack.UIScreen {
         Map<String, String> map = Maps.newLinkedHashMap();
         map.put("Users", String.valueOf(finalUserAmount));
         map.put("Features", String.valueOf(completedFeatures()));
-        map.put("Exposure", String.valueOf(finalExposure) + "%");
+        map.put("Exposure", String.valueOf(truncator.makeTruncatedString(finalExposure * 100f)) + "%");
         map.put("Known exploits", String.valueOf(knownExploits()));
         return ImmutableMap.copyOf(map);
     }
@@ -142,10 +143,12 @@ public class EndScreen extends ScreenStack.UIScreen {
 
     private String determineOutcomeText() {
         final Goal goal = gameWorld.company.get().goal;
-        if (goal.isMet(gameWorld.users.get().intValue())) {
-            return "You needed " + goal.minimum + " users. You were succesful, and get to keep your job!";
+        if (goal.isMet(finalUserAmount, finalExposure)) {
+            return "You needed " + goal.minimumUsers + " users and less than " + truncator.makeTruncatedString(goal.maximumExposure * 100)
+                    + "%. You were succesful, and get to keep your job!";
         } else {
-            return "You needed " + goal.minimum + " users. You made poor security decisions. You're fired.";
+            return "You needed " + goal.minimumUsers + " users and less than " + truncator.makeTruncatedString(goal.maximumExposure * 100)
+                    + "%. You made poor security decisions. You're fired.";
         }
     }
 
