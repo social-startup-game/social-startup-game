@@ -23,7 +23,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.DecimalTruncator;
 import edu.bsu.cybersec.core.GameWorld;
-import edu.bsu.cybersec.core.Goal;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.study.PostSurveyScreen;
 import playn.core.Game;
@@ -142,14 +141,7 @@ public class EndScreen extends ScreenStack.UIScreen {
     }
 
     private String determineOutcomeText() {
-        final Goal goal = gameWorld.company.get().goal;
-        if (goal.isMet(finalUserAmount, finalExposure)) {
-            return "You needed " + goal.minimumUsers + " users and less than " + truncator.makeTruncatedString(goal.maximumExposure * 100)
-                    + "%. You were succesful, and get to keep your job!";
-        } else {
-            return "You needed " + goal.minimumUsers + " users and less than " + truncator.makeTruncatedString(goal.maximumExposure * 100)
-                    + "%. You made poor security decisions. You're fired.";
-        }
+        return new EndTextGenerator(gameWorld).generatorEndText();
     }
 
     @Override

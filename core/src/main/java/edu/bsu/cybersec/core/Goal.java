@@ -29,6 +29,14 @@ public class Goal {
     }
 
     public boolean isMet(int numberOfUsers, float exposureLevel) {
-        return numberOfUsers >= minimumUsers && exposureLevel <= maximumExposure;
+        return isEnoughUsers(numberOfUsers) && isAcceptableExposure(exposureLevel);
+    }
+
+    public boolean isEnoughUsers(int numberOfUsers) {
+        return numberOfUsers >= minimumUsers;
+    }
+
+    public boolean isAcceptableExposure(float exposure) {
+        return exposure <= maximumExposure;
     }
 }
