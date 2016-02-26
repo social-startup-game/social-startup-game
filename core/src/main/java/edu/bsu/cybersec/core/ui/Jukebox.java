@@ -19,12 +19,14 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.SimGame;
 import playn.core.Sound;
 import react.Slot;
 import react.Value;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.*;
@@ -41,6 +43,8 @@ public final class Jukebox {
 
     public final Value<Boolean> muted = Value.create(false);
 
+    private final List<Sound> sfx = Lists.newArrayList();
+
     Jukebox() {
         muted.connect(new Slot<Boolean>() {
             @Override
@@ -53,6 +57,11 @@ public final class Jukebox {
             }
         });
         silenceSoundEffectsWhileMuted();
+    }
+
+    public Jukebox registerSfx(List<Sound> sfx) {
+        this.sfx.addAll(sfx);
+        return this;
     }
 
     private void silenceSoundEffectsWhileMuted() {
@@ -69,7 +78,7 @@ public final class Jukebox {
             }
 
             private void muteSounds() {
-                for (Sound s : SfxCache.instance().all()) {
+                for (Sound s : sfx) {
                     storedVolumes.put(s, s.volume());
                     s.setVolume(0);
                     SimGame.game.plat.log().debug("Set volume to zero");

@@ -72,6 +72,7 @@ public class SimGame extends SceneGame {
         MusicCache.initialize(plat.assets());
         FontCache.initialize(plat.graphics());
         SfxCache.initialize(plat.assets());
+        Jukebox.instance().registerSfx(SfxCache.instance().all());
     }
 
     private void pushFirstScreen() {
