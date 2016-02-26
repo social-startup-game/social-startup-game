@@ -55,6 +55,11 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
                 }
             }
 
+            private void invertYAxisForConvenientDrawing(Surface surface) {
+                // http://stackoverflow.com/questions/4335400/in-html5-canvas-can-i-make-the-y-axis-go-up-rather-than-down
+                surface.transform(1, 0, 0, -1, 0, _size.height);
+            }
+
             private void drawBackgroundAndBorder(Surface surface) {
                 final float borderSize = _size.width * BORDER_WIDTH_PERCENT;
                 final float twiceBorderSize = borderSize * 2f;
@@ -63,7 +68,6 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
                 surface.setFillColor(BACKGROUND_COLOR);
                 surface.fillRect(borderSize, borderSize, _size.width - twiceBorderSize, _size.height - twiceBorderSize);
             }
-
 
             private void drawData(Surface surface) {
                 final float minXPerUnit = _size.width / MINIMUM_X_UNITS;
@@ -80,11 +84,17 @@ public final class CompanyStatusGraph extends SizableWidget<CompanyStatusGraph> 
                     prevX = newX;
                     prevY = newY;
                 }
+                drawGoalLine(surface, yPerUnit);
             }
 
-            private void invertYAxisForConvenientDrawing(Surface surface) {
-                // http://stackoverflow.com/questions/4335400/in-html5-canvas-can-i-make-the-y-axis-go-up-rather-than-down
-                surface.transform(1, 0, 0, -1, 0, _size.height);
+            private void drawGoalLine(Surface surface, float yPerUnit) {
+                // Draw goal line
+                final float goal = world.company.get().goal.minimum;
+                final float goalY = goal * yPerUnit;
+                if (goalY < _size.height) {
+                    surface.setFillColor(GameColors.GRANNY_SMITH);
+                    surface.drawLine(0, goal * yPerUnit, _size.width, goal * yPerUnit, THICKNESS);
+                }
             }
         });
         configurePreferredSize();
