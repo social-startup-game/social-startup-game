@@ -110,23 +110,21 @@ public final class CompanyStatusGroup extends InteractionAreaGroup {
         private static final int PASS_COLOR = GameColors.WHITE;
         private static final int FAIL_COLOR = Colors.RED;
         private boolean isPassColor = true;
-        private final float maximumExposure;
+
 
         private EstimatedExposureLabel(final GameWorld world) {
             super(String.valueOf(world.exposure.get()));
             addStyles(Style.COLOR.is(PASS_COLOR));
-            this.maximumExposure = world.company.get().goal.maximumExposure;
             world.exposure.connect(new ValueView.Listener<Float>() {
                 private final DecimalTruncator truncator = new DecimalTruncator(1);
 
                 @Override
                 public void onChange(Float value, Float oldValue) {
                     text.update(truncator.makeTruncatedString(value * 100) + "%");
-                    boolean isAcceptableExposureLevel = world.exposure.get() <= maximumExposure;
-                    if (isAcceptableExposureLevel && !isPassColor) {
+                    if (world.company.get().goal.isAcceptableExposure(world.exposure.get()) && !isPassColor) {
                         addStyles(Style.COLOR.is(PASS_COLOR));
                         isPassColor = true;
-                    } else if (!isAcceptableExposureLevel && isPassColor) {
+                    } else if (!world.company.get().goal.isAcceptableExposure(world.exposure.get()) && isPassColor) {
                         addStyles(Style.COLOR.is(FAIL_COLOR));
                         isPassColor = false;
                     }
