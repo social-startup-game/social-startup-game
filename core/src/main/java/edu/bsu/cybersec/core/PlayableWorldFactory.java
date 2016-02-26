@@ -116,7 +116,7 @@ public class PlayableWorldFactory {
 
     private void makeExistingFeature() {
         Entity userGeneratingEntity = FeatureFactory.in(world).makeCompletedFeature(0);
-        world.usersPerHour.set(userGeneratingEntity.id, 1);
+        world.usersPerHour.set(userGeneratingEntity.id, 25);
         world.vulnerability.set(userGeneratingEntity.id, 10);
     }
 }
