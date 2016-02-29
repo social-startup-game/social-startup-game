@@ -160,6 +160,8 @@ public final class GameInteractionArea extends Group {
         private Animation.Handle animationHandle;
         private final InteractionAreaGroup view;
         private boolean needsAttention = false;
+        private TextFormat numberTextFormat = new TextFormat(FontCache.instance().REGULAR);
+        private TextLayout numberTextLayout;
 
         ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view, final Value<Integer> number) {
             super(text);
@@ -168,6 +170,16 @@ public final class GameInteractionArea extends Group {
             final Image attentionImage = SimGame.game.assets.getImage(attentionKey);
             final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
             final float desiredWidth = SimGame.game.bounds.width() / 5;
+
+            if (number != null) {
+                numberTextLayout = SimGame.game.plat.graphics().layoutText(number.get().toString(), numberTextFormat);
+                number.connect(new Slot<Integer>() {
+                    @Override
+                    public void onEmit(Integer integer) {
+                        numberTextLayout = SimGame.game.plat.graphics().layoutText(integer.toString(), numberTextFormat);
+                    }
+                });
+            }
 
             addStyles(Style.BACKGROUND.is(new Background() {
                 @Override
@@ -199,12 +211,11 @@ public final class GameInteractionArea extends Group {
                                     fillHeight,
                                     radius);
 
-                            if (number != null) {
-                                TextFormat format = new TextFormat(FontCache.instance().REGULAR);
-                                TextLayout textLayout = SimGame.game.plat.graphics().layoutText(number.get().toString(), format);
-
+                            if (numberTextLayout != null) {
                                 canvas.setFillColor(Colors.BLACK);
-                                canvas.fillText(textLayout, fillWidth - textLayout.size.width(), fillHeight - textLayout.size.height());
+                                canvas.fillText(numberTextLayout,
+                                        fillWidth - numberTextLayout.size.width(),
+                                        fillHeight - numberTextLayout.size.height());
                             }
 
                             surf.draw(canvas.toTexture().tile(), 0, 0);
@@ -214,8 +225,6 @@ public final class GameInteractionArea extends Group {
                             final float imageRenderHeight = Math.min(size.height(), size.width() / aspectRatio);
                             surf.draw(needsAttention ? attentionImage.tile() : iconImage.tile(),
                                     0, 0, imageRenderWidth, imageRenderHeight);
-
-
                         }
                     });
                 }
