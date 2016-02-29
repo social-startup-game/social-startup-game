@@ -23,21 +23,21 @@ import com.google.common.collect.ImmutableList;
 import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
-import playn.core.Canvas;
-import playn.core.Image;
-import playn.core.Surface;
+import edu.bsu.cybersec.core.SystemPriority;
+import playn.core.*;
 import playn.scene.Layer;
 import pythagoras.f.IDimension;
-import react.Signal;
-import react.Slot;
-import react.UnitSlot;
-import react.ValueView;
+import react.*;
 import tripleplay.anim.AnimGroup;
 import tripleplay.anim.Animation;
+import tripleplay.entity.Component;
+import tripleplay.entity.Entity;
 import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
+import tripleplay.util.Colors;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 public final class GameInteractionArea extends Group {
 
@@ -65,10 +65,11 @@ public final class GameInteractionArea extends Group {
         private final ExploitsGroup exploitsGroup = new ExploitsGroup(gameWorld);
         private final EventsGroup eventsGroup = new EventsGroup(gameWorld);
 
-        private final ChangeViewButton statusButton = new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup);
-        private final ChangeViewButton featureButton = new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup);
-        private final ChangeViewButton exploitsButton = new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup);
-        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, GameAssets.ImageKey.NEWS_ATTENTION, "Alerts", eventsGroup);
+        private final ChangeViewButton statusButton = new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup, null);
+        private final ChangeViewButton featureButton = new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup, makeFeatureCounter());
+
+        private final ChangeViewButton exploitsButton = new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup, makeExploitCounter());
+        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, GameAssets.ImageKey.NEWS_ATTENTION, "Alerts", eventsGroup, null);
 
         private final ImmutableList<ChangeViewButton> allButtons = ImmutableList.of(statusButton, featureButton, exploitsButton, eventsButton);
 
@@ -109,6 +110,40 @@ public final class GameInteractionArea extends Group {
                 }
             });
         }
+
+        private class Counter extends tripleplay.entity.System {
+            public final Value<Integer> count = Value.create(0);
+            private final int modifier;
+            private final Component component;
+
+            protected Counter(Component component) {
+                this(component, 0);
+            }
+
+            protected Counter(Component component, int mod) {
+                super(gameWorld, SystemPriority.UI_LEVEL.value);
+                this.component = checkNotNull(component);
+                this.modifier = mod;
+            }
+
+            @Override
+            protected boolean isInterested(Entity entity) {
+                return entity.has(component);
+            }
+
+            @Override
+            protected void update(Clock clock, Entities entities) {
+                count.update(entities.size() + modifier);
+            }
+        }
+
+        private Value<Integer> makeFeatureCounter() {
+            return new Counter(gameWorld.featureNumber, -1).count;
+        }
+
+        private Value<Integer> makeExploitCounter() {
+            return new Counter(gameWorld.exploitNumber).count;
+        }
     }
 
     @Override
@@ -126,7 +161,7 @@ public final class GameInteractionArea extends Group {
         private final InteractionAreaGroup view;
         private boolean needsAttention = false;
 
-        ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view) {
+        ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view, final Value<Integer> number) {
             super(text);
             this.view = checkNotNull(view);
             final Image iconImage = SimGame.game.assets.getImage(imageKey);
@@ -163,6 +198,15 @@ public final class GameInteractionArea extends Group {
                                     fillWidth,
                                     fillHeight,
                                     radius);
+
+                            if (number != null) {
+                                TextFormat format = new TextFormat(FontCache.instance().REGULAR);
+                                TextLayout textLayout = SimGame.game.plat.graphics().layoutText(number.get().toString(), format);
+
+                                canvas.setFillColor(Colors.BLACK);
+                                canvas.fillText(textLayout, fillWidth - textLayout.size.width(), fillHeight - textLayout.size.height());
+                            }
+
                             surf.draw(canvas.toTexture().tile(), 0, 0);
 
                             final float aspectRatio = iconImage.width() / iconImage.height();
@@ -170,6 +214,8 @@ public final class GameInteractionArea extends Group {
                             final float imageRenderHeight = Math.min(size.height(), size.width() / aspectRatio);
                             surf.draw(needsAttention ? attentionImage.tile() : iconImage.tile(),
                                     0, 0, imageRenderWidth, imageRenderHeight);
+
+
                         }
                     });
                 }
@@ -192,8 +238,8 @@ public final class GameInteractionArea extends Group {
             new AttentionAnimator(view);
         }
 
-        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view) {
-            this(imageKey, imageKey, text, view);
+        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view, Value<Integer> number) {
+            this(imageKey, imageKey, text, view, number);
         }
 
         private class AttentionAnimator {
