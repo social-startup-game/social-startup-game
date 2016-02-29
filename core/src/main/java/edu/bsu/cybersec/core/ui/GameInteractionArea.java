@@ -156,12 +156,16 @@ public final class GameInteractionArea extends Group {
     final class ChangeViewButton extends Button {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
         private static final float FLASH_PERIOD = 300f;
+        private static final int NUMBER_CHANGE_HIGHLIGHT_DURATION_MS = 850;
+        private static final int NUMBER_CHANGE_HIGHLIGHT_COLOR = 0xffffff00; // Yellow
+        private static final int NUMBER_COLOR = 0xff000000; // Black
 
         private Animation.Handle animationHandle;
         private final InteractionAreaGroup view;
         private boolean needsAttention = false;
         private TextFormat numberTextFormat = new TextFormat(FontCache.instance().REGULAR);
         private TextLayout numberTextLayout;
+        private long lastNumberChange;
 
         ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view, final Value<Integer> number) {
             super(text);
@@ -177,6 +181,7 @@ public final class GameInteractionArea extends Group {
                     @Override
                     public void onEmit(Integer integer) {
                         numberTextLayout = SimGame.game.plat.graphics().layoutText(integer.toString(), numberTextFormat);
+                        lastNumberChange = System.currentTimeMillis();
                     }
                 });
             }
@@ -212,7 +217,14 @@ public final class GameInteractionArea extends Group {
                                     radius);
 
                             if (numberTextLayout != null) {
-                                canvas.setFillColor(Colors.BLACK);
+                                final float msSinceLastChange = System.currentTimeMillis() - lastNumberChange;
+                                if (msSinceLastChange <= NUMBER_CHANGE_HIGHLIGHT_DURATION_MS) {
+                                    final float proportion = msSinceLastChange / NUMBER_CHANGE_HIGHLIGHT_DURATION_MS;
+                                    int blend = Colors.blend(NUMBER_COLOR, NUMBER_CHANGE_HIGHLIGHT_COLOR, proportion);
+                                    canvas.setFillColor(blend);
+                                } else {
+                                    canvas.setFillColor(NUMBER_COLOR);
+                                }
                                 canvas.fillText(numberTextLayout,
                                         fillWidth - numberTextLayout.size.width(),
                                         fillHeight - numberTextLayout.size.height());
