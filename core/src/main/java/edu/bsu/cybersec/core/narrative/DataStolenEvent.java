@@ -27,9 +27,9 @@ import java.util.List;
 
 public class DataStolenEvent extends NarrativeEvent {
 
-    private static final int HOURS_UNTIL_LOSS_ON_NOTIFY = 1;
+    private static final int HOURS_UNTIL_LOSS_ON_NOTIFY = 5;
     private static final float PERCENT_LOSS_ON_NOTIFY = 0.05f;
-    private static final int HOURS_UNTIL_DISCOVERY_AFTER_IGNORE = 6;
+    private static final int HOURS_UNTIL_DISCOVERY_AFTER_IGNORE = 8;
     private static final float PERCENT_LOSS_ON_IGNORE = 0.40f;
 
     public DataStolenEvent(GameWorld world) {

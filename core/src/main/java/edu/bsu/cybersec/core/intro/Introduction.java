@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core.intro;
 
 import edu.bsu.cybersec.core.Company;
+import edu.bsu.cybersec.core.DecimalTruncator;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameAssets;
 
@@ -61,8 +62,9 @@ public final class Introduction {
                             @Override
                             public Slide next() {
                                 return new BossSlide("You have a job review in two weeks, and I expect us to have " + company.goal.minimumUsers
-                                        + " users by then. Make sure that we stay safe and our expsoure doesn't go above" + company.goal.maximumExposure
-                                        + ". Do you have what it takes?",
+                                        + " users by then. Make sure that we stay safe and our expsoure doesn't go above "
+                                        + new DecimalTruncator(0).makeTruncatedString(company.goal.maximumExposure * 100)
+                                        + "%. Do you have what it takes?",
                                         company.boss.image) {
                                     @Override
                                     public boolean hasNext() {

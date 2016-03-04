@@ -26,8 +26,8 @@ import edu.bsu.cybersec.core.NarrativeEvent;
 import java.util.List;
 
 public class DDOSEvent extends NarrativeEvent {
-    private static final int HOURS_UNTIL_NOTIFY = 10;
-    private static final float PERCENT_LOSS_ON_IGNORE = .10f;
+    private int HOURS_UNTIL_NOTIFY = 0;
+    private final float PERCENT_LOSS_ON_IGNORE = .10f;
 
     public DDOSEvent(GameWorld world) {
         super(world);
@@ -47,6 +47,7 @@ public class DDOSEvent extends NarrativeEvent {
     public void run() {
         super.run();
         ((GameWorld.Systematized) world).userGenerationSystem.userGenerationEnabled.update(false);
+        HOURS_UNTIL_NOTIFY = (int) (world.exposure.get() * 100f);
     }
 
     private class PressReleaseOption extends Option.Terminal {
