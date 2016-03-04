@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -22,7 +22,6 @@ package edu.bsu.cybersec.core.ui;
 import edu.bsu.cybersec.core.systems.WorkHoursSystem;
 import playn.core.Surface;
 import playn.core.Tile;
-import playn.core.TileSource;
 import playn.scene.Layer;
 import pythagoras.f.IDimension;
 import tripleplay.ui.Background;
@@ -33,15 +32,15 @@ import static com.google.common.base.Preconditions.checkState;
 
 public final class ExpandableBackground extends Background {
 
-    public static Builder background(TileSource background) {
+    public static Builder background(Tile background) {
         return new Builder(background);
     }
 
     public static final class Builder {
-        private TileSource background;
+        private Tile background;
         private WorkHoursSystem workHoursSystem;
 
-        private Builder(TileSource background) {
+        private Builder(Tile background) {
             this.background = checkNotNull(background);
         }
 
@@ -52,11 +51,11 @@ public final class ExpandableBackground extends Background {
         }
     }
 
-    private final TileSource background;
+    private final Tile background;
     private final WorkHoursSystem workHoursSystem;
 
     private ExpandableBackground(Builder builder) {
-        this.background = builder.background;
+        this.background = builder.background.tile();
         this.workHoursSystem = builder.workHoursSystem;
     }
 
@@ -64,7 +63,7 @@ public final class ExpandableBackground extends Background {
     protected Instance instantiate(final IDimension size) {
         return new LayerInstance(size, new Layer() {
             private static final int MEDIUM_GREY = 0xff777777;
-            private final float backgroundAspectRatio = background.tile().width() / background.tile().height();
+            private final float backgroundAspectRatio = background.width() / background.height();
 
             @Override
             protected void paintImpl(Surface surf) {
