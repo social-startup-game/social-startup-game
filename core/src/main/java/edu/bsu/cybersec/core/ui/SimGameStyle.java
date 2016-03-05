@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -86,17 +86,26 @@ public class SimGameStyle {
                         Tabs.HIGHLIGHTER.is(Tabs.textColorHighlighter(0xFF000000, 0xFFFFFFFF)))
                 .add(Label.class,
                         Style.FONT.is(font))
-                .add(GameInteractionArea.ChangeViewButton.class,
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class,
                         Style.BACKGROUND.is(butBg),
                         Style.FONT.is(font))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.Mode.SELECTED,
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class, Style.Mode.SELECTED,
                         Style.BACKGROUND.is(butSelBg))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.Mode.DISABLED,
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class, Style.Mode.DISABLED,
                         Style.BACKGROUND.is(disabledChangeViewButtonBackground))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.TEXT_EFFECT.pixelOutline)
-                .add(GameInteractionArea.ChangeViewButton.class, Style.HIGHLIGHT.is(Palette.UNUSED_SPACE))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.COLOR.is(Palette.FOREGROUND))
-                .add(GameInteractionArea.ChangeViewButton.class, Style.ACTION_SOUND.is(SfxCache.instance().CLICK));
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class,
+                        Style.TEXT_EFFECT.pixelOutline)
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class,
+                        Style.HIGHLIGHT.is(Palette.UNUSED_SPACE))
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class,
+                        Style.COLOR.is(Palette.FOREGROUND))
+                .add(GameInteractionArea.ChangeViewControl.ChangeViewButton.class,
+                        Style.ACTION_SOUND.is(SfxCache.instance().CLICK))
+                .add(GameInteractionArea.ChangeViewControl.CountLabel.class,
+                        Style.FONT.is(font.derive(font.size * 0.85f)),
+                        Style.COLOR.is(GameColors.WHITE),
+                        Style.TEXT_EFFECT.pixelOutline,
+                        Style.HIGHLIGHT.is(GameColors.HUNTER_GREEN));
 
     }
 }

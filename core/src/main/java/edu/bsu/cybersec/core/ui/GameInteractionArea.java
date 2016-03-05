@@ -24,20 +24,17 @@ import edu.bsu.cybersec.core.GameTime;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.SystemPriority;
-import playn.core.*;
-import playn.scene.Layer;
-import pythagoras.f.IDimension;
+import playn.core.Clock;
+import playn.core.Image;
 import react.*;
-import tripleplay.anim.AnimGroup;
-import tripleplay.anim.Animation;
 import tripleplay.entity.Component;
 import tripleplay.entity.Entity;
 import tripleplay.ui.*;
+import tripleplay.ui.layout.AbsoluteLayout;
 import tripleplay.ui.layout.AxisLayout;
-import tripleplay.util.Colors;
+import tripleplay.ui.util.BoxPoint;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 public final class GameInteractionArea extends Group {
 
@@ -45,7 +42,7 @@ public final class GameInteractionArea extends Group {
     private final Interface iface;
     private Group shown = new Group(AxisLayout.vertical().stretchByDefault().offStretch())
             .setConstraint(AxisLayout.stretched());
-    private final Signal<ChangeViewButton> shownChanged = Signal.create();
+    private final Signal<ChangeViewControl> shownChanged = Signal.create();
     private final InteractionAreaGroup statusGroup;
 
     public GameInteractionArea(GameWorld gameWorld, Interface iface) {
@@ -59,24 +56,23 @@ public final class GameInteractionArea extends Group {
         addStyles(Style.BACKGROUND.is(Background.solid(Palette.BACKGROUND)));
     }
 
-
     private final class ButtonArea extends Group {
         private final FeatureGroup featureGroup = new FeatureGroup(gameWorld);
         private final ExploitsGroup exploitsGroup = new ExploitsGroup(gameWorld);
         private final EventsGroup eventsGroup = new EventsGroup(gameWorld);
 
-        private final ChangeViewButton statusButton = new ChangeViewButton(GameAssets.ImageKey.STATUS, "Status", statusGroup, null);
-        private final ChangeViewButton featureButton = new ChangeViewButton(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup, makeFeatureCounter());
+        private final ChangeViewControl statusButton = new ChangeViewControl(GameAssets.ImageKey.STATUS, "Status", statusGroup, null);
+        private final ChangeViewControl featureButton = new ChangeViewControl(GameAssets.ImageKey.DEVELOPMENT, "Features", featureGroup, makeFeatureCounter());
 
-        private final ChangeViewButton exploitsButton = new ChangeViewButton(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup, makeExploitCounter());
-        private final ChangeViewButton eventsButton = new ChangeViewButton(GameAssets.ImageKey.NEWS, GameAssets.ImageKey.NEWS_ATTENTION, "Alerts", eventsGroup, null);
+        private final ChangeViewControl exploitsButton = new ChangeViewControl(GameAssets.ImageKey.MAINTENANCE, "Exploits", exploitsGroup, makeExploitCounter());
+        private final ChangeViewControl eventsButton = new ChangeViewControl(GameAssets.ImageKey.NEWS, GameAssets.ImageKey.NEWS_ATTENTION, "Alerts", eventsGroup, null);
 
-        private final ImmutableList<ChangeViewButton> allButtons = ImmutableList.of(statusButton, featureButton, exploitsButton, eventsButton);
+        private final ImmutableList<ChangeViewControl> allButtons = ImmutableList.of(statusButton, featureButton, exploitsButton, eventsButton);
 
         ButtonArea() {
             super(AxisLayout.horizontal());
             returnToStatusButtonOnEventCompletion();
-            for (ChangeViewButton button : allButtons) {
+            for (ChangeViewControl button : allButtons) {
                 add(button);
             }
             add(new MuteCheckBox());
@@ -93,7 +89,7 @@ public final class GameInteractionArea extends Group {
             });
         }
 
-        private void setDefaultViewTo(ChangeViewButton button) {
+        private void setDefaultViewTo(ChangeViewControl button) {
             button.click();
         }
 
@@ -153,203 +149,142 @@ public final class GameInteractionArea extends Group {
         return this;
     }
 
-    final class ChangeViewButton extends Button {
+
+    final class ChangeViewControl extends Group {
         private static final float PERCENT_OF_VIEW_HEIGHT = 0.06f;
         private static final float FLASH_PERIOD = 300f;
-        private static final int NUMBER_CHANGE_HIGHLIGHT_DURATION_MS = 850;
-        private static final int NUMBER_CHANGE_HIGHLIGHT_COLOR = 0xffffff00; // Yellow
-        private static final int NUMBER_COLOR = 0xff000000; // Black
+        private final ChangeViewButton button;
 
-        private Animation.Handle animationHandle;
-        private final InteractionAreaGroup view;
-        private boolean needsAttention = false;
-        private TextFormat numberTextFormat = new TextFormat(FontCache.instance().REGULAR);
-        private TextLayout numberTextLayout;
-        private long lastNumberChange;
+        ChangeViewControl(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, final String text, final InteractionAreaGroup view, final Value<Integer> number) {
+            super(new AbsoluteLayout());
+            this.button = new ChangeViewButton(text);
 
-        ChangeViewButton(GameAssets.ImageKey imageKey, GameAssets.ImageKey attentionKey, String text, final InteractionAreaGroup view, final Value<Integer> number) {
-            super(text);
-            this.view = checkNotNull(view);
             final Image iconImage = SimGame.game.assets.getImage(imageKey);
             final Image attentionImage = SimGame.game.assets.getImage(attentionKey);
             final float desiredHeight = percentOfViewHeight(PERCENT_OF_VIEW_HEIGHT);
             final float desiredWidth = SimGame.game.bounds.width() / 5;
 
+            add(AbsoluteLayout.at(button, 0, 0, desiredWidth, desiredHeight));
             if (number != null) {
-                numberTextLayout = SimGame.game.plat.graphics().layoutText(number.get().toString(), numberTextFormat);
-                number.connect(new Slot<Integer>() {
-                    @Override
-                    public void onEmit(Integer integer) {
-                        numberTextLayout = SimGame.game.plat.graphics().layoutText(integer.toString(), numberTextFormat);
-                        lastNumberChange = System.currentTimeMillis();
-                    }
-                });
+                final Label numberLabel = new CountLabel(number);
+                add(numberLabel.setConstraint(AbsoluteLayout.uniform(BoxPoint.BR)));
             }
 
-            addStyles(Style.BACKGROUND.is(new Background() {
-                @Override
-                protected Instance instantiate(final IDimension size) {
-                    return new LayerInstance(size, new Layer() {
-                        private final int DEFAULT_BUTTON_BG_COLOR = 0xFFCCCCCC;
-                        private final Canvas canvas = SimGame.game.plat.graphics().createCanvas(size.width(), size.height());
-                        private final float radius = percentOfViewHeight(0.008f);
-                        private final float radiusOffset = percentOfViewHeight(0.005f);
+            final Icon theIcon = Icons.scaled(Icons.image(iconImage), desiredHeight * 0.85f / iconImage.height());
+            final Icon altIcon = Icons.scaled(Icons.image(attentionImage), desiredHeight * 0.85f / attentionImage.height());
 
-                        @Override
-                        protected void paintImpl(Surface surf) {
-                            canvas.setFillColor(needsAttention ? Palette.DIALOG_BACKGROUND : Palette.DIALOG_FOREGROUND);
-                            canvas.fillRoundRect(0, 0, size.width(), size.height(), radius);
-                            if (isSelected()) {
-                                canvas.setFillColor(Palette.DIALOG_FOREGROUND);
-                            } else if (isEnabled()) {
-                                canvas.setFillColor(DEFAULT_BUTTON_BG_COLOR);
-                            } else {
-                                canvas.setFillColor(Palette.DIALOG_BACKGROUND);
-                            }
-                            final float fillWidth = size.width() - radius;
-                            final float fillHeight = size.height() - radius;
-                            checkState(fillWidth > 0, "Width should be positive, size=" + size + ", radius=" + radius);
-                            checkState(fillHeight > 0, "Height should be positive, size=" + size + ", radius=" + radius);
-                            canvas.fillRoundRect(radius - radiusOffset,
-                                    radius - radiusOffset,
-                                    fillWidth,
-                                    fillHeight,
-                                    radius);
+            button.icon.update(theIcon);
+            button.addStyles(Style.ICON_CUDDLE.on,
+                    Style.ICON_GAP.is(-(int) percentOfViewHeight(0.03f)));
 
-                            if (numberTextLayout != null) {
-                                final float msSinceLastChange = System.currentTimeMillis() - lastNumberChange;
-                                if (msSinceLastChange <= NUMBER_CHANGE_HIGHLIGHT_DURATION_MS) {
-                                    final float proportion = msSinceLastChange / NUMBER_CHANGE_HIGHLIGHT_DURATION_MS;
-                                    int blend = Colors.blend(NUMBER_COLOR, NUMBER_CHANGE_HIGHLIGHT_COLOR, proportion);
-                                    canvas.setFillColor(blend);
-                                } else {
-                                    canvas.setFillColor(NUMBER_COLOR);
-                                }
-                                canvas.fillText(numberTextLayout,
-                                        fillWidth - numberTextLayout.size.width(),
-                                        fillHeight - numberTextLayout.size.height());
-                            }
-
-                            surf.draw(canvas.toTexture().tile(), 0, 0);
-
-                            final float aspectRatio = iconImage.width() / iconImage.height();
-                            final float imageRenderWidth = Math.min(size.width(), size.height() * aspectRatio);
-                            final float imageRenderHeight = Math.min(size.height(), size.width() / aspectRatio);
-                            surf.draw(needsAttention ? attentionImage.tile() : iconImage.tile(),
-                                    0, 0, imageRenderWidth, imageRenderHeight);
+            view.onAttention().connect(new Slot<Boolean>() {
+                private final Runnable showAltIconIfNotSelected = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!currentViewIs(view)) {
+                            button.icon.update(altIcon);
+                            button.text.update(null);
                         }
-                    });
+                    }
+                };
+                private final Runnable showRegIcon = new Runnable() {
+                    @Override
+                    public void run() {
+                        button.icon.update(theIcon);
+                        button.text.update(text);
+                    }
+                };
+
+                @Override
+                public void onEmit(Boolean selected) {
+                    if (selected) {
+                        flashWhileNeedsAttention();
+                    } else {
+                        showRegIcon.run();
+                    }
                 }
-            }));
+
+                private void flashWhileNeedsAttention() {
+                    iface.anim.action(showAltIconIfNotSelected)
+                            .then()
+                            .delay(FLASH_PERIOD)
+                            .then()
+                            .action(showRegIcon)
+                            .then()
+                            .delay(FLASH_PERIOD)
+                            .then()
+                            .action(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (view.needsAttention.get()) {
+                                        flashWhileNeedsAttention();
+                                    }
+                                }
+                            });
+                }
+            });
+
             setConstraint(Constraints.fixedSize(desiredWidth, desiredHeight));
-            onClick(new Slot<Button>() {
+            button.onClick(new Slot<Button>() {
                 @Override
                 public void onEmit(Button event) {
                     shown.removeAll();
                     shown.add(view);
-                    shownChanged.emit(ChangeViewButton.this);
+                    shownChanged.emit(ChangeViewControl.this);
                 }
             });
-            shownChanged.connect(new Slot<ChangeViewButton>() {
+            shownChanged.connect(new Slot<ChangeViewControl>() {
                 @Override
-                public void onEmit(ChangeViewButton changeViewButton) {
-                    ChangeViewButton.this.setEnabled(changeViewButton != ChangeViewButton.this);
+                public void onEmit(ChangeViewControl changeViewControl) {
+                    ChangeViewControl.this.setEnabled(changeViewControl != ChangeViewControl.this);
                 }
             });
-            new AttentionAnimator(view);
+
         }
 
-        ChangeViewButton(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view, Value<Integer> number) {
+        ChangeViewControl(GameAssets.ImageKey imageKey, String text, final InteractionAreaGroup view, Value<Integer> number) {
             this(imageKey, imageKey, text, view, number);
         }
 
-        private class AttentionAnimator {
+        public void click() {
+            button.click();
+        }
 
-            private final Runnable attentionThemer = new Runnable() {
-                @Override
-                public void run() {
-                    needsAttention = true;
-                }
-            };
+        protected final class ChangeViewButton extends Button {
+            ChangeViewButton(String text) {
+                super(text);
+            }
 
-            private final Runnable regularThemer = new Runnable() {
-                @Override
-                public void run() {
-                    needsAttention = false;
-                }
-            };
+            @Override
+            protected Class<?> getStyleClass() {
+                return ChangeViewButton.class;
+            }
+        }
 
-            /**
-             * Tag a continued animation onto the end of this one.
-             * <p/>
-             * It's not clear from the TriplePlay documentation, but you cannot put an Action animation
-             * inside of a Repeat animation. The reason for this, as of TP-2.0-rc1, is that Action
-             * nulls its reference to its runnable. Hence, to get repeating Action animations (as required
-             * here to change label styles), we have to manually append new animations to the end of the
-             * current animation when they are done.
-             *
-             * @see <a href="https://github.com/threerings/tripleplay/blob/master/core/src/main/java/tripleplay/anim/Animation.java">
-             * TriplePlay Animation</a>
-             */
-            private final Runnable animationContinuer = new Runnable() {
-                @Override
-                public void run() {
-                    loopAnimation();
-                }
-            };
-
-            AttentionAnimator(InteractionAreaGroup view) {
-                view.onAttention().connect(new ValueView.Listener<Boolean>() {
+        protected final class CountLabel extends Label {
+            CountLabel(ValueView<Integer> value) {
+                super(value.get().toString());
+                value.connect(new Slot<Integer>() {
                     @Override
-                    public void onChange(Boolean needsAttention, Boolean oldValue) {
-                        if (needsAttention) {
-                            loopAnimation();
-                        } else {
-                            animationHandle.cancel();
-                            regularThemer.run();
-                        }
+                    public void onEmit(Integer integer) {
+                        text.update(integer.toString());
+                        iface.anim.tweenScale(layer)
+                                .to(1.2f)
+                                .in(250f)
+                                .easeInOut()
+                                .then()
+                                .tweenScale(layer)
+                                .to(1f)
+                                .in(250f)
+                                .easeInOut();
                     }
                 });
             }
 
-            private void loopAnimation() {
-                if (currentViewIs(view)) {
-                    waitBecauseThisViewIsCurrentlyShown();
-                } else {
-                    flash();
-                }
+            @Override
+            protected Class<?> getStyleClass() {
+                return CountLabel.class;
             }
-
-            private void waitBecauseThisViewIsCurrentlyShown() {
-                animationHandle = iface.anim.delay(FLASH_PERIOD * 2)
-                        .then()
-                        .action(animationContinuer)
-                        .handle();
-            }
-
-            private void flash() {
-                animationHandle = iface.anim.add(makeFlashOnceAnimation())
-                        .then()
-                        .action(animationContinuer)
-                        .handle();
-            }
-
-            private Animation makeFlashOnceAnimation() {
-                AnimGroup group = new AnimGroup();
-                group.action(attentionThemer)
-                        .then()
-                        .delay(FLASH_PERIOD)
-                        .then()
-                        .action(regularThemer)
-                        .then()
-                        .delay(FLASH_PERIOD);
-                return group.toAnim();
-            }
-        }
-
-        @Override
-        protected Class<?> getStyleClass() {
-            return ChangeViewButton.class;
         }
     }
 
@@ -394,5 +329,3 @@ final class MuteCheckBox extends Button {
         icon.update(jukebox.muted.get() ? muteIcon : unmuteIcon);
     }
 }
-
-
