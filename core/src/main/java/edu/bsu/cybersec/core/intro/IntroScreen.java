@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -19,14 +19,12 @@
 
 package edu.bsu.cybersec.core.intro;
 
-import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.SimGame;
 import edu.bsu.cybersec.core.ui.GameScreen;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
 import playn.core.Game;
-import playn.core.Mouse;
-import playn.core.Touch;
+import playn.core.Pointer;
 import react.Connection;
 import react.Slot;
 import tripleplay.game.ScreenStack;
@@ -34,54 +32,40 @@ import tripleplay.ui.*;
 import tripleplay.ui.layout.AxisLayout;
 import tripleplay.util.Colors;
 
-import java.util.List;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class IntroScreen extends ScreenStack.UIScreen {
+
     private final ScreenStack screenStack;
-    private final List<Connection> connections = Lists.newArrayList();
     private final Slide slide;
     private final Company company;
+    private Connection connection;
 
     public IntroScreen(ScreenStack screenStack, Slide slide, Company company) {
         super(SimGame.game.plat);
         this.screenStack = checkNotNull(screenStack);
         this.slide = checkNotNull(slide);
         this.company = checkNotNull(company);
-        connections.add(game().plat.input().mouseEvents.connect(new Slot<Mouse.Event>() {
-            @Override
-            public void onEmit(Mouse.Event event) {
-                if (isMouseButtonDownEvent(event)) {
-                    advance();
-                }
-            }
-
-            private boolean isMouseButtonDownEvent(Mouse.Event event) {
-                if (!(event instanceof Mouse.ButtonEvent)) {
-                    return false;
-                } else {
-                    Mouse.ButtonEvent e = (Mouse.ButtonEvent) event;
-                    return e.down;
-                }
-            }
-        }));
-        connections.add(game().plat.input().touchEvents.connect(new Slot<Touch.Event[]>() {
-            @Override
-            public void onEmit(Touch.Event[] events) {
-                for (Touch.Event e : events) {
-                    if (e.kind.isEnd) {
-                        advance();
-                    }
-                }
-            }
-        }));
     }
 
     @Override
     public void wasShown() {
         super.wasShown();
         createUI();
+    }
+
+    @Override
+    public void showTransitionCompleted() {
+        super.showTransitionCompleted();
+        connection = SimGame.game.pointer.events.connect(new Slot<Pointer.Event>() {
+            @Override
+            public void onEmit(Pointer.Event event) {
+                if (event.kind == Pointer.Event.Kind.END) {
+                    connection.close();
+                    advance();
+                }
+            }
+        });
     }
 
     private void createUI() {
@@ -94,9 +78,6 @@ public class IntroScreen extends ScreenStack.UIScreen {
     }
 
     private void advance() {
-        for (Connection c : connections) {
-            c.close();
-        }
         if (slide.hasNext()) {
             screenStack.replace(new IntroScreen(screenStack, slide.next(), company), screenStack.slide());
         } else {
