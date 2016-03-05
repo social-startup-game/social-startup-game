@@ -166,11 +166,11 @@ public class MainUIGroup extends Group {
             animateBasedOnAtWorkStatus();
         }
 
-        private Element createTransparentClickableArea() {
-            return new ClickableLabel("")
-                    .onClick(new Slot<ClickableLabel>() {
+        private Element<?> createTransparentClickableArea() {
+            return new TouchableLabel("")
+                    .onClick(new Slot<TouchableLabel>() {
                         @Override
-                        public void onEmit(ClickableLabel event) {
+                        public void onEmit(TouchableLabel event) {
                             if (focus.get() != EmployeeView.this) {
                                 SimGame.game.plat.log().info("Expanded: " + gameWorld.profile.get(id).firstName);
                                 focus.update(EmployeeView.this);

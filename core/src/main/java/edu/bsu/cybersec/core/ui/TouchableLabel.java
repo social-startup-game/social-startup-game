@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -19,22 +19,23 @@
 
 package edu.bsu.cybersec.core.ui;
 
+import edu.bsu.cybersec.core.SimGame;
 import playn.scene.Pointer;
 import react.Signal;
 import react.Slot;
 import tripleplay.ui.Behavior;
 import tripleplay.ui.Label;
 
-public class ClickableLabel extends Label {
+public class TouchableLabel extends Label {
 
-    private final Signal<ClickableLabel> onClick = Signal.create();
+    private final Signal<TouchableLabel> onTouch = Signal.create();
 
-    public ClickableLabel(String name) {
+    public TouchableLabel(String name) {
         super(name);
     }
 
-    public ClickableLabel onClick(Slot<? super ClickableLabel> slot) {
-        onClick.connect(slot);
+    public TouchableLabel onClick(Slot<? super TouchableLabel> slot) {
+        onTouch.connect(slot);
         return this;
     }
 
@@ -44,7 +45,10 @@ public class ClickableLabel extends Label {
 
             @Override
             public void onPress(Pointer.Interaction iact) {
-                // ignore
+                SimGame.game.plat.log().debug("SSG " + iact);
+                if (SimGame.game.config.isEmployeeExpansionTrigger(iact)) {
+                    onTouch.emit(TouchableLabel.this);
+                }
             }
 
             @Override
@@ -54,12 +58,13 @@ public class ClickableLabel extends Label {
 
             @Override
             public boolean onRelease(Pointer.Interaction iact) {
-                return true;
+                // ignore---there are no clicks
+                return false;
             }
 
             @Override
             public void onClick(Pointer.Interaction iact) {
-                onClick.emit(ClickableLabel.this);
+                // ignore
             }
         };
     }

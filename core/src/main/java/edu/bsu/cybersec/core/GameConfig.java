@@ -20,6 +20,7 @@
 package edu.bsu.cybersec.core;
 
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
+import playn.scene.Pointer;
 
 public interface GameConfig {
 
@@ -38,6 +39,8 @@ public interface GameConfig {
     void enableGameplayLogging();
 
     boolean useDebugKeys();
+
+    boolean isEmployeeExpansionTrigger(Pointer.Interaction iact);
 
     abstract class Default implements GameConfig {
         @Override
@@ -68,6 +71,11 @@ public interface GameConfig {
         @Override
         public boolean useDebugKeys() {
             return true;
+        }
+
+        @Override
+        public boolean isEmployeeExpansionTrigger(Pointer.Interaction iact) {
+            throw new UnsupportedOperationException("Not supported on this platform!");
         }
     }
 
