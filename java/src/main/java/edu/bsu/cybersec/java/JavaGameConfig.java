@@ -23,7 +23,6 @@ import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 import playn.core.Log;
 import playn.java.JavaPlatform;
-import playn.scene.Pointer;
 import react.Value;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -86,10 +85,5 @@ public final class JavaGameConfig extends GameConfig.Default {
                 System.out.println("--> " + msg);
             }
         }
-    }
-
-    @Override
-    public boolean isEmployeeExpansionTrigger(Pointer.Interaction iact) {
-        return !iact.event.isTouch;
     }
 }

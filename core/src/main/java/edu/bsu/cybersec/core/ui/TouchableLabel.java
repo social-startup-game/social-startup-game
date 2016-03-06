@@ -19,7 +19,6 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.SimGame;
 import playn.scene.Pointer;
 import react.Signal;
 import react.Slot;
@@ -45,8 +44,8 @@ public class TouchableLabel extends Label {
 
             @Override
             public void onPress(Pointer.Interaction iact) {
-                SimGame.game.plat.log().debug("SSG " + iact);
-                if (SimGame.game.config.isEmployeeExpansionTrigger(iact)) {
+                if (iact.event.kind == playn.core.Pointer.Event.Kind.START
+                        && !iact.event.isTouch) {
                     onTouch.emit(TouchableLabel.this);
                 }
             }

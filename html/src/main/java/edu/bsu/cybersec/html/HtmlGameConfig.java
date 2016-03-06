@@ -23,7 +23,6 @@ import com.google.gwt.user.client.Window;
 import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
 import playn.html.HtmlPlatform;
-import playn.scene.Pointer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -57,10 +56,5 @@ public final class HtmlGameConfig extends GameConfig.Default {
     public boolean useDebugKeys() {
         final String hostName = Window.Location.getHostName();
         return hostName.equals("127.0.0.1");
-    }
-
-    @Override
-    public boolean isEmployeeExpansionTrigger(Pointer.Interaction iact) {
-        return iact.event.isTouch;
     }
 }
