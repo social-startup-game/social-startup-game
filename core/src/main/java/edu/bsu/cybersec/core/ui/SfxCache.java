@@ -25,14 +25,15 @@ import playn.core.Sound;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 public abstract class SfxCache {
 
     private static SfxCache instance;
 
     public final Sound CLICK = load("click");
-    private final ImmutableList<Sound> all = ImmutableList.of(CLICK);
+    public final Sound SUCCESS = load("success");
+    private final ImmutableList<Sound> all = ImmutableList.of(CLICK, SUCCESS);
 
     public static SfxCache initialize(final Assets assets) {
         if (instance == null) {
