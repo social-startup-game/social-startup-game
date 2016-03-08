@@ -20,7 +20,6 @@
 package edu.bsu.cybersec.core.systems;
 
 import edu.bsu.cybersec.core.*;
-import edu.bsu.cybersec.core.ui.SfxCache;
 import playn.core.Clock;
 import react.Value;
 import tripleplay.entity.Entity;
@@ -105,7 +104,6 @@ public class FeatureDevelopmentSystem extends tripleplay.entity.System {
             final int id = developmentBag.get(i);
             if (isComplete(id)) {
                 complete(id);
-                SfxCache.instance().SUCCESS.play();
             }
         }
     }
