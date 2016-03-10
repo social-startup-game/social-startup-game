@@ -40,7 +40,7 @@ public class InsecurePasswordEvent extends NarrativeEvent {
 
     @Override
     public String text() {
-        return "Some private information was stolen because one of the employees in advertising was using weak a password. " +
+        return "Some private information was stolen because one of the employees in advertising was using a weak password. " +
                 "What would you like to do?";
     }
 
