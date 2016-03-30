@@ -32,15 +32,15 @@
     <orderEntry type="jdk" jdkName="Maven Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="sim-core" />
-    <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-rc3" level="project" />
-    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-rc3" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-scene:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.threerings:tripleplay:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava-gwt:19.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:19.0" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-android:2.0-rc3" level="project" />
-    <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-rc3" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-android:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.playn:playn-core:2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.samskivert:pythagoras:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.threerings:react:1.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.java-websocket:Java-WebSocket:1.3.0" level="project" />

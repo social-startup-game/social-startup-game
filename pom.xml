@@ -34,7 +34,7 @@
     <name>SimGame Metaproject</name>
 
     <properties>
-        <playn.version>2.0-rc3</playn.version>
+        <playn.version>2.0-SNAPSHOT</playn.version>
         <guava.version>19.0</guava.version>
         <mockito.version>1.9.5</mockito.version>
     </properties>
