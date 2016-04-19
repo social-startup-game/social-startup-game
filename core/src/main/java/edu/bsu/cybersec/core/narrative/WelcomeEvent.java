@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -50,11 +50,6 @@ public class WelcomeEvent extends NarrativeEvent {
                     }
 
                     @Override
-                    public void onSelected() {
-                        // Do nothing
-                    }
-
-                    @Override
                     public boolean hasSubsequentPage() {
                         return true;
                     }
@@ -62,6 +57,16 @@ public class WelcomeEvent extends NarrativeEvent {
                     @Override
                     public NarrativeEvent subsequentPage() {
                         return new TutorialEvent(world);
+                    }
+
+                    @Override
+                    public String eventAction() {
+                        return "Tutorial";
+                    }
+
+                    @Override
+                    public String eventLabel() {
+                        return "Yes";
                     }
                 },
                 new Option.DoNothingOption("No, thanks! I'm ready!"));
@@ -97,9 +102,21 @@ final class TutorialEvent extends NarrativeEvent {
     public List<? extends Option> options() {
         return ImmutableList.of(new Option() {
 
+            private final String text = "Got it";
+
+            @Override
+            public String eventAction() {
+                return "Tutorial";
+            }
+
+            @Override
+            public String eventLabel() {
+                return text;
+            }
+
             @Override
             public String text() {
-                return "Got it";
+                return text;
             }
 
             @Override

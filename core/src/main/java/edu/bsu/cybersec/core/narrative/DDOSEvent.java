@@ -26,8 +26,9 @@ import edu.bsu.cybersec.core.NarrativeEvent;
 import java.util.List;
 
 public class DDOSEvent extends NarrativeEvent {
+    private static final String EVENT_NAME = "DDOS";
     private int HOURS_UNTIL_NOTIFY = 0;
-    private final float PERCENT_LOSS_ON_IGNORE = .10f;
+    private static final float PERCENT_LOSS_ON_IGNORE = .10f;
 
     public DDOSEvent(GameWorld world) {
         super(world);
@@ -53,8 +54,14 @@ public class DDOSEvent extends NarrativeEvent {
     private class PressReleaseOption extends Option.Terminal {
         private final String text = "Press Release";
 
-        public PressReleaseOption() {
-            setLogMessage(DDOSEvent.class.getCanonicalName() + ": " + text);
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return text;
         }
 
         @Override
@@ -88,8 +95,14 @@ public class DDOSEvent extends NarrativeEvent {
     private class IgnoreOption extends Option.Terminal {
         private final String text = "Just Wait";
 
-        public IgnoreOption() {
-            setLogMessage(DDOSEvent.class.getCanonicalName() + ": " + text);
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return text;
         }
 
         @Override

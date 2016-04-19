@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -31,18 +31,18 @@ import static com.google.common.base.Preconditions.checkState;
 
 public abstract class NarrativeEvent implements Runnable {
     public abstract static class Option {
-        private String logMessage;
 
-        abstract public String text();
+        public abstract String text();
 
-        public Option setLogMessage(String logMessage) {
-            this.logMessage = logMessage;
-            return this;
-        }
+        public abstract String eventAction();
+
+        public abstract String eventLabel();
 
         public void onSelected() {
-            if (SimGame.game != null && logMessage != null) {
-                SimGame.game.plat.log().info(logMessage);
+            if (SimGame.game != null) {
+                SimGame.game.event.emit(TrackedEvent.game()
+                        .action(eventAction())
+                        .label(eventLabel()));
             }
         }
 
@@ -80,6 +80,16 @@ public abstract class NarrativeEvent implements Runnable {
             @Override
             public void onSelected() {
                 // Do nothing
+            }
+
+            @Override
+            public String eventAction() {
+                return "Do nothing";
+            }
+
+            @Override
+            public String eventLabel() {
+                return "null";
             }
         }
     }

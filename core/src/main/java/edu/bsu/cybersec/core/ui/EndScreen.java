@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.DecimalTruncator;
 import edu.bsu.cybersec.core.GameWorld;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.TrackedEvent;
 import edu.bsu.cybersec.core.study.PostSurveyScreen;
 import playn.core.Game;
 import react.Slot;
@@ -57,8 +58,8 @@ public class EndScreen extends ScreenStack.UIScreen {
 
     private void logEndGameStats() {
         float exposure = gameWorld.exposure.get();
-        SimGame.game.plat.log().info("Final users: " + finalUserAmount
-                + "; exposure: " + exposure);
+        SimGame.game.event.emit(TrackedEvent.game().action("end:users").label(String.valueOf(finalUserAmount)));
+        SimGame.game.event.emit(TrackedEvent.game().action("end:exposure").label(String.valueOf(exposure)));
     }
 
     @Override

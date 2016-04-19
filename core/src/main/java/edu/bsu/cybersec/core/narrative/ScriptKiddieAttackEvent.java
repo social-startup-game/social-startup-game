@@ -33,6 +33,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 public class ScriptKiddieAttackEvent extends NarrativeEvent {
 
+    private static final String EVENT_NAME = "Scriptkiddies";
     static final String RETALIATION_TASK_LABEL = "Retaliating";
 
     private static final int HOURS_UNTIL_REPERCUSSION = 24;
@@ -65,6 +66,16 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
         public RetaliateOption(int id) {
             this.selectedWorkerId = id;
             selectedWorkerName = world.profile.get(selectedWorkerId).firstName;
+        }
+
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return selectedWorkerName;
         }
 
         @Override
@@ -135,6 +146,16 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
         @Override
         public String text() {
             return "Report to Police";
+        }
+
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return "report";
         }
 
         @Override

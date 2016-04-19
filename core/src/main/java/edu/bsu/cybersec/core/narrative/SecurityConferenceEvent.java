@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class SecurityConferenceEvent extends NarrativeEvent {
-
+    private static final String EVENT_NAME = "Conference";
     private static final int CONFERENCE_SKILL_INCREASE = 25;
     private static final int CONFERENCE_DURATION = 48;
 
@@ -62,7 +62,16 @@ public class SecurityConferenceEvent extends NarrativeEvent {
         SendWorkerToConferenceOption(int id) {
             this.id = id;
             this.name = world.profile.get(id).firstName;
-            setLogMessage(SecurityConferenceEvent.class.getCanonicalName() + ": " + name);
+        }
+
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return name;
         }
 
         @Override

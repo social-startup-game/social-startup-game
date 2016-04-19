@@ -35,8 +35,6 @@ public interface GameConfig {
 
     boolean showConsentForm();
 
-    void enableGameplayLogging();
-
     boolean useDebugKeys();
 
     abstract class Default implements GameConfig {

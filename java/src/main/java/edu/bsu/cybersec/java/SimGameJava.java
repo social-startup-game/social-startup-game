@@ -20,11 +20,13 @@
 package edu.bsu.cybersec.java;
 
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.TrackedEvent;
 import org.apache.commons.cli.*;
 import playn.java.JavaPlatform;
 import playn.java.LWJGLPlatform;
 import pythagoras.i.Dimension;
 import pythagoras.i.IDimension;
+import react.Slot;
 
 import java.awt.*;
 
@@ -38,10 +40,17 @@ public class SimGameJava {
         gameConfig = new JavaGameConfig();
         new Parser().process(args);
         LWJGLPlatform plat = new LWJGLPlatform(makeLWJGLConfig());
-        gameConfig.setPlatform(plat);
         registerFont(plat);
-        new SimGame(plat, gameConfig);
+        SimGame game = new SimGame(plat, gameConfig);
+        game.event.connect(new EchoTracker());
         plat.start();
+    }
+
+    private static final class EchoTracker extends Slot<TrackedEvent> {
+        @Override
+        public void onEmit(TrackedEvent event) {
+            System.out.println("> " + event);
+        }
     }
 
     private static JavaPlatform.Config makeLWJGLConfig() {

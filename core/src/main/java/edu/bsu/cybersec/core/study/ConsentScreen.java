@@ -67,7 +67,6 @@ public class ConsentScreen extends ScreenStack.UIScreen {
                                                     @Override
                                                     public void onEmit(Button button) {
                                                         game.consent.update(true);
-                                                        game.config.enableGameplayLogging();
                                                         game.screenStack.replace(new PreSurveyScreen(game), game.screenStack.slide());
                                                     }
                                                 }),

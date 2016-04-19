@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -21,7 +21,6 @@ package edu.bsu.cybersec.core.ui;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import edu.bsu.cybersec.core.SimGame;
 import playn.core.Sound;
 import react.Slot;
 import react.Value;
@@ -29,7 +28,7 @@ import react.Value;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class Jukebox {
 
@@ -81,7 +80,6 @@ public final class Jukebox {
                 for (Sound s : sfx) {
                     storedVolumes.put(s, s.volume());
                     s.setVolume(0);
-                    SimGame.game.plat.log().debug("Set volume to zero");
                 }
             }
 

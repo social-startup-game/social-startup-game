@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.study;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.TrackedEvent;
 import edu.bsu.cybersec.core.ui.FontCache;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
 import playn.core.Game;
@@ -80,19 +81,13 @@ public final class PostSurveyScreen extends ScreenStack.UIScreen {
                 for (Selector selector : table.selectorMap.keySet()) {
                     LikertTable.LevelButton selected = (LikertTable.LevelButton) selector.selected.get();
                     if (selected != null) {
-                        stringBuilder.append(table.selectorMap.get(selector).code)
-                                .append(":")
-                                .append(selected.level.code)
-                                .append(";");
+                        String action = table.selectorMap.get(selector).code;
+                        String label = selected.level.code;
+                        SimGame.game.event.emit(TrackedEvent.survey().action(action).label(label));
                     }
                 }
                 if (!field.text.get().isEmpty()) {
-                    stringBuilder.append("Free:")
-                            .append(field.text.get());
-                }
-                String output = stringBuilder.toString();
-                if (!output.isEmpty()) {
-                    game.plat.log().info(output);
+                    SimGame.game.event.emit(TrackedEvent.survey().action("free").label(field.text.get()));
                 }
             }
         }));

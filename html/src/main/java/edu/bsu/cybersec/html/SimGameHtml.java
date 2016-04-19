@@ -20,33 +20,34 @@
 package edu.bsu.cybersec.html;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Window;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.TrackedEvent;
 import playn.html.HtmlPlatform;
+import react.Slot;
 
 public class SimGameHtml implements EntryPoint {
-
-    private HtmlGameConfig gameConfig;
 
     @Override
     public void onModuleLoad() {
         HtmlPlatform.Config config = new HtmlPlatform.Config();
         HtmlPlatform plat = new HtmlPlatform(config);
-        gameConfig = new HtmlGameConfig(plat);
-        configureLogging(plat);
         plat.assets().setPathPrefix("sim/");
-        new SimGame(plat, new HtmlGameConfig(plat));
+        SimGame game = new SimGame(plat, new HtmlGameConfig());
+        game.event.connect(new Slot<TrackedEvent>() {
+            @Override
+            public void onEmit(TrackedEvent event) {
+                sendTrackingEvent(event);
+            }
+        });
         plat.start();
     }
 
-    /**
-     * If the 'log' HTTP parameter is specified, then enabled logging regardless of any other setting.
-     *
-     * @param plat platform
-     */
-    private void configureLogging(HtmlPlatform plat) {
-        if (Window.Location.getParameter("log") != null) {
-            gameConfig.enableGameplayLogging();
-        }
-    }
+    private static native void sendTrackingEvent(TrackedEvent event) /*-{
+           $wnd.ga('send', {
+              hitType: 'event',
+              eventCategory: event.@edu.bsu.cybersec.core.TrackedEvent::category,
+              eventAction:  event.@edu.bsu.cybersec.core.TrackedEvent::action,
+              eventLabel: event.@edu.bsu.cybersec.core.TrackedEvent::label
+            });
+        }-*/;
 }
