@@ -53,7 +53,6 @@ public class StartingScreen extends ScreenStack.UIScreen {
         Icon iconLogo = Icons.image(logo);
         final float buttonFontSize = percentOfViewHeight(0.04f);
         final Font font = FontCache.instance().REGULAR.derive(buttonFontSize);
-        final EmployeePool employeePool = EmployeePool.create(SimGame.game.assets);
         final Button[] buttons = new Button[]{
                 playButton = new Button("Start the Game!")
                         .addStyles(Style.FONT.is(font))
@@ -62,6 +61,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                             public void onEmit(Button button) {
                                 SimGame.game.plat.log().info(LogUtils.START_GAME_MESSAGE);
                                 disableButtons();
+                                EmployeePool employeePool = EmployeePool.create(SimGame.game.assets);
                                 Company company = Company.from(employeePool).withEmployees(3);
                                 Introduction intro = new Introduction(company);
                                 screenStack.push(new IntroScreen(screenStack, intro.createSlides(), company), screenStack.slide());
