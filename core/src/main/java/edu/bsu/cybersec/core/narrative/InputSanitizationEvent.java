@@ -30,6 +30,7 @@ import tripleplay.entity.Entity;
 import java.util.List;
 
 public class InputSanitizationEvent extends NarrativeEvent {
+    private static final String EVENT_NAME = "Sanitization";
     private static final int HOURS_FOR_SANITIZATION = 16;
     private static final float PERCENT_LOSS_ON_SANITIZATION = .07f;
     private static final float PERCENT_LOSS_ON_IGNORE = .20f;
@@ -60,7 +61,17 @@ public class InputSanitizationEvent extends NarrativeEvent {
         public EmployeeAssignmentOption(int id) {
             this.id = id;
             text = world.profile.get(id).firstName;
-            setLogMessage(InputSanitizationEvent.class.getCanonicalName() + ": " + text);
+        }
+
+
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return text;
         }
 
         @Override
@@ -110,8 +121,14 @@ public class InputSanitizationEvent extends NarrativeEvent {
     private final class IgnoreOption extends Option.Terminal {
         private final String text = "Nobody";
 
-        public IgnoreOption() {
-            setLogMessage(InputSanitizationEvent.class.getCanonicalName() + ": " + text);
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return text;
         }
 
         @Override

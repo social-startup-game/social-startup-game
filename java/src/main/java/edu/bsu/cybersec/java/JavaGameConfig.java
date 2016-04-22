@@ -21,11 +21,7 @@ package edu.bsu.cybersec.java;
 
 import edu.bsu.cybersec.core.GameConfig;
 import edu.bsu.cybersec.core.ui.PlatformSpecificDateFormatter;
-import playn.core.Log;
-import playn.java.JavaPlatform;
 import react.Value;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class JavaGameConfig extends GameConfig.Default {
 
@@ -35,8 +31,6 @@ public final class JavaGameConfig extends GameConfig.Default {
     Value<Boolean> useNarrativeEvents = Value.create(super.useNarrativeEvents());
     Value<Boolean> muteMusic = Value.create(super.muteMusic());
     Value<Boolean> showConsent = Value.create(super.showConsentForm());
-
-    private JavaPlatform platform;
 
     @Override
     public PlatformSpecificDateFormatter dateFormatter() {
@@ -66,24 +60,5 @@ public final class JavaGameConfig extends GameConfig.Default {
     @Override
     public boolean showConsentForm() {
         return showConsent.get();
-    }
-
-    @Override
-    public void enableGameplayLogging() {
-        checkNotNull(platform, "Platform must be specified first.");
-        platform.log().setCollector(new EchoCollector());
-    }
-
-    public void setPlatform(JavaPlatform platform) {
-        this.platform = platform;
-    }
-
-    private class EchoCollector implements Log.Collector {
-        @Override
-        public void logged(Log.Level level, String msg, Throwable e) {
-            if (level.equals(Log.Level.INFO)) {
-                System.out.println("--> " + msg);
-            }
-        }
     }
 }

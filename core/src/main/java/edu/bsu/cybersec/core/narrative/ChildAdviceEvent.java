@@ -25,6 +25,8 @@ import edu.bsu.cybersec.core.NarrativeEvent;
 
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public final class ChildAdviceEvent extends NarrativeEvent {
     private static final ImmutableList<String> OPTIONS_TEXT = ImmutableList.of(
             "Computer Science",
@@ -62,8 +64,17 @@ public final class ChildAdviceEvent extends NarrativeEvent {
         String major;
 
         public MajorOption(String major) {
-            this.major = major;
-            setLogMessage(ChildAdviceEvent.class.getCanonicalName() + ": " + major);
+            this.major = checkNotNull(major);
+        }
+
+        @Override
+        public String eventAction() {
+            return "ChildAdvice";
+        }
+
+        @Override
+        public String eventLabel() {
+            return major;
         }
 
         @Override

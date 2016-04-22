@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -27,6 +27,7 @@ import java.util.List;
 
 public class DataStolenEvent extends NarrativeEvent {
 
+    private static final String EVENT_NAME = "DataStolen";
     private static final int HOURS_UNTIL_LOSS_ON_NOTIFY = 5;
     private static final float PERCENT_LOSS_ON_NOTIFY = 0.05f;
     private static final int HOURS_UNTIL_DISCOVERY_AFTER_IGNORE = 8;
@@ -49,8 +50,14 @@ public class DataStolenEvent extends NarrativeEvent {
     private class NotifyOption extends Option.Terminal {
         private final String text = "Notify our users";
 
-        NotifyOption() {
-            setLogMessage(DataStolenEvent.class.getCanonicalName() + ": " + text);
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return "notify";
         }
 
         @Override
@@ -81,6 +88,16 @@ public class DataStolenEvent extends NarrativeEvent {
         @Override
         public String text() {
             return text;
+        }
+
+        @Override
+        public String eventLabel() {
+            return "ignore";
+        }
+
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
         }
 
         @Override

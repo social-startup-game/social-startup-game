@@ -42,7 +42,7 @@ import tripleplay.ui.layout.AxisLayout;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoadingScreen extends ScreenStack.UIScreen {
 
@@ -89,7 +89,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
             future.onFailure(new Slot<Throwable>() {
                 @Override
                 public void onEmit(Throwable throwable) {
-                    SimGame.game.plat.log().error("Failed to load image", throwable);
+                    SimGame.game.plat.log().warn("Failed to load image", throwable);
                 }
             });
         }
@@ -113,7 +113,7 @@ public class LoadingScreen extends ScreenStack.UIScreen {
             future.onFailure(new Slot<Throwable>() {
                 @Override
                 public void onEmit(Throwable throwable) {
-                    SimGame.game.plat.log().error("Failed to load tile", throwable);
+                    SimGame.game.plat.log().warn("Failed to load tile", throwable);
                 }
             });
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Paul Gestwicki
+ * Copyright 2016 Paul Gestwicki
  *
  * This file is part of The Social Startup Game
  *
@@ -106,7 +106,6 @@ public class DebugMode implements SignalView.Listener<Keyboard.Event> {
                 .put(Key.U, new Runnable() {
                     @Override
                     public void run() {
-                        SimGame.game.plat.log().info("Jumping to a new screen");
                         SimGame.game.screenStack.push(new PostSurveyScreen(SimGame.game));
                     }
                 });

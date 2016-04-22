@@ -27,6 +27,7 @@ import edu.bsu.cybersec.core.RandomInRange;
 import java.util.List;
 
 public class InsecurePasswordEvent extends NarrativeEvent {
+    private static final String EVENT_NAME = "Password";
     private float PERCENT_LOSS = 0.05f;
 
     public InsecurePasswordEvent(GameWorld world) {
@@ -48,8 +49,14 @@ public class InsecurePasswordEvent extends NarrativeEvent {
         private final String text = "Train staff on secure passwords";
         private int HOURS_UNTIL_NOTIFY_ON_TRAIN = 8;
 
-        public TrainingOption() {
-            setLogMessage(InsecurePasswordEvent.class.getCanonicalName() + ": " + text);
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return "train";
         }
 
         @Override
@@ -79,8 +86,14 @@ public class InsecurePasswordEvent extends NarrativeEvent {
         private final String text = "Just change his password";
         private final int HOURS_UNTIL_NOTIFY_ON_CHANGE_PASSWORD = 2;
 
-        public IgnoreOption() {
-            setLogMessage(InsecurePasswordEvent.class.getCanonicalName() + ": " + text);
+        @Override
+        public String eventAction() {
+            return EVENT_NAME;
+        }
+
+        @Override
+        public String eventLabel() {
+            return "change";
         }
 
         @Override

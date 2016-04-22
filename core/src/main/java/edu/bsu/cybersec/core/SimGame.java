@@ -24,6 +24,7 @@ import playn.core.Platform;
 import playn.scene.Pointer;
 import playn.scene.SceneGame;
 import pythagoras.f.IRectangle;
+import react.Signal;
 import react.Value;
 import tripleplay.game.ScreenStack;
 
@@ -48,6 +49,8 @@ public class SimGame extends SceneGame {
     public final Value<Boolean> consent = Value.create(false);
 
     public final Pointer pointer;
+
+    public final Signal<TrackedEvent> event = Signal.create();
 
     public SimGame(Platform plat, GameConfig config) {
         super(plat, 33);

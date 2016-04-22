@@ -22,6 +22,7 @@ package edu.bsu.cybersec.core.study;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.TrackedEvent;
 import edu.bsu.cybersec.core.ui.SimGameStyle;
 import edu.bsu.cybersec.core.ui.StartingScreen;
 import playn.core.Game;
@@ -108,16 +109,10 @@ public class PreSurveyScreen extends ScreenStack.UIScreen {
         StringBuilder stringBuilder = new StringBuilder();
         for (SurveyQuestionView question : views) {
             if (question.hasSelection()) {
-                String selection = question.getSelection();
-                stringBuilder.append(question.question.logPrefix)
-                        .append(":")
-                        .append(selection)
-                        .append(";");
+                String action = question.question.logPrefix;
+                String label = question.getSelection();
+                SimGame.game.event.emit(TrackedEvent.survey().action(action).label(label));
             }
-        }
-        String output = stringBuilder.toString();
-        if (!output.isEmpty()) {
-            game.plat.log().info(output);
         }
     }
 

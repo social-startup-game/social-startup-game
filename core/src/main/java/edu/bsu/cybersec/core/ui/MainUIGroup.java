@@ -171,11 +171,12 @@ public class MainUIGroup extends Group {
                     .onClick(new Slot<TouchableLabel>() {
                         @Override
                         public void onEmit(TouchableLabel event) {
+                            String name = gameWorld.profile.get(id).firstName;
                             if (focus.get() != EmployeeView.this) {
-                                SimGame.game.plat.log().info("Expanded: " + gameWorld.profile.get(id).firstName);
+                                SimGame.game.event.emit(TrackedEvent.game().action("expand").label(name));
                                 focus.update(EmployeeView.this);
                             } else {
-                                SimGame.game.plat.log().info("Collapsed: " + gameWorld.profile.get(id).firstName);
+                                SimGame.game.event.emit(TrackedEvent.game().action("collapse").label(name));
                                 focus.update(null);
                             }
                         }
@@ -336,7 +337,13 @@ public class MainUIGroup extends Group {
                             button.text.update(menuItem.text.get());
                             int assignedTaskId = ((TaskItem) menuItem).taskId;
                             gameWorld.task.set(worker.id, assignedTaskId);
-                            SimGame.game.plat.log().info(gameWorld.profile.get(worker.id).firstName + " task changed to " + gameWorld.name.get(assignedTaskId));
+                            logEvent(assignedTaskId);
+                        }
+
+                        private void logEvent(int assignedTaskId) {
+                            String name = gameWorld.profile.get(worker.id).firstName;
+                            String task = gameWorld.name.get(assignedTaskId);
+                            SimGame.game.event.emit(TrackedEvent.game().action("task").label(name + ":" + task));
                         }
                     };
                 }

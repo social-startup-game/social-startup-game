@@ -21,8 +21,8 @@ package edu.bsu.cybersec.core.ui;
 
 import edu.bsu.cybersec.core.Company;
 import edu.bsu.cybersec.core.EmployeePool;
-import edu.bsu.cybersec.core.LogUtils;
 import edu.bsu.cybersec.core.SimGame;
+import edu.bsu.cybersec.core.TrackedEvent;
 import edu.bsu.cybersec.core.intro.IntroScreen;
 import edu.bsu.cybersec.core.intro.Introduction;
 import playn.core.Font;
@@ -59,7 +59,7 @@ public class StartingScreen extends ScreenStack.UIScreen {
                         .onClick(new Slot<Button>() {
                             @Override
                             public void onEmit(Button button) {
-                                SimGame.game.plat.log().info(LogUtils.START_GAME_MESSAGE);
+                                SimGame.game.event.emit(TrackedEvent.game().action("start").label(""));
                                 disableButtons();
                                 EmployeePool employeePool = EmployeePool.create(SimGame.game.assets);
                                 Company company = Company.from(employeePool).withEmployees(3);
