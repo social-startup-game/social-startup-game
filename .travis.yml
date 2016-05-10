@@ -1,6 +1,5 @@
 language: java
 script:
-- bash ./install-playn-snapshot.sh
 - mvn install
 - mvn -Phtml package
 - if [ "$TRAVIS_BRANCH" == "master" ]; then bash ./deploy.sh; fi
