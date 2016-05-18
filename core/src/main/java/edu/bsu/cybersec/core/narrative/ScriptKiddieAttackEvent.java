@@ -63,7 +63,8 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
     final class RetaliateOption extends Option.Terminal {
         private final int selectedWorkerId;
         private final String selectedWorkerName;
-        public RetaliateOption(int id) {
+
+        RetaliateOption(int id) {
             this.selectedWorkerId = id;
             selectedWorkerName = world.profile.get(selectedWorkerId).firstName;
         }
@@ -176,7 +177,7 @@ public class ScriptKiddieAttackEvent extends NarrativeEvent {
                 @Override
                 public String text() {
                     return "The police found the hacker responsible, and the story gave you some good press! You gained "
-                            + userGain + " from the free publicity.";
+                            + userGain + " users from the free publicity.";
                 }
 
                 @Override
