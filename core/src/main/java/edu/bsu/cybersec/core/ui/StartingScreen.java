@@ -19,10 +19,7 @@
 
 package edu.bsu.cybersec.core.ui;
 
-import edu.bsu.cybersec.core.Company;
-import edu.bsu.cybersec.core.EmployeePool;
-import edu.bsu.cybersec.core.SimGame;
-import edu.bsu.cybersec.core.TrackedEvent;
+import edu.bsu.cybersec.core.*;
 import edu.bsu.cybersec.core.intro.IntroScreen;
 import edu.bsu.cybersec.core.intro.Introduction;
 import playn.core.Font;
@@ -50,7 +47,10 @@ public class StartingScreen extends ScreenStack.UIScreen {
         Root root = iface.createRoot(AxisLayout.vertical(), SimGameStyle.newSheet(game().plat.graphics()), layer)
                 .setSize(size());
         Image logo = SimGame.game.assets.getImage(GameAssets.ImageKey.LOGO);
-        Icon iconLogo = Icons.image(logo);
+
+        IconScaler iconScaler = new IconScaler(SimGame.game);
+        Icon iconLogo = iconScaler.scale(GameAssets.ImageKey.LOGO, SimGame.game.bounds.width() * 0.85f);
+
         final float buttonFontSize = percentOfViewHeight(0.04f);
         final Font font = FontCache.instance().REGULAR.derive(buttonFontSize);
         final Button[] buttons = new Button[]{
