@@ -58,7 +58,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
         private final int id;
         private String text = null;
 
-        public EmployeeAssignmentOption(int id) {
+        EmployeeAssignmentOption(int id) {
             this.id = id;
             text = world.profile.get(id).firstName;
         }
@@ -87,7 +87,7 @@ public class InputSanitizationEvent extends NarrativeEvent {
 
         private void assignEmployee() {
             final Entity taskEntity = world.create(true).add(world.name, world.owner, world.secondsRemaining, world.onComplete, world.taskFlags);
-            world.name.set(taskEntity.id, "Checking input handling");
+            world.name.set(taskEntity.id, "Investigating");
             world.owner.set(taskEntity.id, id);
             world.taskFlags.set(taskEntity.id, TaskFlags.flags(TaskFlags.BOUND_TO_WORKDAY));
             world.secondsRemaining.set(taskEntity.id, HOURS_FOR_SANITIZATION * ClockUtils.SECONDS_PER_HOUR);
