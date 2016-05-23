@@ -25,11 +25,11 @@ import react.Slot;
 import tripleplay.ui.Behavior;
 import tripleplay.ui.Label;
 
-public class TouchableLabel extends Label {
+final class TouchableLabel extends Label {
 
     private final Signal<TouchableLabel> onTouch = Signal.create();
 
-    public TouchableLabel(String name) {
+    TouchableLabel(String name) {
         super(name);
     }
 
@@ -44,8 +44,7 @@ public class TouchableLabel extends Label {
 
             @Override
             public void onPress(Pointer.Interaction iact) {
-                if (iact.event.kind == playn.core.Pointer.Event.Kind.START
-                        && !iact.event.isTouch) {
+                if (iact.event.kind == playn.core.Pointer.Event.Kind.START) {
                     onTouch.emit(TouchableLabel.this);
                 }
             }

@@ -23,7 +23,6 @@ import edu.bsu.cybersec.core.*;
 import playn.core.Clock;
 import playn.core.Game;
 import playn.scene.Layer;
-import playn.scene.Mouse;
 import pythagoras.f.IDimension;
 import react.UnitSlot;
 import tripleplay.entity.Entity;
@@ -48,7 +47,6 @@ public class GameScreen extends ScreenStack.UIScreen {
         super(SimGame.game.plat);
 
         this.screenStack = checkNotNull(screenStack);
-        game().plat.input().mouseEvents.connect(new Mouse.Dispatcher(layer, true));
 
         gameWorld = createGameWorld(company);
         initializeTimeRenderingSystem();
@@ -171,7 +169,7 @@ public class GameScreen extends ScreenStack.UIScreen {
 
         private final float SHIM_WIDTH = SimGame.game.bounds.percentOfHeight(0.05f);
 
-        public TopStatusBar() {
+        TopStatusBar() {
             super(AxisLayout.horizontal());
             add(new Shim(0, 0).setConstraint(Constraints.fixedSize(SHIM_WIDTH, 0)));
             add(timeLabel.addStyles(Style.HALIGN.left).setConstraint(AxisLayout.stretched()));
