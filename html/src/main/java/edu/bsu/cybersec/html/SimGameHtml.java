@@ -39,6 +39,7 @@ public class SimGameHtml implements EntryPoint {
                 sendTrackingEvent(event);
             }
         });
+        new BackgroundMuter().muteMusicWhileDocumentIsHidden();
         plat.start();
     }
 
