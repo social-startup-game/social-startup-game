@@ -7,7 +7,7 @@ from hackers?
 
 The game is designed for ages 10&ndash;16.
 
-![Build status](https://travis-ci.org/social-startup-game/social-startup-game.svg "Build status")
+![Build status indicator](https://travis-ci.org/social-startup-game/social-startup-game.svg "Build status")
 
 ## Design goals
 
