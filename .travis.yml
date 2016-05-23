@@ -2,7 +2,9 @@ language: java
 script:
 - mvn install
 - mvn -Phtml package
-- if [ "$TRAVIS_BRANCH" == "master" ]; then bash ./deploy.sh; fi
+- echo $TRAVIS_BRANCH
+- echo $TRAVIS_PULL_REQUEST
+- if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST" == "false" ]; then bash ./deploy.sh; fi
 env:
   global:
   - GH_REF: github.com/social-startup-game/social-startup-game.git
