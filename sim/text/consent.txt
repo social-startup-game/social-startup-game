@@ -1,0 +1,42 @@
+Study Title:
+Evaluating a Cybersecurity Education Game
+
+Study Purpose and Rationale:
+The purpose of this study is to evaluate whether The Social Startup Game is successful at meeting its primary design goals: to educate the player about fundamentals of cybersecurity and to expose career paths in cybersecurity.
+
+Inclusion/Exclusion Criteria:
+To be eligible to participate in this study, you must be 18 years of age or older.
+
+Participation Procedures and Duration:
+To participate, you will play The Social Startup Game, which takes about 10­15 minutes. Your choices during the game will be recorded. You will answer a short demographic survey before the game and a post­play survey afterward.
+
+Data Confidentiality or Anonymity:
+All data will be maintained as anonymous and no identifying information such as names will appear in any publication or presentation of the data.
+
+Storage of Data:
+Gameplay and survey data will be stored in a password­protected secure database for three years after the completion of the study and then deleted.
+
+Risks or Discomforts:
+There are no perceived risks for participating in this study
+
+Who to Contact Should You Experience Any Negative Effects from Participating in this Study:
+Should you experience any feelings of anxiety, contact your local counseling center.
+
+Benefits:
+One benefit you may gain from participating in this study may be a better understanding of cybersecurity practices and educational paths to cybersecurity careers.
+
+Voluntary Participation:
+Your participation in this study is completely voluntary and you are free to withdraw your permission at anytime for any reason without penalty or prejudice from the investigator. Please feel free to email questions to the investigator before participating in the study and at any time during the study.
+
+IRB Contact Information:
+For one’s rights as a research subject, you may contact the following: For questions about your rights as a research subject, please contact the Director, Office of Research Integrity, Ball State University, Muncie, IN 47306, (765) 285­5070 or at irb@bsu.edu.
+
+Contact Information:
+If you have any questions about this study, contact:
+Paul Gestwicki
+Computer Science Dept, RB455
+Ball State University
+765­285­8668 or http://www.cs.bsu.edu/~pvg
+
+Consent:
+By clicking on the button below, I agree to participate in this research project entitled, "Evaluating a Cybersecurity Education Game." I have had the study explained to me and my questions have been answered to my satisfaction. I have read the description of this project and give my consent to participate. To the best of my knowledge, I meet the inclusion/exclusion criteria for participation in this study.
