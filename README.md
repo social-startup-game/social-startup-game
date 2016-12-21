@@ -5,6 +5,8 @@ security officer at “Social Jam”, an up-and-coming social media company. Can
 company acquire more users during your probationary period while keeping the company safe
 from hackers?
 
+[Play free online!](http://social-startup-game.github.io/)
+
 The game is designed for ages 10&ndash;16.
 
 ![Build status indicator](https://travis-ci.org/social-startup-game/social-startup-game.svg "Build status")
