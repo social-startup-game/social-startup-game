@@ -13937,7 +13937,6 @@ function SimGameHtml$1(){
 
 defineClass(363, 953, {}, SimGameHtml$1);
 _.onEmit = function onEmit_45(event_0){
-  $wnd.ga('send', {hitType:'event', eventCategory:event_0.category, eventAction:event_0.action, eventLabel:event_0.label_0});
 }
 ;
 var Ledu_bsu_cybersec_html_SimGameHtml$1_2_classLit = createForClass('edu.bsu.cybersec.html', 'SimGameHtml/1', 363, Lreact_Slot_2_classLit);
